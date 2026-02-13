@@ -10,10 +10,10 @@ import (
 	"backend/internal/handler"
 	"backend/internal/job"
 	"backend/internal/repository"
-	"backend/internal/router"
 	"backend/internal/server"
 	"backend/internal/service"
 	"backend/pkg/app"
+	"backend/pkg/email"
 	"backend/pkg/jwt"
 	"backend/pkg/log"
 	"backend/pkg/server/http"
@@ -25,23 +25,38 @@ import (
 // Injectors from wire.go:
 
 func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
-	jwtJWT := jwt.NewJwt(viperViper)
-	handlerHandler := handler.NewHandler(logger)
 	db := repository.NewDB(viperViper, logger)
-	repositoryRepository := repository.NewRepository(logger, db)
-	transaction := repository.NewTransaction(repositoryRepository)
+	syncedEnforcer := repository.NewCasbinEnforcer(viperViper, logger, db)
+	cache := repository.NewCache()
+	universalClient := repository.NewRedis(viperViper, logger)
+	minIO := repository.NewMinIO(viperViper, logger)
+	repositoryRepository := repository.NewRepository(db, syncedEnforcer, cache, universalClient, minIO, logger)
+	tokenStore := repository.NewTokenStore(repositoryRepository)
+	jwtJWT := jwt.NewJwt(viperViper, tokenStore)
+	handlerHandler := handler.NewHandler(logger)
 	sidSid := sid.NewSid()
-	serviceService := service.NewService(transaction, logger, sidSid, jwtJWT)
+	emailEmail := email.NewEmail(viperViper)
+	transaction := repository.NewTransaction(repositoryRepository)
+	serviceService := service.NewService(logger, sidSid, jwtJWT, emailEmail, transaction)
 	userRepository := repository.NewUserRepository(repositoryRepository)
-	userService := service.NewUserService(serviceService, userRepository)
+	authService := service.NewAuthService(serviceService, userRepository)
+	authHandler := handler.NewAuthHandler(handlerHandler, authService)
+	roleRepository := repository.NewRoleRepository(repositoryRepository)
+	menuRepository := repository.NewMenuRepository(repositoryRepository)
+	avatarStorage := repository.NewAvatarStorage(repositoryRepository)
+	userService := service.NewUserService(serviceService, userRepository, roleRepository, menuRepository, avatarStorage)
 	userHandler := handler.NewUserHandler(handlerHandler, userService)
-	routerDeps := router.RouterDeps{
-		Logger:      logger,
-		Config:      viperViper,
-		JWT:         jwtJWT,
-		UserHandler: userHandler,
-	}
-	httpServer := server.NewHTTPServer(routerDeps)
+	roleService := service.NewRoleService(serviceService, roleRepository)
+	roleHandler := handler.NewRoleHandler(handlerHandler, roleService)
+	menuService := service.NewMenuService(serviceService, menuRepository)
+	menuHandler := handler.NewMenuHandler(handlerHandler, menuService)
+	apiRepository := repository.NewApiRepository(repositoryRepository)
+	apiService := service.NewApiService(serviceService, apiRepository)
+	apiHandler := handler.NewApiHandler(handlerHandler, apiService)
+	itemRepository := repository.NewItemRepository(repositoryRepository)
+	itemService := service.NewItemService(serviceService, itemRepository)
+	itemHandler := handler.NewItemHandler(handlerHandler, itemService)
+	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, syncedEnforcer, authHandler, userHandler, roleHandler, menuHandler, apiHandler, itemHandler)
 	jobJob := job.NewJob(transaction, logger, sidSid)
 	userJob := job.NewUserJob(jobJob, userRepository)
 	jobServer := server.NewJobServer(logger, userJob)
@@ -52,11 +67,11 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 
 // wire.go:
 
-var repositorySet = wire.NewSet(repository.NewDB, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository)
+var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewCache, repository.NewMinIO, repository.NewRepository, repository.NewTransaction, repository.NewTokenStore, repository.NewCasbinEnforcer, repository.NewUserRepository, repository.NewAvatarStorage, repository.NewRoleRepository, repository.NewMenuRepository, repository.NewApiRepository, repository.NewItemRepository)
 
-var serviceSet = wire.NewSet(service.NewService, service.NewUserService)
+var serviceSet = wire.NewSet(service.NewService, service.NewAuthService, service.NewUserService, service.NewRoleService, service.NewMenuService, service.NewApiService, service.NewItemService)
 
-var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler)
+var handlerSet = wire.NewSet(handler.NewHandler, handler.NewAuthHandler, handler.NewUserHandler, handler.NewRoleHandler, handler.NewMenuHandler, handler.NewApiHandler, handler.NewItemHandler)
 
 var jobSet = wire.NewSet(job.NewJob, job.NewUserJob)
 

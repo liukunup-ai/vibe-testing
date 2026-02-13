@@ -10,16 +10,27 @@ import (
 	"backend/pkg/app"
 	"backend/pkg/log"
 	"backend/pkg/sid"
+
 	"github.com/google/wire"
 	"github.com/spf13/viper"
 )
 
 var repositorySet = wire.NewSet(
 	repository.NewDB,
-	//repository.NewRedis,
+	repository.NewRedis,
+	repository.NewCache,
+	repository.NewMinIO,
 	repository.NewRepository,
 	repository.NewTransaction,
+	repository.NewTokenStore,
+	repository.NewCasbinEnforcer,
 	repository.NewUserRepository,
+	repository.NewAvatarStorage,
+	repository.NewRoleRepository,
+	repository.NewMenuRepository,
+	repository.NewApiRepository,
+	// more biz repository
+	repository.NewItemRepository,
 )
 
 var taskSet = wire.NewSet(

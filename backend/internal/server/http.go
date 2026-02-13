@@ -1,53 +1,136 @@
 package server
 
 import (
-	"github.com/gin-gonic/gin"
 	apiV1 "backend/api/v1"
 	"backend/docs"
+	"backend/internal/handler"
 	"backend/internal/middleware"
-	"backend/internal/router"
+	"backend/pkg/jwt"
+	"backend/pkg/log"
 	"backend/pkg/server/http"
+	"time"
+
+	"github.com/casbin/casbin/v2"
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func NewHTTPServer(
-	deps router.RouterDeps,
+	logger *log.Logger,
+	conf *viper.Viper,
+	jwt *jwt.JWT,
+	e *casbin.SyncedEnforcer,
+	authHandler *handler.AuthHandler,
+	userHandler *handler.UserHandler,
+	roleHandler *handler.RoleHandler,
+	menuHandler *handler.MenuHandler,
+	apiHandler *handler.ApiHandler,
+	itemHandler *handler.ItemHandler,
 ) *http.Server {
-	if deps.Config.GetString("env") == "prod" {
-		gin.SetMode(gin.ReleaseMode)
-	}
+	gin.SetMode(gin.DebugMode)
 	s := http.NewServer(
 		gin.Default(),
-		deps.Logger,
-		http.WithServerHost(deps.Config.GetString("http.host")),
-		http.WithServerPort(deps.Config.GetInt("http.port")),
+		logger,
+		http.WithServerHost(conf.GetString("http.host")),
+		http.WithServerPort(conf.GetInt("http.port")),
+		http.WithCertFiles(conf.GetString("http.cert_file"), conf.GetString("http.key_file")),
 	)
 
 	// swagger doc
-	docs.SwaggerInfo.BasePath = "/v1"
+	docs.SwaggerInfo.BasePath = "/"
 	s.GET("/swagger/*any", ginSwagger.WrapHandler(
 		swaggerfiles.Handler,
-		//ginSwagger.URL(fmt.Sprintf("http://localhost:%d/swagger/doc.json", deps.Config.GetInt("app.http.port"))),
+		//ginSwagger.URL(fmt.Sprintf("http://localhost:%d/swagger/doc.json", conf.GetInt("app.http.port"))),
 		ginSwagger.DefaultModelsExpandDepth(-1),
 		ginSwagger.PersistAuthorization(true),
 	))
 
 	s.Use(
 		middleware.CORSMiddleware(),
-		middleware.ResponseLogMiddleware(deps.Logger),
-		middleware.RequestLogMiddleware(deps.Logger),
+		middleware.ResponseLogMiddleware(logger),
+		middleware.RequestLogMiddleware(logger),
 		//middleware.SignMiddleware(log),
 	)
 	s.GET("/", func(ctx *gin.Context) {
-		deps.Logger.WithContext(ctx).Info("hello")
+		logger.WithContext(ctx).Info("hello")
 		apiV1.HandleSuccess(ctx, map[string]interface{}{
 			":)": "Thank you for using nunu!",
 		})
 	})
 
+	s.GET("/healthz", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":  "ok",
+			"time":    time.Now().UTC().Format(time.RFC3339),
+			"version": "v1",
+		})
+	})
+
 	v1 := s.Group("/v1")
-	router.InitUserRouter(deps, v1)
+	{
+		// No route group has permission
+		noAuthRouter := v1.Group("/")
+		{
+			noAuthRouter.POST("/register", authHandler.Register)
+			noAuthRouter.POST("/login", authHandler.Login)
+			noAuthRouter.POST("/reset-password", authHandler.ResetPassword)
+			noAuthRouter.POST("/refresh-token", authHandler.RefreshToken)
+		}
+
+		// Non-strict permission routing group
+		noStrictAuthRouter := v1.Group("/").Use(middleware.NoStrictAuth(jwt, logger))
+		{
+			// User
+			noStrictAuthRouter.GET("/users/:id", userHandler.GetUserByID)
+		}
+
+		// Strict permission routing group
+		strictAuthRouter := v1.Group("/").Use(middleware.StrictAuth(jwt, logger), middleware.AuthMiddleware(e))
+		{
+			// User
+			strictAuthRouter.GET("/users/profile", userHandler.GetProfile)
+			strictAuthRouter.PUT("/users/profile", userHandler.UpdateProfile)
+			strictAuthRouter.PUT("/users/profile/avatar", userHandler.UploadAvatar)
+			strictAuthRouter.GET("/users/menu", userHandler.GetMenu)
+			strictAuthRouter.PUT("/users/password", userHandler.UpdatePassword)
+
+			// Admin User
+			strictAuthRouter.GET("/admin/users", userHandler.ListUsers)
+			strictAuthRouter.POST("/admin/users", userHandler.CreateUser)
+			strictAuthRouter.PUT("/admin/users/:id", userHandler.UpdateUser)
+			strictAuthRouter.DELETE("/admin/users/:id", userHandler.DeleteUser)
+
+			// Admin Role
+			strictAuthRouter.GET("/admin/roles", roleHandler.ListRoles)
+			strictAuthRouter.POST("/admin/roles", roleHandler.CreateRole)
+			strictAuthRouter.PUT("/admin/roles/:id", roleHandler.UpdateRole)
+			strictAuthRouter.DELETE("/admin/roles/:id", roleHandler.DeleteRole)
+			// Admin Role Permission
+			strictAuthRouter.GET("/admin/roles/permissions", roleHandler.GetRolePermissions)
+			strictAuthRouter.PUT("/admin/roles/permissions", roleHandler.UpdateRolePermissions)
+
+			// Admin Menu
+			strictAuthRouter.GET("/admin/menus", menuHandler.ListMenus)
+			strictAuthRouter.POST("/admin/menus", menuHandler.CreateMenu)
+			strictAuthRouter.PUT("/admin/menus/:id", menuHandler.UpdateMenu)
+			strictAuthRouter.DELETE("/admin/menus/:id", menuHandler.DeleteMenu)
+
+			// Admin API
+			strictAuthRouter.GET("/admin/apis", apiHandler.ListApis)
+			strictAuthRouter.POST("/admin/apis", apiHandler.CreateApi)
+			strictAuthRouter.PUT("/admin/apis/:id", apiHandler.UpdateApi)
+			strictAuthRouter.DELETE("/admin/apis/:id", apiHandler.DeleteApi)
+
+			// Item
+			strictAuthRouter.GET("/items", itemHandler.ListItems)
+			strictAuthRouter.POST("/items", itemHandler.CreateItem)
+			strictAuthRouter.PUT("/items/:id", itemHandler.UpdateItem)
+			strictAuthRouter.DELETE("/items/:id", itemHandler.DeleteItem)
+			strictAuthRouter.GET("/items/:id", itemHandler.GetItem)
+		}
+	}
 
 	return s
 }

@@ -7,35 +7,57 @@ import (
 	"backend/internal/handler"
 	"backend/internal/job"
 	"backend/internal/repository"
-	"backend/internal/router"
 	"backend/internal/server"
 	"backend/internal/service"
 	"backend/pkg/app"
+	"backend/pkg/email"
 	"backend/pkg/jwt"
 	"backend/pkg/log"
 	"backend/pkg/server/http"
 	"backend/pkg/sid"
+
 	"github.com/google/wire"
 	"github.com/spf13/viper"
 )
 
 var repositorySet = wire.NewSet(
 	repository.NewDB,
-	//repository.NewRedis,
-	//repository.NewMongo,
+	repository.NewRedis,
+	repository.NewCache,
+	repository.NewMinIO,
 	repository.NewRepository,
 	repository.NewTransaction,
+	repository.NewTokenStore,
+	repository.NewCasbinEnforcer,
 	repository.NewUserRepository,
+	repository.NewAvatarStorage,
+	repository.NewRoleRepository,
+	repository.NewMenuRepository,
+	repository.NewApiRepository,
+	// more biz repository
+	repository.NewItemRepository,
 )
 
 var serviceSet = wire.NewSet(
 	service.NewService,
+	service.NewAuthService,
 	service.NewUserService,
+	service.NewRoleService,
+	service.NewMenuService,
+	service.NewApiService,
+	// more biz service
+	service.NewItemService,
 )
 
 var handlerSet = wire.NewSet(
 	handler.NewHandler,
+	handler.NewAuthHandler,
 	handler.NewUserHandler,
+	handler.NewRoleHandler,
+	handler.NewMenuHandler,
+	handler.NewApiHandler,
+	// more biz handler
+	handler.NewItemHandler,
 )
 
 var jobSet = wire.NewSet(
@@ -66,9 +88,9 @@ func NewWire(*viper.Viper, *log.Logger) (*app.App, func(), error) {
 		handlerSet,
 		jobSet,
 		serverSet,
-		wire.Struct(new(router.RouterDeps), "*"),
 		sid.NewSid,
 		jwt.NewJwt,
+		email.NewEmail,
 		newApp,
 	))
 }

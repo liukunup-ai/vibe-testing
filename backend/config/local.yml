@@ -3,6 +3,8 @@ http:
   #  host: 0.0.0.0
   host: 127.0.0.1
   port: 8000
+  # cert_file: "./storage/cert/server.crt"
+  # key_file: "./storage/cert/server.key"
 security:
   api_sign:
     app_key: 123456
@@ -21,16 +23,31 @@ data:
   #      driver: postgres
   #      dsn: host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai
   redis:
-    addr: 127.0.0.1:6350
+    addrs:
+      - "127.0.0.1:6379"
     password: ""
     db: 0
     read_timeout: 0.2s
     write_timeout: 0.2s
-  mongo:
-    uri: mongodb://root:123456@localhost:27017
+email:
+  host: smtp.163.com
+  port: 587
+  username: xxx@163.com
+  password: 123456
+  use_ssl: false
+  use_tls: true
+  local_name: localhost
+storage:
+  minio:
+    endpoint: "http://minio.local:9000"
+    access_key: ak
+    secret_key: sk
+    bucket: robotshop
+    region: us-east-1
+    secure: false
+
 log:
   log_level: debug
-  mode: both               #  file or console or both
   encoding: console           # json or console
   log_file_name: "./storage/logs/server.log"
   max_backups: 30

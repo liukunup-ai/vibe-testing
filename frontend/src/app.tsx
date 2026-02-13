@@ -1,74 +1,98 @@
-import { LinkOutlined } from '@ant-design/icons';
-import type { Settings as LayoutSettings } from '@ant-design/pro-components';
+import { AvatarDropdown, AvatarName, Footer, Question, SelectLang } from '@/components';
+import { fetchCurrentUser } from '@/services/backend/user';
+import { LinkOutlined, SmileOutlined, CrownOutlined, AppstoreOutlined, ProfileOutlined } from '@ant-design/icons';
+import type { Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
-import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
+import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import React from 'react';
-import {
-  AvatarDropdown,
-  AvatarName,
-  Footer,
-  Question,
-  SelectLang,
-} from '@/components';
-import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
 import defaultSettings from '../config/defaultSettings';
-import { errorConfig } from './requestErrorConfig';
+import { errorConfig } from './utils/request';
 import '@ant-design/v5-patch-for-react-19';
+import { fetchDynamicMenu } from '@/services/backend/user';
 
 const isDev = process.env.NODE_ENV === 'development';
-const loginPath = '/user/login';
+const loginPath = '/login';
+
+// 解决动态菜单图标问题
+interface IconMapType {
+  [key: string]: React.ReactNode;
+}
+const IconMap: IconMapType = {
+  smile: <SmileOutlined />,
+  crown: <CrownOutlined />,
+  appstore: <AppstoreOutlined />,
+  profile: <ProfileOutlined />,
+};
+const loopMenuItem = (menus: API.MenuNode[]): MenuDataItem[] =>
+  menus.map(({ icon, children, parentKeys, ...item }) => ({
+    ...item,
+    icon: icon && IconMap[icon],
+    children: children && loopMenuItem(children),
+    parentKeys: typeof parentKeys === 'string' ? parentKeys.split(',') : [],
+  })
+);
 
 /**
  * @see https://umijs.org/docs/api/runtime-config#getinitialstate
  * */
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
-  currentUser?: API.CurrentUser;
+  currentUser?: API.User;
   loading?: boolean;
-  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+  fetchUserInfo?: () => Promise<API.User | undefined>;
+  fetchMenuData?: () => Promise<MenuDataItem[]>;
+  menuData?: MenuDataItem[];
 }> {
   const fetchUserInfo = async () => {
     try {
-      const msg = await queryCurrentUser({
+      const response = await fetchCurrentUser({
         skipErrorHandler: true,
       });
-      return msg.data;
-    } catch (_error) {
+      return response.data;
+    } catch (error) {
       history.push(loginPath);
     }
     return undefined;
   };
+  const fetchMenuData = async () => {
+    try {
+      const response = await fetchDynamicMenu({
+        skipErrorHandler: true,
+      });
+      if (response.success) {
+        return loopMenuItem(response.data?.list || []);
+      }
+    } catch (error) {
+      console.error('failed to fetch menu data:', error);
+    }
+    return [];
+  };
+
   // 如果不是登录页面，执行
   const { location } = history;
-  if (
-    ![loginPath, '/user/register', '/user/register-result'].includes(
-      location.pathname,
-    )
-  ) {
+  if (location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
+    const menuData = await fetchMenuData();
     return {
       fetchUserInfo,
+      fetchMenuData,
       currentUser,
+      menuData,
       settings: defaultSettings as Partial<LayoutSettings>,
     };
   }
   return {
     fetchUserInfo,
+    menuData: [],
     settings: defaultSettings as Partial<LayoutSettings>,
   };
 }
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
-export const layout: RunTimeLayoutConfig = ({
-  initialState,
-  setInitialState,
-}) => {
+export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
-    actionsRender: () => [
-      <Question key="doc" />,
-      <SelectLang key="SelectLang" />,
-    ],
+    actionsRender: () => [<Question key="doc" />, <SelectLang key="SelectLang" />],
     avatarProps: {
       src: initialState?.currentUser?.avatar,
       title: <AvatarName />,
@@ -77,7 +101,7 @@ export const layout: RunTimeLayoutConfig = ({
       },
     },
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: initialState?.currentUser?.nickname,
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
@@ -140,6 +164,8 @@ export const layout: RunTimeLayoutConfig = ({
         </>
       );
     },
+    // 实现动态菜单功能
+    menuDataRender: () => initialState.menuData,
     ...initialState?.settings,
   };
 };
@@ -149,7 +175,6 @@ export const layout: RunTimeLayoutConfig = ({
  * 它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
  * @doc https://umijs.org/docs/max/request#配置
  */
-export const request: RequestConfig = {
-  baseURL: 'https://proapi.azurewebsites.net',
+export const request = {
   ...errorConfig,
 };

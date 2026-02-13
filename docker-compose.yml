@@ -1,0 +1,35 @@
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "7001:7001"
+    environment:
+      - APP_ENV=local
+      - DB_TYPE=sqlite
+    volumes:
+      - ./backend/storage:/app/storage
+    depends_on:
+      - mailcatcher
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - API_BASE_URL=http://backend:7001
+    depends_on:
+      - backend
+
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    environment:
+      - MAILCATCHER_SMTP_PORT=1025
+      - MAILCATCHER_HTTP_PORT=1080

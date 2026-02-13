@@ -1,10 +1,8 @@
 // https://umijs.org/config/
-
-import { join } from 'node:path';
 import { defineConfig } from '@umijs/max';
+import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-
 import routes from './routes';
 
 const { REACT_APP_ENV = 'dev' } = process.env;
@@ -45,9 +43,13 @@ export default defineConfig({
    * @name 主题的配置
    * @description 虽然叫主题，但是其实只是 less 的变量设置
    * @doc antd的主题设置 https://ant.design/docs/react/customize-theme-cn
-   * @doc umi 的 theme 配置 https://umijs.org/docs/api/config#theme
+   * @doc umi 的theme 配置 https://umijs.org/docs/api/config#theme
    */
-  // theme: { '@primary-color': '#1DA57A' }
+  theme: {
+    // 如果不想要 configProvide 动态设置主题需要把这个设置为 default
+    // 只有设置为 variable， 才能使用 configProvide 动态设置主色调
+    'root-entry-name': 'variable',
+  },
   /**
    * @name moment 的国际化配置
    * @description 如果对国际化没有要求，打开之后能减少js的包大小
@@ -114,14 +116,8 @@ export default defineConfig({
    * @doc https://umijs.org/docs/max/antd#antd
    */
   antd: {
-    appConfig: {},
-    configProvider: {
-      theme: {
-        cssVar: true,
-        token: {
-          fontFamily: 'AlibabaSans, sans-serif',
-        },
-      },
+    styleProvider: {
+      cssVar: true,
     },
   },
   /**
@@ -154,21 +150,11 @@ export default defineConfig({
   openAPI: [
     {
       requestLibPath: "import { request } from '@umijs/max'",
-      // 或者使用在线的版本
-      // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
-      schemaPath: join(__dirname, 'oneapi.json'),
-      mock: false,
-    },
-    {
-      requestLibPath: "import { request } from '@umijs/max'",
-      schemaPath:
-        'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
-      projectName: 'swagger',
+      schemaPath: 'http://127.0.0.1:8000/swagger/doc.json',
+      projectName: 'backend',
+      apiPrefix: "'/v1'",
     },
   ],
-  mock: {
-    include: ['mock/**/*', 'src/pages/**/_mock.ts'],
-  },
   /**
    * @name 是否开启 mako
    * @description 使用 mako 极速研发
@@ -177,5 +163,4 @@ export default defineConfig({
   mako: {},
   esbuildMinifyIIFE: true,
   requestRecord: {},
-  exportStatic: {},
 });

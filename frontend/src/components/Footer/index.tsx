@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
       style={{
         background: 'none',
       }}
-      copyright="Powered by Ant Desgin"
+      copyright="2026 Vibe Testing 版权所有"
       links={[
         {
           key: 'Ant Design Pro',

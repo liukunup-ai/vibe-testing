@@ -395,8 +395,8 @@ graph TB
 
 #### 1. users 用户表
 存储平台用户的基本信息和认证凭据。
-- **核心字段**：用户名、密码（加密）、邮箱、手机号、创建时间、最后登录时间、状态（正常/禁用）
-- **扩展字段**：头像 URL、部门、职位、语言偏好、时区
+- **核心字段**：public_user_id（UUID4，对外暴露的 ID）、用户名、密码（加密）、邮箱、手机号、创建时间、状态（正常/禁用）
+- **扩展字段**：头像 URL、全名（full_name，用于展示）、部门、职位、语言偏好、时区
 - **安全字段**：两步验证密钥、密码盐值、登录失败次数、锁定时间
 
 #### 2. user_roles 角色表
@@ -1735,11 +1735,12 @@ def test_mobile_app(driver):
 ```sql
 CREATE TABLE users (
     id              BIGSERIAL PRIMARY KEY,
+    public_id
     username        VARCHAR(50) NOT NULL UNIQUE,
     password_hash   VARCHAR(255) NOT NULL,
     email           VARCHAR(100) NOT NULL UNIQUE,
     phone           VARCHAR(20),
-    real_name       VARCHAR(50),
+    full_name       VARCHAR(50),
     avatar_url      VARCHAR(500),
     department_id   BIGINT REFERENCES departments(id),
     status          SMALLINT NOT NULL DEFAULT 1,  -- 0:禁用 1:启用 2:锁定
