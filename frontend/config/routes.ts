@@ -1,4 +1,4 @@
-import access from "@/access";
+import access from '@/access';
 
 /**
  * @name umi 的路由配置
@@ -15,24 +15,261 @@ import access from "@/access";
 export default [
   {
     path: '/',
-    redirect: '/welcome',
+    redirect: '/dashboard',
   },
+  // 1. 数据大盘
   {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
-    component: '@/pages/Welcome',
+    path: '/dashboard',
+    name: 'dashboard',
+    icon: 'dashboard',
+    component: '@/pages/Dashboard',
   },
+  // 2. 工作台
   {
-    path: '/item',
-    name: 'item',
-    icon: 'appstore',
-    component: '@/pages/Item',
+    path: '/workbench',
+    name: 'workbench',
+    icon: 'desktop',
+    routes: [
+      {
+        path: '/workbench',
+        redirect: '/workbench/overview',
+      },
+      {
+        path: '/workbench/overview',
+        name: 'overview',
+        icon: 'appstore',
+        component: '@/pages/Workbench/Overview',
+      },
+      {
+        path: '/workbench/notification',
+        name: 'notification',
+        icon: 'bell',
+        component: '@/pages/Workbench/Notification',
+      },
+      {
+        path: '/workbench/todo',
+        name: 'todo',
+        icon: 'checkSquare',
+        component: '@/pages/Workbench/Todo',
+      },
+    ],
   },
+  // 3. 效能
+  {
+    path: '/efficiency',
+    name: 'efficiency',
+    icon: 'lineChart',
+    routes: [
+      {
+        path: '/efficiency',
+        redirect: '/efficiency/project',
+      },
+      {
+        path: '/efficiency/project',
+        name: 'project',
+        icon: 'project',
+        component: '@/pages/Efficiency/Project',
+      },
+      {
+        path: '/efficiency/product',
+        name: 'product',
+        icon: 'shopping',
+        component: '@/pages/Efficiency/Product',
+      },
+      {
+        path: '/efficiency/development',
+        name: 'development',
+        icon: 'code',
+        component: '@/pages/Efficiency/Development',
+      },
+      {
+        path: '/efficiency/testing',
+        name: 'testing',
+        icon: 'experiment',
+        component: '@/pages/Efficiency/Testing',
+      },
+    ],
+  },
+  // 4. 项目
+  {
+    path: '/project',
+    name: 'project',
+    icon: 'folder',
+    routes: [
+      {
+        path: '/project',
+        redirect: '/project/list',
+      },
+      {
+        path: '/project/list',
+        name: 'list',
+        icon: 'unorderedList',
+        component: '@/pages/Project/List',
+      },
+      {
+        path: '/project/detail/:id',
+        name: 'detail',
+        component: '@/pages/Project/Detail',
+        hideInMenu: true,
+      },
+      {
+        path: '/project/members',
+        name: 'members',
+        icon: 'team',
+        component: '@/pages/Project/Members',
+      },
+    ],
+  },
+  // 5. 需求
+  {
+    path: '/requirement',
+    name: 'requirement',
+    icon: 'fileText',
+    routes: [
+      {
+        path: '/requirement',
+        redirect: '/requirement/list',
+      },
+      {
+        path: '/requirement/list',
+        name: 'list',
+        icon: 'unorderedList',
+        component: '@/pages/Requirement/List',
+      },
+      {
+        path: '/requirement/detail/:id',
+        name: 'detail',
+        component: '@/pages/Requirement/Detail',
+        hideInMenu: true,
+      },
+    ],
+  },
+  // 6. 测试
+  {
+    path: '/testing',
+    name: 'testing',
+    icon: 'experiment',
+    routes: [
+      {
+        path: '/testing',
+        redirect: '/testing/testcase',
+      },
+      {
+        path: '/testing/testcase',
+        name: 'testcase',
+        icon: 'fileText',
+        component: '@/pages/Testing/TestCase',
+      },
+      {
+        path: '/testing/testcase/edit',
+        name: 'testCaseEdit',
+        component: '@/pages/Testing/TestCase/Edit',
+        hideInMenu: true,
+      },
+      {
+        path: '/testing/testcase/import',
+        name: 'testCaseImport',
+        component: '@/pages/Testing/TestCase/Import',
+        hideInMenu: true,
+      },
+      {
+        path: '/testing/testplan',
+        name: 'testplan',
+        icon: 'calendar',
+        component: '@/pages/Testing/TestPlan',
+      },
+      {
+        path: '/testing/report',
+        name: 'report',
+        icon: 'barChart',
+        component: '@/pages/Testing/Report',
+      },
+      {
+        path: '/testing/report/detail/:id',
+        name: 'reportDetail',
+        component: '@/pages/Testing/Report/Detail',
+        hideInMenu: true,
+      },
+    ],
+  },
+  // 7. 缺陷
+  {
+    path: '/bug',
+    name: 'bug',
+    icon: 'bug',
+    routes: [
+      {
+        path: '/bug',
+        redirect: '/bug/list',
+      },
+      {
+        path: '/bug/list',
+        name: 'list',
+        icon: 'unorderedList',
+        component: '@/pages/Bug/List',
+      },
+      {
+        path: '/bug/detail/:id',
+        name: 'detail',
+        component: '@/pages/Bug/Detail',
+        hideInMenu: true,
+      },
+    ],
+  },
+  // 8. 设备
+  {
+    path: '/device',
+    name: 'device',
+    icon: 'mobile',
+    routes: [
+      {
+        path: '/device',
+        redirect: '/device/list',
+      },
+      {
+        path: '/device/list',
+        name: 'list',
+        icon: 'unorderedList',
+        component: '@/pages/Device/List',
+      },
+      {
+        path: '/device/detail/:id',
+        name: 'detail',
+        component: '@/pages/Device/Detail',
+        hideInMenu: true,
+      },
+    ],
+  },
+  // 9. 个人中心
+  {
+    path: '/profile',
+    name: 'profile',
+    icon: 'user',
+    routes: [
+      {
+        path: '/profile',
+        redirect: '/profile/center',
+      },
+      {
+        path: '/profile/center',
+        name: 'center',
+        icon: 'idcard',
+        component: '@/pages/Profile/Center',
+      },
+      {
+        path: '/profile/settings',
+        name: 'settings',
+        icon: 'setting',
+        component: '@/pages/Profile/Settings',
+      },
+    ],
+  },
+  // 10. 管理中心
   {
     path: '/admin',
     name: 'admin',
     icon: 'crown',
+    access: 'canAdmin',
     routes: [
       {
         path: '/admin',
@@ -41,30 +278,47 @@ export default [
       {
         path: '/admin/user',
         name: 'user',
+        icon: 'user',
         component: '@/pages/Admin/User',
       },
       {
         path: '/admin/role',
         name: 'role',
+        icon: 'safety',
         component: '@/pages/Admin/Role',
       },
       {
         path: '/admin/menu',
         name: 'menu',
+        icon: 'menu',
         component: '@/pages/Admin/Menu',
       },
       {
         path: '/admin/api',
         name: 'api',
+        icon: 'api',
         component: '@/pages/Admin/Api',
+      },
+      {
+        path: '/admin/audit',
+        name: 'audit',
+        icon: 'audit',
+        component: '@/pages/Admin/Audit',
+      },
+      {
+        path: '/admin/config',
+        name: 'config',
+        icon: 'tool',
+        component: '@/pages/Admin/Config',
       },
     ],
   },
+  // 11. 使用帮助
   {
-    path: '/profile',
-    name: 'profile',
-    icon: 'user',
-    component: '@/pages/Profile',
+    path: '/help',
+    name: 'help',
+    icon: 'questionCircle',
+    component: '@/pages/Help',
   },
   {
     name: 'login',

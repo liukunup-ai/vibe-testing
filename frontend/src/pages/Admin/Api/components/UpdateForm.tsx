@@ -28,12 +28,20 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
       if (!values.id) {
         throw new Error('更新操作时未找到记录ID');
       }
-      await updateApi({id: values.id}, values as API.ApiRequest);
-      message.success(intl.formatMessage({ id: 'pages.common.object.update.success', defaultMessage: '更新成功' }));
+      await updateApi({ id: values.id }, values as API.ApiRequest);
+      message.success(
+        intl.formatMessage({
+          id: 'pages.common.object.update.success',
+          defaultMessage: '更新成功',
+        }),
+      );
       form.resetFields();
       onSuccess();
     } catch (error) {
-      const msg = intl.formatMessage({ id: 'pages.common.object.update.failed', defaultMessage: '更新失败' });
+      const msg = intl.formatMessage({
+        id: 'pages.common.object.update.failed',
+        defaultMessage: '更新失败',
+      });
       if (error instanceof Error) {
         message.error(error.message || msg);
       } else {
@@ -51,7 +59,9 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
 
   return (
     <Modal
-      title={<FormattedMessage id="pages.admin.api.modal.updateForm.title" defaultMessage="更新接口" />}
+      title={
+        <FormattedMessage id="pages.admin.api.modal.updateForm.title" defaultMessage="更新接口" />
+      }
       open={visible}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -59,11 +69,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
       destroyOnHidden={true}
       width={600}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        className="update-api-form"
-      >
+      <Form form={form} layout="vertical" className="update-api-form">
         <Form.Item name="id" label="ID" hidden>
           <Input disabled />
         </Form.Item>
@@ -72,40 +78,84 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
           name="name"
           label={<FormattedMessage id="pages.admin.api.key.group" defaultMessage="分组" />}
           rules={[
-            { required: true, message: intl.formatMessage({ id: 'pages.admin.api.form.group.required', defaultMessage: '请输入分组' }) },
+            {
+              required: true,
+              message: intl.formatMessage({
+                id: 'pages.admin.api.form.group.required',
+                defaultMessage: '请输入分组',
+              }),
+            },
           ]}
         >
-          <Input placeholder={intl.formatMessage({ id: 'pages.admin.api.form.group.placeholder', defaultMessage: '请输入分组' })} />
+          <Input
+            placeholder={intl.formatMessage({
+              id: 'pages.admin.api.form.group.placeholder',
+              defaultMessage: '请输入分组',
+            })}
+          />
         </Form.Item>
 
         <Form.Item
           name="name"
           label={<FormattedMessage id="pages.admin.api.key.name" defaultMessage="名称" />}
           rules={[
-            { required: true, message: intl.formatMessage({ id: 'pages.admin.api.form.name.required', defaultMessage: '请输入名称' }) },
+            {
+              required: true,
+              message: intl.formatMessage({
+                id: 'pages.admin.api.form.name.required',
+                defaultMessage: '请输入名称',
+              }),
+            },
           ]}
         >
-          <Input placeholder={intl.formatMessage({ id: 'pages.admin.api.form.name.placeholder', defaultMessage: '请输入名称' })} />
+          <Input
+            placeholder={intl.formatMessage({
+              id: 'pages.admin.api.form.name.placeholder',
+              defaultMessage: '请输入名称',
+            })}
+          />
         </Form.Item>
 
         <Form.Item
           name="path"
           label={<FormattedMessage id="pages.admin.api.key.path" defaultMessage="路径" />}
           rules={[
-            { required: true, message: intl.formatMessage({ id: 'pages.admin.api.form.path.required', defaultMessage: '请输入路径' }) },
+            {
+              required: true,
+              message: intl.formatMessage({
+                id: 'pages.admin.api.form.path.required',
+                defaultMessage: '请输入路径',
+              }),
+            },
           ]}
         >
-          <Input placeholder={intl.formatMessage({ id: 'pages.admin.api.form.path.placeholder', defaultMessage: '请输入路径' })} />
+          <Input
+            placeholder={intl.formatMessage({
+              id: 'pages.admin.api.form.path.placeholder',
+              defaultMessage: '请输入路径',
+            })}
+          />
         </Form.Item>
 
         <Form.Item
           name="method"
           label={<FormattedMessage id="pages.admin.api.key.method" defaultMessage="方法" />}
           rules={[
-            { required: true, message: intl.formatMessage({ id: 'pages.admin.api.form.method.required', defaultMessage: '请输入方法' }) },
+            {
+              required: true,
+              message: intl.formatMessage({
+                id: 'pages.admin.api.form.method.required',
+                defaultMessage: '请输入方法',
+              }),
+            },
           ]}
         >
-          <Input placeholder={intl.formatMessage({ id: 'pages.admin.api.form.method.placeholder', defaultMessage: '请输入方法' })} />
+          <Input
+            placeholder={intl.formatMessage({
+              id: 'pages.admin.api.form.method.placeholder',
+              defaultMessage: '请输入方法',
+            })}
+          />
         </Form.Item>
       </Form>
     </Modal>

@@ -154,7 +154,11 @@ const Api: React.FC = () => {
   }) => {
     try {
       const response = await listApis(params as API.ListApisParams);
-      return { data: response.data?.list || [], success: response.success, total: response.data?.total };
+      return {
+        data: response.data?.list || [],
+        success: response.success,
+        total: response.data?.total,
+      };
     } catch (error) {
       const msg = intl.formatMessage({
         id: 'pages.common.fetchList.error',

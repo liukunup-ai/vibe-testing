@@ -12,9 +12,9 @@ import (
 	"go.uber.org/zap"
 )
 
-// @title           Robot Shop
+// @title           Vibe Testing
 // @version         1.0.0
-// @description     This is a sample server celler server.
+// @description     A modern full-stack testing platform with test case management, test execution, and AI-powered analysis.
 // @termsOfService  http://swagger.io/terms/
 // @contact.name   API Support
 // @contact.url    http://www.swagger.io/support

@@ -5,11 +5,11 @@ import { refreshToken } from '@/services/backend/user';
 
 // 错误处理方案： 错误类型
 enum ErrorShowType {
-  SILENT = 0,        // 静默处理
-  WARN_MESSAGE = 1,  // 警告提示
+  SILENT = 0, // 静默处理
+  WARN_MESSAGE = 1, // 警告提示
   ERROR_MESSAGE = 2, // 错误提示
-  NOTIFICATION = 3,  // 通知用户
-  REDIRECT = 9,      // 重定向跳转
+  NOTIFICATION = 3, // 通知用户
+  REDIRECT = 9, // 重定向跳转
 }
 
 // 与后端约定的响应数据格式
@@ -148,7 +148,6 @@ const handleUnauthorizedError = async (originalRequest: any): Promise<any> => {
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const errorConfig: RequestConfig = {
-
   // 错误处理：umi@3 的错误处理方案
   errorConfig: {
     // 错误抛出
@@ -166,7 +165,8 @@ export const errorConfig: RequestConfig = {
     errorHandler: async (error: any, opts: any) => {
       if (opts?.skipErrorHandler) throw error;
 
-      if (error.name === 'BizError') { // 业务错误
+      if (error.name === 'BizError') {
+        // 业务错误
         const errorInfo: IResponse | undefined = error.info;
         if (errorInfo) {
           if (errorInfo.errorCode === 401) {
@@ -176,7 +176,8 @@ export const errorConfig: RequestConfig = {
             handleBizError(errorInfo);
           }
         }
-      } else if (error.response) { // 响应错误
+      } else if (error.response) {
+        // 响应错误
         // Axios 的错误
         // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
         if (error.response.status === 401) {
@@ -185,12 +186,14 @@ export const errorConfig: RequestConfig = {
         } else {
           message.error(`响应错误码: ${error.response.status}`);
         }
-      } else if (error.request) { // 请求错误
+      } else if (error.request) {
+        // 请求错误
         // 请求已经成功发起，但没有收到响应
         // \`error.request\` 在浏览器中是 XMLHttpRequest 的实例，
         // 而在node.js中是 http.ClientRequest 的实例
         message.error('无响应，请重试');
-      } else { // 未知错误
+      } else {
+        // 未知错误
         // 发送请求时出了点问题
         message.error('请求错误，请重试');
       }
@@ -215,6 +218,5 @@ export const errorConfig: RequestConfig = {
   ],
 
   // 响应拦截器
-  responseInterceptors: [
-  ]
+  responseInterceptors: [],
 };

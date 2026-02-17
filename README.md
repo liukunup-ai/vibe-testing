@@ -9,6 +9,8 @@
 - 📁 **文件管理**: 支持本地存储和 MinIO 对象存储
 - 🎨 **动态菜单**: 可配置的动态菜单系统
 - 🔑 **权限管理**: 完整的 RBAC 权限控制
+- 🧪 **自动化测试平台**: 完整的测试项目管理、用例管理、测试执行、缺陷跟踪
+- 🤖 **AI 集成**: 支持 AI 用例生成、智能诊断、覆盖率分析
 - 🚀 **容器化部署**: Docker + Docker Compose 一键部署
 - 📊 **监控支持**: 可选的 Prometheus + Grafana 监控
 
@@ -64,6 +66,9 @@ docker-compose up -d
 ### 集成文档
 - [LLM 应用](./LLMs.zh-CN.md) - LLM 集成说明
 
+### 其他文档
+- [AGENTS.md](./AGENTS.md) - AI 代理协作规范与数据库表结构
+
 ## 🛠️ 技术栈
 
 ### 前端
@@ -91,12 +96,20 @@ docker-compose up -d
 vibe-testing/
 ├── frontend/           # 前端代码 (React + Ant Design Pro)
 ├── backend/            # 后端代码 (Go + Gin)
+│   ├── internal/
+│   │   ├── model/      # 数据模型定义
+│   │   ├── repository/ # 数据访问层
+│   │   ├── service/    # 业务逻辑层
+│   │   ├── handler/    # HTTP 处理器
+│   │   └── server/     # 服务器配置 & 数据迁移
+│   └── cmd/            # 入口程序
 ├── deploy/             # 部署相关
 │   ├── build/          # Dockerfile
 │   ├── docker-compose/ # Docker Compose 配置
 │   └── scripts/        # 部署脚本
 ├── .env.example        # 环境变量模板
 ├── .env.prod           # 生产环境配置模板
+├── AGENTS.md           # AI 代理协作规范
 └── README.md
 ```
 
@@ -135,6 +148,46 @@ API_SIGN_APP_SECRET=your-api-secret
 cp .env.prod .env
 vim .env  # 修改相关配置
 ```
+
+## 🗄️ 数据库与样例数据
+
+### 数据库表结构
+
+本项目使用 MySQL 数据库，包含以下核心表：
+
+**基础数据表**: user, menu, role, api, item  
+**测试平台表**: project, test_case, test_suite, test_plan, test_record, test_data, test_env  
+**设备管理表**: device, device_group  
+**缺陷管理表**: bug, bug_history  
+**需求与反馈表**: requirement, user_feedback  
+**CI/CD 相关表**: artifact  
+**AI 功能表**: ai_provider, ai_analysis_result
+
+### 自动数据初始化
+
+后端服务启动时会自动执行：
+1. **数据库迁移** - 自动创建/更新表结构
+2. **基础数据初始化** - 用户、菜单、API、权限等
+3. **样例数据初始化** - 项目、用例、设备、缺陷等模拟数据
+
+> 💡 **提示**: 首次启动后会自动填充样例数据，方便快速体验和开发调试。
+
+### 数据初始化配置
+
+数据初始化代码位于 `backend/internal/server/migration.go`，包含以下初始化函数：
+
+- `initialUser()` - 管理员和运营人员账号
+- `initialMenuData()` - 系统菜单配置
+- `initialApisData()` - API 接口定义
+- `initialRBAC()` - 角色权限配置
+- `initialProjects()` - 测试项目数据
+- `initialTestCases()` - 测试用例样例
+- `initialTestSuites()` - 测试套件样例
+- `initialTestPlans()` - 测试计划样例
+- `initialDevices()` - 测试设备样例
+- `initialBugs()` - 缺陷数据样例
+- `initialRequirements()` - 需求数据样例
+- `initialAIProviders()` - AI 供应商配置
 
 ## 🧪 测试
 

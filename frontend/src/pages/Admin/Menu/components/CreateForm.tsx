@@ -20,11 +20,16 @@ const CreateForm = ({ visible, onCancel, onSuccess }: CreateFormProps) => {
     try {
       const values = await form.validateFields();
       await createMenu(values as API.MenuRequest);
-      message.success(intl.formatMessage({ id: 'pages.common.new.success', defaultMessage: '新建成功' }));
+      message.success(
+        intl.formatMessage({ id: 'pages.common.new.success', defaultMessage: '新建成功' }),
+      );
       form.resetFields();
       onSuccess();
     } catch (error) {
-      const msg = intl.formatMessage({ id: 'pages.common.new.failure', defaultMessage: '新建失败' });
+      const msg = intl.formatMessage({
+        id: 'pages.common.new.failure',
+        defaultMessage: '新建失败',
+      });
       if (error instanceof Error) {
         message.error(error.message || msg);
       } else {
@@ -42,17 +47,15 @@ const CreateForm = ({ visible, onCancel, onSuccess }: CreateFormProps) => {
 
   return (
     <Modal
-      title={<FormattedMessage id="pages.admin.menu.modal.createForm.title" defaultMessage="新建菜单" />}
+      title={
+        <FormattedMessage id="pages.admin.menu.modal.createForm.title" defaultMessage="新建菜单" />
+      }
       open={visible}
       onOk={handleOk}
       onCancel={handleCancel}
       confirmLoading={loading}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        className="create-menu-form"
-      >
+      <Form form={form} layout="vertical" className="create-menu-form">
         <Form.Item
           name="parentId"
           label={<FormattedMessage id="pages.admin.menu.key.parent" defaultMessage="父级菜单" />}
@@ -64,7 +67,13 @@ const CreateForm = ({ visible, onCancel, onSuccess }: CreateFormProps) => {
           name="path"
           label={<FormattedMessage id="pages.admin.menu.key.path" defaultMessage="路径" />}
           rules={[
-            { required: true, message: intl.formatMessage({ id: 'pages.admin.menu.form.path.required', defaultMessage: '路径不能为空'}) },
+            {
+              required: true,
+              message: intl.formatMessage({
+                id: 'pages.admin.menu.form.path.required',
+                defaultMessage: '路径不能为空',
+              }),
+            },
           ]}
         >
           <Input />

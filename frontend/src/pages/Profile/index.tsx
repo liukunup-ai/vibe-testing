@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Tabs, Spin, Form, Input, Button, Upload, message } from "antd";
+import { Tabs, Spin, Form, Input, Button, Upload, message } from 'antd';
 import type { UploadProps, UploadChangeParam, RcFile } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useModel, useNavigate, useIntl } from '@umijs/max';
@@ -95,7 +95,7 @@ const Profile: React.FC = () => {
     if (info.file.status === 'done') {
       const avatarUrl = info.file.response?.data?.url;
       if (avatarUrl) {
-        setProfile(prev => prev ? { ...prev, avatar: avatarUrl } : prev);
+        setProfile((prev) => (prev ? { ...prev, avatar: avatarUrl } : prev));
         message.success(intl.formatMessage({ id: 'pages.profile.avatarUploadSuccess' }));
       }
     } else if (info.file.status === 'error') {
@@ -232,21 +232,17 @@ const Profile: React.FC = () => {
 
   return (
     <Tabs tabPosition="left">
-      <Tabs.TabPane
-        tab={intl.formatMessage({ id: 'pages.profile.tab.profile' })}
-        key="profile"
-      >
-        {loading ? <Spin /> : (
+      <Tabs.TabPane tab={intl.formatMessage({ id: 'pages.profile.tab.profile' })} key="profile">
+        {loading ? (
+          <Spin />
+        ) : (
           <>
             {renderAvatarUpload()}
             {renderProfileForm()}
           </>
         )}
       </Tabs.TabPane>
-      <Tabs.TabPane
-        key="settings"
-        tab={intl.formatMessage({ id: 'pages.profile.tab.settings' })}
-      >
+      <Tabs.TabPane key="settings" tab={intl.formatMessage({ id: 'pages.profile.tab.settings' })}>
         {renderPasswordForm()}
       </Tabs.TabPane>
     </Tabs>

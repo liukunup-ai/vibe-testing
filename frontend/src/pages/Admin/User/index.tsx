@@ -25,7 +25,10 @@ const User: React.FC = () => {
           setRoleOptions(response.data?.list || []);
         }
       } catch (error) {
-        const msg = intl.formatMessage({ id: 'pages.admin.user.fetchRoles.failure', defaultMessage: '获取角色列表失败' });
+        const msg = intl.formatMessage({
+          id: 'pages.admin.user.fetchRoles.failure',
+          defaultMessage: '获取角色列表失败',
+        });
         if (error instanceof Error) {
           message.error(error.message || msg);
         } else {
@@ -45,7 +48,7 @@ const User: React.FC = () => {
     {
       title: intl.formatMessage({
         id: 'pages.admin.user.key.username',
-        defaultMessage: '用户名'
+        defaultMessage: '用户名',
       }),
       dataIndex: 'username',
       ellipsis: true,
@@ -110,23 +113,23 @@ const User: React.FC = () => {
         0: {
           text: intl.formatMessage({
             id: 'pages.admin.user.status.inactive',
-            defaultMessage: '待激活'
+            defaultMessage: '待激活',
           }),
-          status: 'Inactive'
+          status: 'Inactive',
         },
         1: {
           text: intl.formatMessage({
             id: 'pages.admin.user.status.normal',
-            defaultMessage: '正常'
+            defaultMessage: '正常',
           }),
-          status: 'Normal'
+          status: 'Normal',
         },
         2: {
           text: intl.formatMessage({
             id: 'pages.admin.user.status.disabled',
-            defaultMessage: '禁用'
+            defaultMessage: '禁用',
           }),
-          status: 'Disabled'
+          status: 'Disabled',
         },
       },
       render: (_, record) => (
@@ -145,7 +148,7 @@ const User: React.FC = () => {
             </Tag>
           )}
         </Space>
-      )
+      ),
     },
     {
       title: intl.formatMessage({
@@ -155,12 +158,15 @@ const User: React.FC = () => {
       dataIndex: 'roles',
       ellipsis: true,
       hideInSearch: true,
-      filters: roleOptions?.map(({ id, name }) => ({ text: name as string, value: id as number })) || [],
+      filters:
+        roleOptions?.map(({ id, name }) => ({ text: name as string, value: id as number })) || [],
       onFilter: (value, record) => record.roles?.some(({ id }) => id === value) ?? false,
       render: (_, record) => (
         <Space>
           {record.roles?.map((r) => (
-            <Tag key={r.id} color="blue">{r.name}</Tag>
+            <Tag key={r.id} color="blue">
+              {r.name}
+            </Tag>
           ))}
         </Space>
       ),
@@ -209,10 +215,12 @@ const User: React.FC = () => {
           onClick={async () => {
             if (record.id) {
               await deleteUser({ id: record.id });
-              message.success(intl.formatMessage({
-                id: 'pages.common.remove.success',
-                defaultMessage: '删除成功',
-              }));
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.common.remove.success',
+                  defaultMessage: '删除成功',
+                }),
+              );
               action?.reload();
             }
           }}
@@ -235,10 +243,12 @@ const User: React.FC = () => {
       const result = await listUsers(params as API.ListUsersParams);
       return { data: result.data?.list || [], success: result.success, total: result.data?.total };
     } catch (error) {
-      message.error(intl.formatMessage({
-        id: 'pages.common.fetchData.failure',
-        defaultMessage: '获取数据失败',
-      }));
+      message.error(
+        intl.formatMessage({
+          id: 'pages.common.fetchData.failure',
+          defaultMessage: '获取数据失败',
+        }),
+      );
       return { data: [], success: false, total: 0 };
     }
   };

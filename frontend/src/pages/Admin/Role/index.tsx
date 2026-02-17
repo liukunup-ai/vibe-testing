@@ -60,7 +60,9 @@ const Role: React.FC = () => {
       },
       render: (_, record) => (
         <Space>
-          <Tag color="blue" style={{ marginRight: 4 }}>{record.casbinRole}</Tag>
+          <Tag color="blue" style={{ marginRight: 4 }}>
+            {record.casbinRole}
+          </Tag>
         </Space>
       ),
     },
@@ -108,10 +110,12 @@ const Role: React.FC = () => {
           onClick={async () => {
             if (record.id) {
               await deleteRole({ id: record.id });
-              message.success(intl.formatMessage({
-                id: 'pages.common.remove.success',
-                defaultMessage: '删除成功',
-              }));
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.common.remove.success',
+                  defaultMessage: '删除成功',
+                }),
+              );
               action?.reload();
             }
           }}
@@ -130,12 +134,18 @@ const Role: React.FC = () => {
   }) => {
     try {
       const response = await listRoles(params as API.ListRolesParams);
-      return { data: response.data?.list || [], success: response.success, total: response.data?.total };
+      return {
+        data: response.data?.list || [],
+        success: response.success,
+        total: response.data?.total,
+      };
     } catch (error) {
-      message.error(intl.formatMessage({
-        id: 'pages.common.fetchData.failure',
-        defaultMessage: '获取数据失败',
-      }));
+      message.error(
+        intl.formatMessage({
+          id: 'pages.common.fetchData.failure',
+          defaultMessage: '获取数据失败',
+        }),
+      );
       return { data: [], success: false, total: 0 };
     }
   };

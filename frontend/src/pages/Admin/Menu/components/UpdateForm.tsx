@@ -30,12 +30,17 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
       if (!values.id) {
         throw new Error('更新操作时未找到记录ID');
       }
-      await updateMenu({id: values.id}, values as API.MenuRequest);
-      message.success(intl.formatMessage({ id: 'pages.common.new.success', defaultMessage: '新建成功' }));
+      await updateMenu({ id: values.id }, values as API.MenuRequest);
+      message.success(
+        intl.formatMessage({ id: 'pages.common.new.success', defaultMessage: '新建成功' }),
+      );
       form.resetFields();
       onSuccess();
     } catch (error) {
-      const msg = intl.formatMessage({ id: 'pages.common.new.failure', defaultMessage: '新建失败' });
+      const msg = intl.formatMessage({
+        id: 'pages.common.new.failure',
+        defaultMessage: '新建失败',
+      });
       if (error instanceof Error) {
         message.error(error.message || msg);
       } else {
@@ -53,7 +58,9 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
 
   return (
     <Modal
-      title={<FormattedMessage id="pages.admin.menu.modal.updateForm.title" defaultMessage="编辑菜单" />}
+      title={
+        <FormattedMessage id="pages.admin.menu.modal.updateForm.title" defaultMessage="编辑菜单" />
+      }
       open={visible}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -61,11 +68,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
       destroyOnHidden={true}
       width={600}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        className="update-menu-form"
-      >
+      <Form form={form} layout="vertical" className="update-menu-form">
         <Form.Item name="id" label="ID" hidden>
           <Input disabled />
         </Form.Item>
@@ -81,7 +84,13 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
           name="path"
           label={<FormattedMessage id="pages.admin.menu.key.path" defaultMessage="路径" />}
           rules={[
-            { required: true, message: intl.formatMessage({ id: 'pages.admin.menu.form.path.required', defaultMessage: '路径不能为空'}) },
+            {
+              required: true,
+              message: intl.formatMessage({
+                id: 'pages.admin.menu.form.path.required',
+                defaultMessage: '路径不能为空',
+              }),
+            },
           ]}
         >
           <Input />

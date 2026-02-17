@@ -1,53 +1,75 @@
 export default {
-  'menu.welcome': 'Welcome',
-  'menu.item': 'Item',
-  'menu.more-blocks': 'More Blocks',
-  'menu.home': 'Home',
+  // 1. Dashboard
+  'menu.dashboard': 'Dashboard',
+
+  // 2. Workbench
+  'menu.workbench': 'Workbench',
+  'menu.workbench.overview': 'Overview',
+  'menu.workbench.notification': 'Notifications',
+  'menu.workbench.todo': 'Todo List',
+
+  // 3. Efficiency
+  'menu.efficiency': 'Efficiency',
+  'menu.efficiency.project': 'Project View',
+  'menu.efficiency.product': 'Product View',
+  'menu.efficiency.development': 'Development View',
+  'menu.efficiency.testing': 'Testing View',
+
+  // 4. Project
+  'menu.project': 'Project',
+  'menu.project.list': 'Project List',
+  'menu.project.detail': 'Project Detail',
+  'menu.project.members': 'Member Management',
+
+  // 5. Requirement
+  'menu.requirement': 'Requirement',
+  'menu.requirement.list': 'Requirement List',
+  'menu.requirement.detail': 'Requirement Detail',
+
+  // 6. Testing
+  'menu.testing': 'Testing',
+  'menu.testing.testcase': 'Test Cases',
+  'menu.testing.testplan': 'Test Plans',
+  'menu.testing.report': 'Test Reports',
+
+  // 7. Bug
+  'menu.bug': 'Bugs',
+  'menu.bug.list': 'Bug List',
+  'menu.bug.detail': 'Bug Detail',
+
+  // 8. Device
+  'menu.device': 'Devices',
+  'menu.device.list': 'Device List',
+  'menu.device.detail': 'Device Detail',
+
+  // 9. Profile
+  'menu.profile': 'Profile',
+  'menu.profile.center': 'Personal Info',
+  'menu.profile.settings': 'Settings',
+
+  // 10. Admin
   'menu.admin': 'Admin',
-  'menu.admin.sub-page': 'Sub-Page',
+  'menu.admin.user': 'User Management',
+  'menu.admin.role': 'Role Management',
+  'menu.admin.menu': 'Menu Management',
+  'menu.admin.api': 'API Management',
+  'menu.admin.audit': 'Audit Logs',
+  'menu.admin.config': 'System Config',
+
+  // 11. Help
+  'menu.help': 'Help',
+
+  // Auth
   'menu.login': 'Login',
   'menu.register': 'Register',
   'menu.register-result': 'Register Result',
-  'menu.dashboard': 'Dashboard',
-  'menu.dashboard.analysis': 'Analysis',
-  'menu.dashboard.monitor': 'Monitor',
-  'menu.dashboard.workplace': 'Workplace',
+  'menu.account.logout': 'Logout',
+
+  // Exceptions
   'menu.exception.403': '403',
   'menu.exception.404': '404',
   'menu.exception.500': '500',
-  'menu.form': 'Form',
-  'menu.form.basic-form': 'Basic Form',
-  'menu.form.step-form': 'Step Form',
-  'menu.form.step-form.info': 'Step Form(write transfer information)',
-  'menu.form.step-form.confirm': 'Step Form(confirm transfer information)',
-  'menu.form.step-form.result': 'Step Form(finished)',
-  'menu.form.advanced-form': 'Advanced Form',
-  'menu.list': 'List',
-  'menu.list.table-list': 'Search Table',
-  'menu.list.basic-list': 'Basic List',
-  'menu.list.card-list': 'Card List',
-  'menu.list.search-list': 'Search List',
-  'menu.list.search-list.articles': 'Search List(articles)',
-  'menu.list.search-list.projects': 'Search List(projects)',
-  'menu.list.search-list.applications': 'Search List(applications)',
-  'menu.profile': 'Profile',
-  'menu.profile.basic': 'Basic Profile',
-  'menu.profile.advanced': 'Advanced Profile',
-  'menu.result': 'Result',
-  'menu.result.success': 'Success',
-  'menu.result.fail': 'Fail',
-  'menu.exception': 'Exception',
   'menu.exception.not-permission': '403',
   'menu.exception.not-find': '404',
   'menu.exception.server-error': '500',
-  'menu.exception.trigger': 'Trigger',
-  'menu.account': 'Account',
-  'menu.account.center': 'Account Center',
-  'menu.account.settings': 'Account Settings',
-  'menu.account.trigger': 'Trigger Error',
-  'menu.account.logout': 'Logout',
-  'menu.editor': 'Graphic Editor',
-  'menu.editor.flow': 'Flow Editor',
-  'menu.editor.mind': 'Mind Editor',
-  'menu.editor.koni': 'Koni Editor',
 };

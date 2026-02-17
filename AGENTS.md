@@ -921,11 +921,70 @@
 | 500 | 服务器错误 | 重试或升级 |
 | 503 | 服务不可用 | 降级处理 |
 
-### 8.4 变更记录
+### 8.4 数据库表结构
+
+| 表名 | 说明 | 样例数据 |
+|-----|------|---------|
+| user | 用户表 | ✅ 2条 |
+| menu | 菜单表 | ✅ 完整菜单 |
+| role | 角色表 | ✅ 3条 |
+| api | API接口表 | ✅ 完整API列表 |
+| item | 项目项表 | ✅ 5条 |
+| project | 测试项目表 | ✅ 3条 |
+| project_user | 项目用户关联表 | ✅ 4条 |
+| test_case | 测试用例表 | ✅ 5条 |
+| test_suite | 测试套件表 | ✅ 3条 |
+| test_plan | 测试计划表 | ✅ 2条 |
+| test_record | 执行记录表 | - |
+| test_case_execution | 用例执行记录表 | - |
+| test_suite_execution | 套件执行记录表 | - |
+| test_attachment | 执行附件表 | - |
+| test_data | 测试数据表 | ✅ 2条 |
+| test_env | 测试环境表 | ✅ 2条 |
+| device | 设备表 | ✅ 3条 |
+| device_group | 设备分组表 | ✅ 3条 |
+| bug | 缺陷表 | ✅ 3条 |
+| bug_history | Bug历史记录表 | ✅ 4条 |
+| requirement | 需求表 | ✅ 3条 |
+| user_feedback | 用户反馈表 | ✅ 3条 |
+| artifact | 制品表 | ✅ 2条 |
+| ai_provider | AI供应商配置表 | ✅ 2条 |
+| ai_analysis_result | AI分析结果表 | ✅ 2条 |
+
+### 8.5 数据初始化说明
+
+后端服务启动时会自动执行数据迁移和样例数据初始化：
+
+```
+backend/internal/server/migration.go
+├── initialUser()          # 初始化用户数据
+├── initialMenuData()      # 初始化菜单数据
+├── initialApisData()      # 初始化API数据
+├── initialRBAC()          # 初始化权限数据
+├── initialItems()         # 初始化项目项数据
+└── initialModelData()     # 初始化业务模型数据
+    ├── initialProjects()          # 项目 & 项目用户
+    ├── initialTestCases()         # 测试用例
+    ├── initialTestSuites()        # 测试套件
+    ├── initialTestPlans()         # 测试计划
+    ├── initialTestEnvs()          # 测试环境
+    ├── initialTestData()          # 测试数据
+    ├── initialDeviceGroups()      # 设备分组
+    ├── initialDevices()           # 测试设备
+    ├── initialBugs()              # 缺陷 & 历史
+    ├── initialRequirements()      # 需求
+    ├── initialUserFeedbacks()     # 用户反馈
+    ├── initialArtifacts()         # 构建制品
+    ├── initialAIProviders()       # AI供应商
+    └── initialAIAnalysisResults() # AI分析结果
+```
+
+### 8.6 变更记录
 
 | 版本 | 日期 | 变更内容 | 作者 |
 |-----|------|---------|------|
 | 1.0.0 | 2024-01-20 | 初始版本 | - |
+| 1.1.0 | 2026-02-16 | 新增测试平台相关数据表及样例数据 | - |
 
 ---
 

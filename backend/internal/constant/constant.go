@@ -20,6 +20,6 @@ const (
 
 		此链接将在24小时后失效。
 
-		Robot Shop 团队
+		Vibe Testing 团队
 		`
 )

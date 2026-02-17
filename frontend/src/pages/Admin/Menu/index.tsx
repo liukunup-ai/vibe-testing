@@ -128,10 +128,12 @@ const Menu: React.FC = () => {
           onClick={async () => {
             if (record.id) {
               await deleteMenu({ id: record.id });
-              message.success(intl.formatMessage({
-                id: 'pages.common.remove.success',
-                defaultMessage: '删除成功',
-              }));
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.common.remove.success',
+                  defaultMessage: '删除成功',
+                }),
+              );
               action?.reload();
             }
           }}
@@ -142,18 +144,17 @@ const Menu: React.FC = () => {
     },
   ];
 
-  const search = async (params: {
-    page: number;
-    pageSize: number;
-  }) => {
+  const search = async (params: { page: number; pageSize: number }) => {
     try {
       const result = await listMenus(params as API.ListMenusParams);
       return { data: result.data?.list || [], success: result.success, total: result.data?.total };
     } catch (error) {
-      message.error(intl.formatMessage({
-        id: 'pages.common.fetchData.failure',
-        defaultMessage: '获取数据失败',
-      }));
+      message.error(
+        intl.formatMessage({
+          id: 'pages.common.fetchData.failure',
+          defaultMessage: '获取数据失败',
+        }),
+      );
       return { data: [], success: false, total: 0 };
     }
   };

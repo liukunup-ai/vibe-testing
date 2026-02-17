@@ -28,6 +28,17 @@ func NewHTTPServer(
 	menuHandler *handler.MenuHandler,
 	apiHandler *handler.ApiHandler,
 	itemHandler *handler.ItemHandler,
+	projectHandler *handler.ProjectHandler,
+	caseHandler *handler.TestCaseHandler,
+	suiteHandler *handler.TestSuiteHandler,
+	planHandler *handler.TestPlanHandler,
+	recordHandler *handler.TestRecordHandler,
+	deviceHandler *handler.DeviceHandler,
+	userFeedbackHandler *handler.UserFeedbackHandler,
+	bugHandler *handler.BugHandler,
+	requirementHandler *handler.RequirementHandler,
+	aiProviderHandler *handler.AIProviderHandler,
+	aiAnalysisResultHandler *handler.AIAnalysisResultHandler,
 ) *http.Server {
 	gin.SetMode(gin.DebugMode)
 	s := http.NewServer(
@@ -129,6 +140,83 @@ func NewHTTPServer(
 			strictAuthRouter.PUT("/items/:id", itemHandler.UpdateItem)
 			strictAuthRouter.DELETE("/items/:id", itemHandler.DeleteItem)
 			strictAuthRouter.GET("/items/:id", itemHandler.GetItem)
+
+			// Project
+			strictAuthRouter.GET("/projects", projectHandler.ListProjects)
+			strictAuthRouter.POST("/projects", projectHandler.CreateProject)
+			strictAuthRouter.PUT("/projects/:id", projectHandler.UpdateProject)
+			strictAuthRouter.DELETE("/projects/:id", projectHandler.DeleteProject)
+			strictAuthRouter.GET("/projects/:id", projectHandler.GetProject)
+
+			// TestCase
+			strictAuthRouter.GET("/testcases", caseHandler.ListTestCases)
+			strictAuthRouter.POST("/testcases", caseHandler.CreateTestCase)
+			strictAuthRouter.PUT("/testcases/:id", caseHandler.UpdateTestCase)
+			strictAuthRouter.DELETE("/testcases/:id", caseHandler.DeleteTestCase)
+			strictAuthRouter.GET("/testcases/:id", caseHandler.GetTestCase)
+
+			// TestSuite
+			strictAuthRouter.GET("/testsuites", suiteHandler.ListTestSuites)
+			strictAuthRouter.POST("/testsuites", suiteHandler.CreateTestSuite)
+			strictAuthRouter.PUT("/testsuites/:id", suiteHandler.UpdateTestSuite)
+			strictAuthRouter.DELETE("/testsuites/:id", suiteHandler.DeleteTestSuite)
+			strictAuthRouter.GET("/testsuites/:id", suiteHandler.GetTestSuite)
+
+			// TestPlan
+			strictAuthRouter.GET("/testplans", planHandler.ListTestPlans)
+			strictAuthRouter.POST("/testplans", planHandler.CreateTestPlan)
+			strictAuthRouter.PUT("/testplans/:id", planHandler.UpdateTestPlan)
+			strictAuthRouter.DELETE("/testplans/:id", planHandler.DeleteTestPlan)
+			strictAuthRouter.GET("/testplans/:id", planHandler.GetTestPlan)
+
+			// TestRecord
+			strictAuthRouter.GET("/testrecords", recordHandler.ListTestRecords)
+			strictAuthRouter.POST("/testrecords", recordHandler.CreateTestRecord)
+			strictAuthRouter.DELETE("/testrecords/:id", recordHandler.DeleteTestRecord)
+			strictAuthRouter.GET("/testrecords/:id", recordHandler.GetTestRecord)
+
+			// Device
+			strictAuthRouter.GET("/devices", deviceHandler.ListDevices)
+			strictAuthRouter.POST("/devices", deviceHandler.CreateDevice)
+			strictAuthRouter.PUT("/devices/:id", deviceHandler.UpdateDevice)
+			strictAuthRouter.DELETE("/devices/:id", deviceHandler.DeleteDevice)
+			strictAuthRouter.GET("/devices/:id", deviceHandler.GetDevice)
+			strictAuthRouter.POST("/devices/heartbeat", deviceHandler.DeviceHeartbeat)
+
+			// UserFeedback
+			strictAuthRouter.GET("/feedbacks", userFeedbackHandler.ListUserFeedbacks)
+			strictAuthRouter.POST("/feedbacks", userFeedbackHandler.CreateUserFeedback)
+			strictAuthRouter.PUT("/feedbacks/:id", userFeedbackHandler.UpdateUserFeedback)
+			strictAuthRouter.DELETE("/feedbacks/:id", userFeedbackHandler.DeleteUserFeedback)
+			strictAuthRouter.GET("/feedbacks/:id", userFeedbackHandler.GetUserFeedback)
+
+			// Bug
+			strictAuthRouter.GET("/bugs", bugHandler.ListBugs)
+			strictAuthRouter.POST("/bugs", bugHandler.CreateBug)
+			strictAuthRouter.PUT("/bugs/:id", bugHandler.UpdateBug)
+			strictAuthRouter.DELETE("/bugs/:id", bugHandler.DeleteBug)
+			strictAuthRouter.GET("/bugs/:id", bugHandler.GetBug)
+
+			// Requirement
+			strictAuthRouter.GET("/requirements", requirementHandler.ListRequirements)
+			strictAuthRouter.POST("/requirements", requirementHandler.CreateRequirement)
+			strictAuthRouter.PUT("/requirements/:id", requirementHandler.UpdateRequirement)
+			strictAuthRouter.DELETE("/requirements/:id", requirementHandler.DeleteRequirement)
+			strictAuthRouter.GET("/requirements/:id", requirementHandler.GetRequirement)
+
+			// AIProvider
+			strictAuthRouter.GET("/aiproviders", aiProviderHandler.ListAIProviders)
+			strictAuthRouter.POST("/aiproviders", aiProviderHandler.CreateAIProvider)
+			strictAuthRouter.PUT("/aiproviders/:id", aiProviderHandler.UpdateAIProvider)
+			strictAuthRouter.DELETE("/aiproviders/:id", aiProviderHandler.DeleteAIProvider)
+			strictAuthRouter.GET("/aiproviders/:id", aiProviderHandler.GetAIProvider)
+
+			// AIAnalysisResult
+			strictAuthRouter.GET("/aianalyses", aiAnalysisResultHandler.ListAIAnalysisResults)
+			strictAuthRouter.POST("/aianalyses", aiAnalysisResultHandler.CreateAIAnalysisResult)
+			strictAuthRouter.PUT("/aianalyses/:id", aiAnalysisResultHandler.UpdateAIAnalysisResult)
+			strictAuthRouter.DELETE("/aianalyses/:id", aiAnalysisResultHandler.DeleteAIAnalysisResult)
+			strictAuthRouter.GET("/aianalyses/:id", aiAnalysisResultHandler.GetAIAnalysisResult)
 		}
 	}
 

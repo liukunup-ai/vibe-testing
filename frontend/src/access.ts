@@ -6,7 +6,7 @@ export default function access(initialState: { currentUser?: API.User } | undefi
   const { currentUser } = initialState ?? {};
   // 角色检查
   const hasRole = (user: API.User | undefined, roles: string[]) => {
-    return user && user.roles?.some(role => roles.includes(role.casbinRole as string));
+    return user && user.roles?.some((role) => roles.includes(role.casbinRole as string));
   };
 
   return {

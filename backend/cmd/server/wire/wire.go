@@ -36,6 +36,20 @@ var repositorySet = wire.NewSet(
 	repository.NewApiRepository,
 	// more biz repository
 	repository.NewItemRepository,
+	repository.NewProjectRepository,
+	repository.NewProjectUserRepository,
+	repository.NewTestCaseRepository,
+	repository.NewTestSuiteRepository,
+	repository.NewTestPlanRepository,
+	repository.NewTestRecordRepository,
+	repository.NewTestCaseExecutionRepository,
+	repository.NewTestSuiteExecutionRepository,
+	repository.NewDeviceRepository,
+	repository.NewUserFeedbackRepository,
+	repository.NewBugRepository,
+	repository.NewRequirementRepository,
+	repository.NewAIProviderRepository,
+	repository.NewAIAnalysisResultRepository,
 )
 
 var serviceSet = wire.NewSet(
@@ -47,6 +61,17 @@ var serviceSet = wire.NewSet(
 	service.NewApiService,
 	// more biz service
 	service.NewItemService,
+	service.NewProjectService,
+	service.NewTestCaseService,
+	service.NewTestSuiteService,
+	service.NewTestPlanService,
+	service.NewTestRecordService,
+	service.NewDeviceService,
+	service.NewUserFeedbackService,
+	service.NewBugService,
+	service.NewRequirementService,
+	service.NewAIProviderService,
+	service.NewAIAnalysisResultService,
 )
 
 var handlerSet = wire.NewSet(
@@ -58,6 +83,17 @@ var handlerSet = wire.NewSet(
 	handler.NewApiHandler,
 	// more biz handler
 	handler.NewItemHandler,
+	handler.NewProjectHandler,
+	handler.NewTestCaseHandler,
+	handler.NewTestSuiteHandler,
+	handler.NewTestPlanHandler,
+	handler.NewTestRecordHandler,
+	handler.NewDeviceHandler,
+	handler.NewUserFeedbackHandler,
+	handler.NewBugHandler,
+	handler.NewRequirementHandler,
+	handler.NewAIProviderHandler,
+	handler.NewAIAnalysisResultHandler,
 )
 
 var jobSet = wire.NewSet(

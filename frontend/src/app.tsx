@@ -1,6 +1,40 @@
 import { AvatarDropdown, AvatarName, Footer, Question, SelectLang } from '@/components';
-import { fetchCurrentUser } from '@/services/backend/user';
-import { LinkOutlined, SmileOutlined, CrownOutlined, AppstoreOutlined, ProfileOutlined } from '@ant-design/icons';
+import { fetchCurrentUser, fetchDynamicMenu } from '@/services/backend/user';
+import {
+  LinkOutlined,
+  SmileOutlined,
+  CrownOutlined,
+  AppstoreOutlined,
+  ProfileOutlined,
+  ExperimentOutlined,
+  DashboardOutlined,
+  ProjectOutlined,
+  FileTextOutlined,
+  ApartmentOutlined,
+  CalendarOutlined,
+  HistoryOutlined,
+  MobileOutlined,
+  BarChartOutlined,
+  SettingOutlined,
+  QuestionCircleOutlined,
+  UserOutlined,
+  DesktopOutlined,
+  LineChartOutlined,
+  FolderOutlined,
+  BugOutlined,
+  BellOutlined,
+  CheckSquareOutlined,
+  ShoppingOutlined,
+  CodeOutlined,
+  TeamOutlined,
+  UnorderedListOutlined,
+  IdcardOutlined,
+  SafetyOutlined,
+  MenuOutlined,
+  ApiOutlined,
+  AuditOutlined,
+  ToolOutlined,
+} from '@ant-design/icons';
 import type { Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
@@ -9,7 +43,6 @@ import React from 'react';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './utils/request';
 import '@ant-design/v5-patch-for-react-19';
-import { fetchDynamicMenu } from '@/services/backend/user';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/login';
@@ -23,6 +56,34 @@ const IconMap: IconMapType = {
   crown: <CrownOutlined />,
   appstore: <AppstoreOutlined />,
   profile: <ProfileOutlined />,
+  experiment: <ExperimentOutlined />,
+  dashboard: <DashboardOutlined />,
+  project: <ProjectOutlined />,
+  fileText: <FileTextOutlined />,
+  apartment: <ApartmentOutlined />,
+  calendar: <CalendarOutlined />,
+  history: <HistoryOutlined />,
+  mobile: <MobileOutlined />,
+  barChart: <BarChartOutlined />,
+  setting: <SettingOutlined />,
+  questionCircle: <QuestionCircleOutlined />,
+  user: <UserOutlined />,
+  desktop: <DesktopOutlined />,
+  lineChart: <LineChartOutlined />,
+  folder: <FolderOutlined />,
+  bug: <BugOutlined />,
+  bell: <BellOutlined />,
+  checkSquare: <CheckSquareOutlined />,
+  shopping: <ShoppingOutlined />,
+  code: <CodeOutlined />,
+  team: <TeamOutlined />,
+  unorderedList: <UnorderedListOutlined />,
+  idcard: <IdcardOutlined />,
+  safety: <SafetyOutlined />,
+  menu: <MenuOutlined />,
+  api: <ApiOutlined />,
+  audit: <AuditOutlined />,
+  tool: <ToolOutlined />,
 };
 const loopMenuItem = (menus: API.MenuNode[]): MenuDataItem[] =>
   menus.map(({ icon, children, parentKeys, ...item }) => ({
@@ -30,8 +91,7 @@ const loopMenuItem = (menus: API.MenuNode[]): MenuDataItem[] =>
     icon: icon && IconMap[icon],
     children: children && loopMenuItem(children),
     parentKeys: typeof parentKeys === 'string' ? parentKeys.split(',') : [],
-  })
-);
+  }));
 
 /**
  * @see https://umijs.org/docs/api/runtime-config#getinitialstate
