@@ -9,7 +9,7 @@ import (
 
 type Response struct {
 	Success       bool        `json:"success" example:"true"`  // 是否成功
-	Data          interface{} `json:"data"`                    // 返回数据
+	Data          interface{} `json:"data,omitempty"`          // 返回数据
 	ErrorCode     int         `json:"errorCode,omitempty"`     // 错误码
 	ErrorMessage  string      `json:"errorMessage,omitempty"`  // 报错信息
 	ErrorShowType int         `json:"errorShowType,omitempty"` // 前端展示方式
@@ -27,8 +27,8 @@ func HandleSuccess(ctx *gin.Context, data interface{}) {
 	if data == nil {
 		data = map[string]any{}
 	}
-	resp := Response{Success: true, Data: data, ErrorCode: errorCodeMap[ErrSuccess], ErrorMessage: ErrSuccess.Error(), ErrorShowType: SILENT}
-	if _, ok := errorCodeMap[ErrSuccess]; !ok {
+	resp := Response{Success: true, Data: data, ErrorCode: errorCodeMap[Success], ErrorMessage: Success.Error(), ErrorShowType: SILENT}
+	if _, ok := errorCodeMap[Success]; !ok {
 		resp = Response{Success: true, Data: data}
 	}
 	ctx.JSON(http.StatusOK, resp)

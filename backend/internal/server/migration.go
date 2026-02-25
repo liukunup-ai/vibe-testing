@@ -32,10 +32,10 @@ func NewMigrateServer(
 	e *casbin.SyncedEnforcer,
 ) *MigrateServer {
 	return &MigrateServer{
-		e:   e,
 		db:  db,
 		log: log,
 		sid: sid,
+		e:   e,
 	}
 }
 
@@ -45,6 +45,7 @@ func (m *MigrateServer) Start(ctx context.Context) error {
 		&model.Menu{},
 		&model.Role{},
 		&model.Api{},
+		&model.Setting{},
 		&model.Item{},
 	)
 	if err := m.db.AutoMigrate(
@@ -52,9 +53,10 @@ func (m *MigrateServer) Start(ctx context.Context) error {
 		&model.Menu{},
 		&model.Role{},
 		&model.Api{},
+		&model.Setting{},
 		&model.Item{},
 	); err != nil {
-		m.log.Error("user migrate error", zap.Error(err))
+		m.log.Error("AutoMigrate error", zap.Error(err))
 		return err
 	}
 	err := m.initialUser(ctx)
@@ -97,24 +99,29 @@ func (m *MigrateServer) initialUser(ctx context.Context) error {
 		return err
 	}
 	if err = m.db.Create(&model.User{
-		Model:    gorm.Model{ID: 1},
-		Username: "admin",
-		Password: string(hashedPassword),
-		Avatar:   "https://cravatar.cn/avatar/245467ef31b6f0addc72b039b94122a4?s=100&f=y&r=g",
-		Nickname: "超级管理员",
-		Email:    "admin@example.com",
-		Status:   1,
+		Model:          gorm.Model{ID: 1},
+		UserID:         constant.AdminUserID,
+		Username:       "admin",
+		HashedPassword: string(hashedPassword),
+		FullName:       "超级管理员",
+		Email:          "admin@example.com",
+		Status:         1,
 	}).Error; err != nil {
 		return err
 	}
+
+	operatorUserID, err := m.sid.GenString()
+	if err != nil {
+		return err
+	}
 	if err = m.db.Create(&model.User{
-		Model:    gorm.Model{ID: 2},
-		Username: "operator",
-		Password: string(hashedPassword),
-		Avatar:   "https://cravatar.cn/avatar/hash?s=100&d=robohash",
-		Nickname: "运营人员",
-		Email:    "operator@example.com",
-		Status:   1,
+		Model:          gorm.Model{ID: 2},
+		UserID:         operatorUserID,
+		Username:       "operator",
+		HashedPassword: string(hashedPassword),
+		FullName:       "运营人员",
+		Email:          "operator@example.com",
+		Status:         1,
 	}).Error; err != nil {
 		return err
 	}
@@ -137,7 +144,7 @@ func (m *MigrateServer) initialRBAC(ctx context.Context) error {
 	roles := []model.Role{
 		{CasbinRole: constant.AdminRole, Name: "超级管理员"},
 		{CasbinRole: constant.OperatorRole, Name: "运营人员"},
-		{CasbinRole: "user", Name: "普通用户"},
+		{CasbinRole: constant.UserRole, Name: "普通用户"},
 	}
 	if err := m.db.Create(&roles).Error; err != nil {
 		return err
@@ -148,16 +155,15 @@ func (m *MigrateServer) initialRBAC(ctx context.Context) error {
 		m.log.Error("m.e.SavePolicy error", zap.Error(err))
 		return err
 	}
+
 	// 给管理员加角色
-	_, err = m.e.AddRoleForUser(constant.AdminUserID, constant.AdminRole)
-	if err != nil {
+	if _, err := m.e.AddRoleForUser(constant.AdminUserID, constant.AdminRole); err != nil {
 		m.log.Error("m.e.AddRoleForUser error", zap.Error(err))
 		return err
 	}
 	// 给管理员加菜单权限
 	menuList := make([]model.Menu, 0)
-	err = m.db.Find(&menuList).Error
-	if err != nil {
+	if err := m.db.Find(&menuList).Error; err != nil {
 		m.log.Error("m.db.Find(&menuList).Error error", zap.Error(err))
 		return err
 	}
@@ -166,8 +172,7 @@ func (m *MigrateServer) initialRBAC(ctx context.Context) error {
 	}
 	// 给管理员加接口权限
 	apiList := make([]model.Api, 0)
-	err = m.db.Find(&apiList).Error
-	if err != nil {
+	if err := m.db.Find(&apiList).Error; err != nil {
 		m.log.Error("m.db.Find(&apiList).Error error", zap.Error(err))
 		return err
 	}
@@ -175,9 +180,13 @@ func (m *MigrateServer) initialRBAC(ctx context.Context) error {
 		m.addPermissionForRole(constant.AdminRole, constant.ApiResourcePrefix+api.Path, api.Method)
 	}
 
+	// 从数据库查询用户
+	var operator model.User
+	if err := m.db.First(&operator, 2).Error; err != nil {
+		return err
+	}
 	// 添加运营人员权限
-	_, err = m.e.AddRoleForUser("2", constant.OperatorRole)
-	if err != nil {
+	if _, err := m.e.AddRoleForUser(operator.UserID, constant.OperatorRole); err != nil {
 		m.log.Error("m.e.AddRoleForUser error", zap.Error(err))
 		return err
 	}
@@ -192,6 +201,17 @@ func (m *MigrateServer) initialRBAC(ctx context.Context) error {
 	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/account", "read")
 	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/menus", http.MethodGet)
 	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/admin/user", http.MethodGet)
+
+	// 添加普通用户权限
+	// 菜单权限
+	m.addPermissionForRole(constant.UserRole, constant.MenuResourcePrefix+"/welcome", "read")
+	m.addPermissionForRole(constant.UserRole, constant.MenuResourcePrefix+"/profile", "read")
+	// API权限
+	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/users/profile", http.MethodGet)
+	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/users/profile", http.MethodPut)
+	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/users/profile/avatar", http.MethodPost)
+	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/users/menu", http.MethodGet)
+	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/users/password", http.MethodPut)
 
 	return nil
 }
@@ -218,7 +238,7 @@ func (m *MigrateServer) initialApisData(ctx context.Context) error {
 
 		{Group: "用户", Name: "获取profile", Path: "/v1/users/profile", Method: http.MethodGet},
 		{Group: "用户", Name: "更新profile", Path: "/v1/users/profile", Method: http.MethodPut},
-		{Group: "用户", Name: "更新头像", Path: "/v1/users/profile/avatar", Method: http.MethodPut},
+		{Group: "用户", Name: "更新头像", Path: "/v1/users/profile/avatar", Method: http.MethodPost},
 		{Group: "用户", Name: "获取菜单", Path: "/v1/users/menu", Method: http.MethodGet},
 		{Group: "用户", Name: "更新密码", Path: "/v1/users/password", Method: http.MethodPut},
 
@@ -247,6 +267,12 @@ func (m *MigrateServer) initialApisData(ctx context.Context) error {
 		{Group: "接口管理", Name: "创建接口", Path: "/v1/admin/apis", Method: http.MethodPost},
 		{Group: "接口管理", Name: "更新接口", Path: "/v1/admin/apis/:id", Method: http.MethodPut},
 		{Group: "接口管理", Name: "删除接口", Path: "/v1/admin/apis/:id", Method: http.MethodDelete},
+
+		// 系统设置
+		{Group: "系统设置", Name: "获取系统设置", Path: "/v1/admin/settings", Method: http.MethodGet},
+		{Group: "系统设置", Name: "更新系统设置", Path: "/v1/admin/settings", Method: http.MethodPut},
+		{Group: "系统设置", Name: "测试邮件发送", Path: "/v1/admin/settings/test-email", Method: http.MethodPost},
+		{Group: "系统设置", Name: "获取公开设置", Path: "/v1/settings", Method: http.MethodGet},
 
 		// 项目管理
 		{Group: "项目管理", Name: "获取项目列表", Path: "/v1/items", Method: http.MethodGet},
@@ -361,6 +387,13 @@ var menuData = `[
     "parentId": 1000,
     "path": "/admin/api",
     "name": "api",
-	"component": "@/pages/Admin/Api"
+    "component": "@/pages/Admin/Api"
+  },
+  {
+    "id": 1006,
+    "parentId": 1000,
+    "path": "/admin/config",
+    "name": "config",
+    "component": "@/pages/Admin/Config"
   }
 ]`

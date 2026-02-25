@@ -51,11 +51,12 @@ func TestAuthHandler_Login(t *testing.T) {
 		Password: "123456",
 	}
 
-	tokenPair := &v1.TokenPair{
+	tokenPair := &v1.TokenData{
 		TokenType:    "Bearer",
 		AccessToken:  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test",
 		RefreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refresh",
 		ExpiresIn:    900,
+		ExpiresAt:    1730000000,
 	}
 
 	mockAuthService := mock_service.NewMockAuthService(ctrl)
@@ -90,7 +91,7 @@ func TestUserHandler_Get(t *testing.T) {
 	mockUserService.EXPECT().Get(gomock.Any(), userId).Return(&v1.UserDataItem{
 		ID:       userId,
 		Username: "testuser",
-		Nickname: "Test User",
+		FullName: "Test User",
 		Email:    "test@example.com",
 	}, nil)
 
@@ -150,13 +151,13 @@ func TestUserHandler_ListUsers(t *testing.T) {
 			{
 				ID:       1,
 				Username: "user1",
-				Nickname: "User One",
+				FullName: "User One",
 				Email:    "user1@example.com",
 			},
 			{
 				ID:       2,
 				Username: "user2",
-				Nickname: "User Two",
+				FullName: "User Two",
 				Email:    "user2@example.com",
 			},
 		},

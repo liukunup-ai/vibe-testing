@@ -83,9 +83,9 @@ func TestAuthService_Login(t *testing.T) {
 	}
 
 	mockUserRepo.EXPECT().GetByUsernameOrEmail(ctx, req.Username, req.Username).Return(model.User{
-		Model:    gorm.Model{ID: 1},
-		Username: req.Username,
-		Password: string(hashedPassword),
+		Model:          gorm.Model{ID: 1},
+		Username:       req.Username,
+		HashedPassword: string(hashedPassword),
 	}, nil)
 
 	token, err := authService.Login(ctx, req)

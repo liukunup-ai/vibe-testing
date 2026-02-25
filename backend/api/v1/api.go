@@ -6,7 +6,7 @@ type ApiSearchRequest struct {
 	PageSize int    `form:"pageSize" binding:"required,min=1,max=100" example:"10"` // 分页大小
 	Group    string `form:"group" example:"User"`                                   // 筛选项: 分组 精确匹配
 	Name     string `form:"name" example:"ListUsers"`                               // 筛选项: 名称 模糊匹配
-	Path     string `form:"path" example:"/v1/admin/users"`                         // 筛选项: 路径 模糊匹配
+	Path     string `form:"path" example:"/admin/users"`                            // 筛选项: 路径 模糊匹配
 	Method   string `form:"method" example:"GET"`                                   // 筛选项: 方法 精确匹配
 }
 type ApiDataItem struct {
@@ -15,7 +15,7 @@ type ApiDataItem struct {
 	UpdatedAt string `json:"updatedAt,omitempty" example:"2006-01-02 15:04:05"` // 更新时间
 	Group     string `json:"group" example:"User"`                              // 分组
 	Name      string `json:"name" example:"ListUsers"`                          // 名称
-	Path      string `json:"path" example:"/v1/admin/users"`                    // 路径
+	Path      string `json:"path" example:"/admin/users"`                       // 路径
 	Method    string `json:"method" example:"GET"`                              // 方法
 } // @name Api
 type ApiSearchResponseData struct {
@@ -33,8 +33,8 @@ type ApiResponse struct {
 }
 
 type ApiRequest struct {
-	Group  string `json:"group" example:"User"`           // 分组
-	Name   string `json:"name" example:"ListUsers"`       // 名称
-	Path   string `json:"path" example:"/v1/admin/users"` // 路径
-	Method string `json:"method" example:"GET"`           // 方法
+	Group  string `json:"group" example:"User"`        // 分组
+	Name   string `json:"name" example:"ListUsers"`    // 名称
+	Path   string `json:"path" example:"/admin/users"` // 路径
+	Method string `json:"method" example:"GET"`        // 方法
 }

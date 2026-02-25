@@ -63,7 +63,7 @@ RUN apk add --no-cache ca-certificates openssl && \
         -keyout /etc/nginx/ssl/server.key \
         -out /etc/nginx/ssl/server.crt \
         -days 3650 \
-        -subj "/C=CN/ST=Beijing/L=Beijing/O=/OU=/CN=RobotShop" \
+        -subj "/C=CN/ST=Beijing/L=Beijing/O=/OU=/CN=VibeTesting" \
         -addext "subjectAltName=DNS:localhost" && \
     openssl dhparam -out /etc/nginx/dhparam.pem 2048 && \
     cp /etc/nginx/ssl/server.crt /etc/nginx/ssl/fe.local.crt && \

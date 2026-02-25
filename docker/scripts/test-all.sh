@@ -3,7 +3,7 @@
 ###############################################################################
 # 完整的 Docker 构建部署测试脚本
 # 用途：自动执行完整的构建、运行和测试流程
-# 作者：robot-shop team
+# 作者：vibe-testing team
 # 日期：2025-11-12
 ###############################################################################
 
@@ -52,7 +52,7 @@ log_section() {
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 REPORT_FILE="${PROJECT_ROOT}/deploy/TEST_REPORT_$(date +%Y%m%d_%H%M%S).md"
-RESULTS_FILE="/tmp/robot-shop-test-results-$$.txt"
+RESULTS_FILE="/tmp/vibe-testing-test-results-$$.txt"
 
 # 清理结果文件
 > "${RESULTS_FILE}"
@@ -138,7 +138,7 @@ test_build() {
     
     local build_start=$(date +%s)
     
-    export IMAGE_NAME="robot-shop"
+    export IMAGE_NAME="vibe-testing"
     export IMAGE_TAG="test-$(date +%Y%m%d-%H%M%S)"
     export CLEAN="true"
     
@@ -168,7 +168,7 @@ test_build() {
 test_run() {
     log_section "3. 容器运行测试"
     
-    export CONTAINER_NAME="robot-shop-test-$(date +%s)"
+    export CONTAINER_NAME="vibe-testing-test-$(date +%s)"
     export HOST_PORT="8000"
     export KEEP_RUNNING="false"
     
@@ -237,7 +237,7 @@ cleanup_test_resources() {
     log_info "清理测试镜像和容器..."
     
     # 清理测试容器
-    docker ps -a --filter "name=robot-shop-test-" --format "{{.Names}}" | xargs -r docker rm -f >/dev/null 2>&1 || true
+    docker ps -a --filter "name=vibe-testing-test-" --format "{{.Names}}" | xargs -r docker rm -f >/dev/null 2>&1 || true
     
     # 清理测试镜像
     docker images "${IMAGE_NAME}:test-*" --format "{{.Repository}}:{{.Tag}}" | xargs -r docker rmi >/dev/null 2>&1 || true
@@ -254,7 +254,7 @@ generate_report() {
     local total_duration=$((test_end_time - TEST_START_TIME))
     
     cat > "${REPORT_FILE}" << EOF
-# Robot Shop - Docker 构建部署测试报告
+# Vibe Testing - Docker 构建部署测试报告
 
 **测试时间**: $(date '+%Y-%m-%d %H:%M:%S')  
 **测试耗时**: ${total_duration} 秒  
@@ -264,7 +264,7 @@ generate_report() {
 
 ## 1. 测试概述
 
-本报告记录了 Robot Shop 项目的 Docker 镜像构建和部署测试结果。
+本报告记录了 Vibe Testing 项目的 Docker 镜像构建和部署测试结果。
 
 ## 2. 测试环境
 
@@ -365,8 +365,8 @@ EOF
 
 1. **推送镜像到仓库**
    \`\`\`bash
-   docker tag robot-shop:latest your-registry/robot-shop:latest
-   docker push your-registry/robot-shop:latest
+   docker tag vibe-testing:latest your-registry/vibe-testing:latest
+   docker push your-registry/vibe-testing:latest
    \`\`\`
 
 2. **使用 GitHub Actions 自动部署**
@@ -374,8 +374,8 @@ EOF
 
 3. **生产环境部署**
    \`\`\`bash
-   docker pull your-registry/robot-shop:latest
-   docker run -d -p 8000:8000 your-registry/robot-shop:latest
+   docker pull your-registry/vibe-testing:latest
+   docker run -d -p 8000:8000 your-registry/vibe-testing:latest
    \`\`\`
 
 EOF
@@ -445,7 +445,7 @@ main() {
     echo ""
     echo -e "${CYAN}╔═══════════════════════════════════════════════════════════════╗${NC}"
     echo -e "${CYAN}║                                                               ║${NC}"
-    echo -e "${CYAN}║        Robot Shop - Docker 构建部署完整测试                   ║${NC}"
+    echo -e "${CYAN}║        Vibe Testing - Docker 构建部署完整测试                   ║${NC}"
     echo -e "${CYAN}║                                                               ║${NC}"
     echo -e "${CYAN}╚═══════════════════════════════════════════════════════════════╝${NC}"
     echo ""

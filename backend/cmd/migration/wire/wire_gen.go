@@ -21,7 +21,7 @@ import (
 func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
 	db := repository.NewDB(viperViper, logger)
 	sidSid := sid.NewSid()
-	syncedEnforcer := repository.NewCasbinEnforcer(viperViper, logger, db)
+	syncedEnforcer := repository.NewCasbinEnforcer(db)
 	migrateServer := server.NewMigrateServer(db, logger, sidSid, syncedEnforcer)
 	appApp := newApp(migrateServer)
 	return appApp, func() {

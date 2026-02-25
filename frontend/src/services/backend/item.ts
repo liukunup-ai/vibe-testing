@@ -32,7 +32,7 @@ export async function createItem(body: API.ItemRequest, options?: { [key: string
 /** 获取项目 获取指定ID的项目信息 GET /items/${param0} */
 export async function getItem(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.GetItemsParams,
+  params: API.GetItemParams,
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
@@ -46,7 +46,7 @@ export async function getItem(
 /** 更新项目 更新项目数据 PUT /items/${param0} */
 export async function updateItem(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.UpdateItemsParams,
+  params: API.UpdateItemParams,
   body: API.ItemRequest,
   options?: { [key: string]: any },
 ) {
@@ -65,7 +65,7 @@ export async function updateItem(
 /** 删除项目 删除指定ID的项目 DELETE /items/${param0} */
 export async function deleteItem(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.DeleteItemsParams,
+  params: API.DeleteItemParams,
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;

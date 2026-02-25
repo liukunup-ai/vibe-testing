@@ -1,7 +1,7 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { ProTable, TableDropdown } from '@ant-design/pro-components';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button, message } from 'antd';
+import { Avatar, Button, message } from 'antd';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { useRef, useState } from 'react';
 import { listItems, deleteItem, createItem } from '../../services/backend/item';
@@ -14,6 +14,22 @@ const Item: React.FC = () => {
   const [currentItem, setCurrentItem] = useState<API.Item | null>(null);
   const actionRef = useRef<ActionType>(null);
   const intl = useIntl();
+
+  const renderOwner = (owner?: API.OwnerData) => {
+    if (!owner?.username) return '-';
+    const displayName = owner.fullName || owner.username;
+    return (
+      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Avatar
+          src={owner.avatarUrl}
+          icon={!owner.avatarUrl && <UserOutlined />}
+          size="small"
+          style={{ flexShrink: 0 }}
+        />
+        <span>{displayName}</span>
+      </span>
+    );
+  };
 
   const columns: ProColumns<API.Item>[] = [
     {
@@ -53,6 +69,8 @@ const Item: React.FC = () => {
         defaultMessage: '所有者',
       }),
       dataIndex: 'owner',
+      hideInSearch: true,
+      render: (_, record) => renderOwner(record.owner),
     },
     {
       title: intl.formatMessage({
@@ -100,7 +118,7 @@ const Item: React.FC = () => {
             await createItem({
               name: record.name + '-Copy',
               desc: record.desc,
-              owner: record.owner,
+              owner: record.owner?.username,
             });
             actionRef.current?.reload();
           }}
@@ -111,13 +129,6 @@ const Item: React.FC = () => {
           key="actionGroup"
           onSelect={() => action?.reload()}
           menus={[
-            {
-              key: 'test',
-              name: '测试',
-              onClick: async () => {
-                message.warning('此功能尚未实现');
-              },
-            },
             {
               key: 'delete',
               name: '删除',

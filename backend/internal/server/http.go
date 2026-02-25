@@ -27,6 +27,7 @@ func NewHTTPServer(
 	roleHandler *handler.RoleHandler,
 	menuHandler *handler.MenuHandler,
 	apiHandler *handler.ApiHandler,
+	settingHandler *handler.SettingHandler,
 	itemHandler *handler.ItemHandler,
 ) *http.Server {
 	gin.SetMode(gin.DebugMode)
@@ -60,6 +61,9 @@ func NewHTTPServer(
 		})
 	})
 
+	// Serve local avatar files
+	s.Static("/storage/avatar", "./storage/avatar")
+
 	s.GET("/healthz", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"status":  "ok",
@@ -73,10 +77,13 @@ func NewHTTPServer(
 		// No route group has permission
 		noAuthRouter := v1.Group("/")
 		{
+			noAuthRouter.GET("/settings", settingHandler.GetSiteSetting)
 			noAuthRouter.POST("/register", authHandler.Register)
 			noAuthRouter.POST("/login", authHandler.Login)
+			noAuthRouter.POST("/forgot-password", authHandler.ForgotPassword)
 			noAuthRouter.POST("/reset-password", authHandler.ResetPassword)
 			noAuthRouter.POST("/refresh-token", authHandler.RefreshToken)
+			noAuthRouter.POST("/auth/oidc", authHandler.OIDCAuth)
 		}
 
 		// Non-strict permission routing group
@@ -91,16 +98,21 @@ func NewHTTPServer(
 		{
 			// User
 			strictAuthRouter.GET("/users/profile", userHandler.GetProfile)
-			strictAuthRouter.PUT("/users/profile", userHandler.UpdateProfile)
-			strictAuthRouter.PUT("/users/profile/avatar", userHandler.UploadAvatar)
+		strictAuthRouter.PUT("/users/profile", userHandler.UpdateProfile)
+		strictAuthRouter.POST("/users/profile/avatar", userHandler.UploadAvatar)
 			strictAuthRouter.GET("/users/menu", userHandler.GetMenu)
 			strictAuthRouter.PUT("/users/password", userHandler.UpdatePassword)
+			strictAuthRouter.POST("/logout", authHandler.Logout)
 
 			// Admin User
 			strictAuthRouter.GET("/admin/users", userHandler.ListUsers)
 			strictAuthRouter.POST("/admin/users", userHandler.CreateUser)
 			strictAuthRouter.PUT("/admin/users/:id", userHandler.UpdateUser)
 			strictAuthRouter.DELETE("/admin/users/:id", userHandler.DeleteUser)
+			strictAuthRouter.POST("/admin/users/:id/send-reset-email", userHandler.SendResetEmail)
+			strictAuthRouter.POST("/admin/users/:id/revoke-sessions", userHandler.RevokeSessions)
+			strictAuthRouter.PUT("/admin/users/:id/status", userHandler.UpdateStatus)
+			strictAuthRouter.PUT("/admin/users/:id/reset-avatar", userHandler.ResetAvatar)
 
 			// Admin Role
 			strictAuthRouter.GET("/admin/roles", roleHandler.ListRoles)
@@ -122,6 +134,11 @@ func NewHTTPServer(
 			strictAuthRouter.POST("/admin/apis", apiHandler.CreateApi)
 			strictAuthRouter.PUT("/admin/apis/:id", apiHandler.UpdateApi)
 			strictAuthRouter.DELETE("/admin/apis/:id", apiHandler.DeleteApi)
+
+			// Admin Setting
+			strictAuthRouter.GET("/admin/settings", settingHandler.GetSetting)
+			strictAuthRouter.PUT("/admin/settings", settingHandler.UpdateSetting)
+			strictAuthRouter.POST("/admin/settings/test-email", settingHandler.TestEmail)
 
 			// Item
 			strictAuthRouter.GET("/items", itemHandler.ListItems)

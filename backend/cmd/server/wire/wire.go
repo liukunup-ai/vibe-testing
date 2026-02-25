@@ -10,6 +10,7 @@ import (
 	"backend/internal/server"
 	"backend/internal/service"
 	"backend/pkg/app"
+	"backend/pkg/audit"
 	"backend/pkg/email"
 	"backend/pkg/jwt"
 	"backend/pkg/log"
@@ -22,9 +23,7 @@ import (
 
 var repositorySet = wire.NewSet(
 	repository.NewDB,
-	repository.NewRedis,
 	repository.NewCache,
-	repository.NewMinIO,
 	repository.NewRepository,
 	repository.NewTransaction,
 	repository.NewTokenStore,
@@ -34,6 +33,7 @@ var repositorySet = wire.NewSet(
 	repository.NewRoleRepository,
 	repository.NewMenuRepository,
 	repository.NewApiRepository,
+	repository.NewSettingRepository,
 	// more biz repository
 	repository.NewItemRepository,
 )
@@ -45,6 +45,7 @@ var serviceSet = wire.NewSet(
 	service.NewRoleService,
 	service.NewMenuService,
 	service.NewApiService,
+	service.NewSettingService,
 	// more biz service
 	service.NewItemService,
 )
@@ -56,6 +57,7 @@ var handlerSet = wire.NewSet(
 	handler.NewRoleHandler,
 	handler.NewMenuHandler,
 	handler.NewApiHandler,
+	handler.NewSettingHandler,
 	// more biz handler
 	handler.NewItemHandler,
 )
@@ -73,7 +75,6 @@ var serverSet = wire.NewSet(
 func newApp(
 	httpServer *http.Server,
 	jobServer *server.JobServer,
-	// task *server.Task,
 ) *app.App {
 	return app.NewApp(
 		app.WithServer(httpServer, jobServer),
@@ -90,7 +91,8 @@ func NewWire(*viper.Viper, *log.Logger) (*app.App, func(), error) {
 		serverSet,
 		sid.NewSid,
 		jwt.NewJwt,
-		email.NewEmail,
+		email.NewService,
+		audit.NewAudit,
 		newApp,
 	))
 }

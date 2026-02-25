@@ -4,7 +4,6 @@ import (
 	v1 "backend/api/v1"
 	"backend/internal/service"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -33,8 +32,9 @@ func NewUserHandler(handler *Handler, userService service.UserService) *UserHand
 // @Param page query int true "页码"
 // @Param pageSize query int true "分页大小"
 // @Param email query string false "邮箱"
+// @Param phone query string false "手机"
 // @Param username query string false "用户名"
-// @Param nickname query string false "昵称"
+// @Param fullName query string false "展示名"
 // @Success 200 {object} v1.UserSearchResponse
 // @Router /admin/users [get]
 // @ID ListUsers
@@ -91,19 +91,13 @@ func (h *UserHandler) CreateUser(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param id path uint true "用户ID"
+// @Param id path string true "用户ID"
 // @Param request body v1.UserRequest true "参数"
 // @Success 200 {object} v1.Response
 // @Router /admin/users/{id} [put]
 // @ID UpdateUser
 func (h *UserHandler) UpdateUser(ctx *gin.Context) {
-	idStr := ctx.Param("id")
-	uid, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		h.logger.WithContext(ctx).Error("UpdateUser parse id error", zap.Error(err))
-		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, gin.H{"error": "invalid id"})
-		return
-	}
+	uid := ctx.Param("id")
 
 	var req v1.UserRequest
 	if err := ctx.ShouldBind(&req); err != nil {
@@ -112,7 +106,7 @@ func (h *UserHandler) UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.userService.Update(ctx, uint(uid), &req); err != nil {
+	if err := h.userService.Update(ctx, uid, &req); err != nil {
 		h.logger.WithContext(ctx).Error("userService.Update error", zap.Error(err))
 		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -128,20 +122,14 @@ func (h *UserHandler) UpdateUser(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param id query uint true "用户ID"
+// @Param id query string true "用户ID"
 // @Success 200 {object} v1.Response
 // @Router /admin/users/{id} [delete]
 // @ID DeleteUser
 func (h *UserHandler) DeleteUser(ctx *gin.Context) {
-	idStr := ctx.Param("id")
-	uid, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		h.logger.WithContext(ctx).Error("DeleteUser parse id error", zap.Error(err))
-		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, gin.H{"error": "invalid id"})
-		return
-	}
+	uid := ctx.Param("id")
 
-	if err := h.userService.Delete(ctx, uint(uid)); err != nil {
+	if err := h.userService.Delete(ctx, uid); err != nil {
 		h.logger.WithContext(ctx).Error("userService.Delete error", zap.Error(err))
 		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)
 		return
@@ -157,20 +145,14 @@ func (h *UserHandler) DeleteUser(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param id path uint true "用户ID"
+// @Param id path string true "用户ID"
 // @Success 200 {object} v1.UserResponse
 // @Router /users/{id} [get]
 // @ID GetUserByID
 func (h *UserHandler) GetUserByID(ctx *gin.Context) {
-	idStr := ctx.Param("id")
-	uid, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		h.logger.WithContext(ctx).Error("GetUserByID parse id error", zap.Error(err))
-		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, gin.H{"error": "invalid id"})
-		return
-	}
+	uid := ctx.Param("id")
 
-	data, err := h.userService.Get(ctx, uint(uid))
+	data, err := h.userService.Get(ctx, uid)
 	if err != nil {
 		h.logger.WithContext(ctx).Error("userService.Get error", zap.Error(err))
 		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)
@@ -191,16 +173,11 @@ func (h *UserHandler) GetUserByID(ctx *gin.Context) {
 // @Router /users/profile [get]
 // @ID FetchCurrentUser
 func (h *UserHandler) GetProfile(ctx *gin.Context) {
-	uid := GetUserIdFromCtx(ctx)
-	if uid == 0 {
-		h.logger.WithContext(ctx).Error("GetProfile get uid error")
-		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
-		return
-	}
+	uid := GetUserIDFromCtx(ctx)
 
 	data, err := h.userService.Get(ctx, uid)
 	if err != nil {
-		h.logger.WithContext(ctx).Error("userService.Get error", zap.Error(err))
+		h.logger.WithContext(ctx).Error("userService.GetByPublicID error", zap.Error(err))
 		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)
 		return
 	}
@@ -220,12 +197,7 @@ func (h *UserHandler) GetProfile(ctx *gin.Context) {
 // @Router /users/profile [put]
 // @ID UpdateProfile
 func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
-	uid := GetUserIdFromCtx(ctx)
-	if uid == 0 {
-		h.logger.WithContext(ctx).Error("UpdateProfile get uid error")
-		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
-		return
-	}
+	uid := GetUserIDFromCtx(ctx)
 
 	var req v1.UserRequest
 	if err := ctx.ShouldBind(&req); err != nil {
@@ -234,7 +206,7 @@ func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.userService.Update(ctx, uint(uid), &req); err != nil {
+	if err := h.userService.Update(ctx, uid, &req); err != nil {
 		h.logger.WithContext(ctx).Error("userService.Update error", zap.Error(err))
 		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -252,15 +224,10 @@ func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
 // @Security Bearer
 // @Param file formData file true "头像文件"
 // @Success 200 {object} v1.Response
-// @Router /users/profile/avatar [put]
+// @Router /users/profile/avatar [post]
 // @ID UploadAvatar
 func (h *UserHandler) UploadAvatar(ctx *gin.Context) {
-	uid := GetUserIdFromCtx(ctx)
-	if uid == 0 {
-		h.logger.WithContext(ctx).Error("UploadAvatar get uid error")
-		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
-		return
-	}
+	uid := GetUserIDFromCtx(ctx)
 
 	file, err := ctx.FormFile("file")
 	if err != nil {
@@ -304,12 +271,7 @@ func (h *UserHandler) UploadAvatar(ctx *gin.Context) {
 // @Router /users/menu [get]
 // @ID FetchDynamicMenu
 func (h *UserHandler) GetMenu(ctx *gin.Context) {
-	uid := GetUserIdFromCtx(ctx)
-	if uid == 0 {
-		h.logger.WithContext(ctx).Error("GetMenu get uid error")
-		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
-		return
-	}
+	uid := GetUserIDFromCtx(ctx)
 
 	data, err := h.userService.GetMenu(ctx, uid)
 	if err != nil {
@@ -333,12 +295,7 @@ func (h *UserHandler) GetMenu(ctx *gin.Context) {
 // @Router /users/password [put]
 // @ID UpdatePassword
 func (h *UserHandler) UpdatePassword(ctx *gin.Context) {
-	uid := GetUserIdFromCtx(ctx)
-	if uid == 0 {
-		h.logger.WithContext(ctx).Error("UpdatePassword get uid error")
-		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
-		return
-	}
+	uid := GetUserIDFromCtx(ctx)
 
 	var req v1.UpdatePasswordRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -349,6 +306,106 @@ func (h *UserHandler) UpdatePassword(ctx *gin.Context) {
 
 	if err := h.userService.UpdatePassword(ctx, uid, &req); err != nil {
 		h.logger.WithContext(ctx).Error("userService.UpdatePassword error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	v1.HandleSuccess(ctx, nil)
+}
+
+// SendResetEmail godoc
+// @Summary 发送重置密码邮件
+// @Schemes
+// @Description 向指定用户发送重置密码邮件
+// @Tags User
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "用户ID"
+// @Success 200 {object} v1.Response
+// @Router /admin/users/{id}/send-reset-email [post]
+// @ID SendResetEmail
+func (h *UserHandler) SendResetEmail(ctx *gin.Context) {
+	uid := ctx.Param("id")
+
+	if err := h.userService.SendResetEmail(ctx, uid); err != nil {
+		h.logger.WithContext(ctx).Error("userService.SendResetEmail error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	v1.HandleSuccess(ctx, nil)
+}
+
+// RevokeSessions godoc
+// @Summary 撤销登录态
+// @Schemes
+// @Description 撤销指定用户的所有登录会话
+// @Tags User
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "用户ID"
+// @Success 200 {object} v1.Response
+// @Router /admin/users/{id}/revoke-sessions [post]
+// @ID RevokeSessions
+func (h *UserHandler) RevokeSessions(ctx *gin.Context) {
+	uid := ctx.Param("id")
+
+	if err := h.userService.RevokeSessions(ctx, uid); err != nil {
+		h.logger.WithContext(ctx).Error("userService.RevokeSessions error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	v1.HandleSuccess(ctx, nil)
+}
+
+// UpdateStatus godoc
+// @Summary 更新用户状态
+// @Schemes
+// @Description 更新用户状态（启用/禁用）
+// @Tags User
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "用户ID"
+// @Param request body v1.UpdateStatusRequest true "状态信息"
+// @Success 200 {object} v1.Response
+// @Router /admin/users/{id}/status [put]
+// @ID UpdateStatus
+func (h *UserHandler) UpdateStatus(ctx *gin.Context) {
+	uid := ctx.Param("id")
+
+	var req v1.UpdateStatusRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		h.logger.WithContext(ctx).Error("UpdateStatus bind error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+
+	if err := h.userService.UpdateStatus(ctx, uid, req.Status); err != nil {
+		h.logger.WithContext(ctx).Error("userService.UpdateStatus error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	v1.HandleSuccess(ctx, nil)
+}
+
+// ResetAvatar godoc
+// @Summary 重置头像
+// @Schemes
+// @Description 重置用户头像为默认头像
+// @Tags User
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "用户ID"
+// @Success 200 {object} v1.Response
+// @Router /admin/users/{id}/reset-avatar [put]
+// @ID ResetAvatar
+func (h *UserHandler) ResetAvatar(ctx *gin.Context) {
+	uid := ctx.Param("id")
+
+	if err := h.userService.ResetAvatar(ctx, uid); err != nil {
+		h.logger.WithContext(ctx).Error("userService.ResetAvatar error", zap.Error(err))
 		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

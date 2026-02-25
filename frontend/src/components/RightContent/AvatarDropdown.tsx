@@ -6,8 +6,8 @@ import { createStyles } from 'antd-style';
 import React from 'react';
 import { flushSync } from 'react-dom';
 import HeaderDropdown from '../HeaderDropdown';
-import { removeToken } from '../../utils/auth';
-
+import { useTokenModel } from '@/models/useTokenModel';
+import { logout } from '@/services/backend/auth';
 export type GlobalHeaderRightProps = {
   menu?: boolean;
   children?: React.ReactNode;
@@ -16,7 +16,11 @@ export type GlobalHeaderRightProps = {
 export const AvatarName = () => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState || {};
-  return <span className="anticon">{currentUser?.nickname}</span>;
+  return (
+    <span style={{ display: 'flex', alignItems: 'center' }}>
+      {currentUser?.fullName}
+    </span>
+  );
 };
 
 const useStyles = createStyles(({ token }) => {
@@ -38,30 +42,49 @@ const useStyles = createStyles(({ token }) => {
 });
 
 export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, children }) => {
-  /**
-   * 退出登录，并且将当前的 url 保存
-   */
+  const { clearTokens } = useTokenModel();
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const siteSettings = (initialState as any)?.siteSettings;
+
   const loginOut = async () => {
-    // 登出时清除 accessToken
-    removeToken();
+    // 先清除本地 tokens
+    clearTokens();
+    
+    try {
+      // 调用后端 logout API
+      const resp = await logout();
+      const endSessionUrl = (resp as any)?.data?.endSessionUrl;
+      
+      // 优先使用后端返回的 endSessionUrl，否则使用配置的 signoutRedirectUrl
+      const signoutUrl = endSessionUrl || siteSettings?.oidc?.signoutRedirectUrl;
+      if (signoutUrl) {
+        window.location.href = signoutUrl;
+        return;
+      }
+    } catch (error) {
+      // 即使 API 调用失败，也继续使用配置的 signoutRedirectUrl
+      const signoutUrl = siteSettings?.oidc?.signoutRedirectUrl;
+      if (signoutUrl) {
+        window.location.href = signoutUrl;
+        return;
+      }
+    }
+    
+    // 没有 OIDC 登出 URL，跳转到登录页
     const { search, pathname } = window.location;
     const urlParams = new URL(window.location.href).searchParams;
     const searchParams = new URLSearchParams({
       redirect: pathname + search,
     });
-    /** 此方法会跳转到 redirect 参数所在的位置 */
     const redirect = urlParams.get('redirect');
-    // Note: There may be security issues, please note
-    if (window.location.pathname !== '/user/login' && !redirect) {
+    if (window.location.pathname !== '/login' && !redirect) {
       history.replace({
-        pathname: '/user/login',
+        pathname: '/login',
         search: searchParams.toString(),
       });
     }
   };
   const { styles } = useStyles();
-
-  const { initialState, setInitialState } = useModel('@@initialState');
 
   const onMenuClick: MenuProps['onClick'] = (event) => {
     const { key } = event;
@@ -93,7 +116,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
 
   const { currentUser } = initialState;
 
-  if (!currentUser || !currentUser.nickname) {
+  if (!currentUser || !currentUser.fullName) {
     return loading;
   }
 

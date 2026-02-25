@@ -58,7 +58,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
     setLoading(true);
     try {
       const values = await form.validateFields();
-      if (!values.id) {
+      if (!values.userId) {
         throw new Error('Record ID not found during update operation');
       }
       const submitValues = {
@@ -70,7 +70,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
             })
           : [],
       };
-      await updateUser({ id: values.id }, submitValues as API.UserRequest);
+      await updateUser({ id: values.userId }, submitValues as API.UserRequest);
       message.success(intl.formatMessage({ id: 'pages.common.update.success', defaultMessage: '更新成功' }));
       form.resetFields();
       onSuccess();
@@ -106,7 +106,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
         layout="vertical"
         className="update-user-form"
       >
-        <Form.Item name="id" label="ID" hidden>
+        <Form.Item name="userId" label="ID" hidden>
           <Input disabled />
         </Form.Item>
 
@@ -123,13 +123,13 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
         </Form.Item>
 
         <Form.Item
-          name="nickname"
-          label={<FormattedMessage id="pages.admin.user.key.nickname" defaultMessage="昵称" />}
+          name="fullName"
+          label={<FormattedMessage id="pages.admin.user.key.fullName" defaultMessage="全名" />}
           rules={[
-            { max: 20, message: intl.formatMessage({ id: 'pages.admin.user.form.nickname.maxlen', defaultMessage: '昵称不能超过20个字符' }) },
+            { max: 20, message: intl.formatMessage({ id: 'pages.admin.user.form.fullName.maxlen', defaultMessage: '全名不能超过20个字符' }) },
           ]}
         >
-          <Input placeholder={intl.formatMessage({ id: 'pages.admin.user.form.nickname.placeholder', defaultMessage: '请输入昵称' })} />
+          <Input placeholder={intl.formatMessage({ id: 'pages.admin.user.form.fullName.placeholder', defaultMessage: '请输入全名' })} />
         </Form.Item>
 
         <Form.Item

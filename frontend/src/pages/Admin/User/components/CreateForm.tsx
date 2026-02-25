@@ -97,13 +97,13 @@ const CreateForm = ({ visible, onCancel, onSuccess }: CreateFormProps) => {
         </Form.Item>
 
         <Form.Item
-          name="nickname"
-          label={<FormattedMessage id="pages.admin.user.key.nickname" defaultMessage="昵称" />}
+          name="fullName"
+          label={<FormattedMessage id="pages.admin.user.key.fullName" defaultMessage="全名" />}
           rules={[
-            { max: 20, message: intl.formatMessage({ id: 'pages.admin.user.form.nickname.maxlen', defaultMessage: '昵称不能超过20个字符' }) },
+            { max: 20, message: intl.formatMessage({ id: 'pages.admin.user.form.fullName.maxlen', defaultMessage: '全名不能超过20个字符' }) },
           ]}
         >
-          <Input placeholder={intl.formatMessage({ id: 'pages.admin.user.form.nickname.placeholder', defaultMessage: '请输入昵称' })} />
+          <Input placeholder={intl.formatMessage({ id: 'pages.admin.user.form.fullName.placeholder', defaultMessage: '请输入全名' })} />
         </Form.Item>
 
         <Form.Item
