@@ -22,6 +22,9 @@ type RoleService interface {
 
 	GetPermissions(ctx context.Context, role string) (*v1.GetRolePermissionResponseData, error)
 	UpdatePermissions(ctx context.Context, req *v1.UpdateRolePermissionRequest) error
+
+	GetApis(ctx context.Context, roleId uint) ([]uint, error)
+	UpdateApis(ctx context.Context, roleId uint, apiIds []uint) error
 }
 
 func NewRoleService(
@@ -142,7 +145,14 @@ func (s *roleService) UpdatePermissions(ctx context.Context, req *v1.UpdateRoleP
 		if len(perm) == 2 {
 			permissions[v] = struct{}{}
 		}
-
 	}
 	return s.roleRepository.UpdatePermissions(ctx, req.CasbinRole, permissions)
+	}
+
+		func (s *roleService) GetApis(ctx context.Context, roleId uint) ([]uint, error) {
+	return s.roleRepository.GetApiIds(ctx, roleId)
+}
+
+	func (s *roleService) UpdateApis(ctx context.Context, roleId uint, apiIds []uint) error {
+	return s.roleRepository.UpdateApis(ctx, roleId, apiIds)
 }
