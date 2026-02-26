@@ -57,9 +57,23 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
     }
   }, [visible, initialValues, form]);
 
+  const getMethodColor = (method?: string) => {
+    switch (method) {
+      case 'GET':
+        return 'green';
+      case 'POST':
+        return 'blue';
+      case 'PUT':
+        return 'orange';
+      case 'DELETE':
+        return 'red';
+      default:
+        return 'default';
+    }
+  };
+
   // 构建树形数据
   const treeData = useMemo((): DataNode[] => {
-    // 按分组整理
     const groupedApis: Record<string, API.Api[]> = {};
     apiList.forEach((api) => {
       // 应用搜索和方法筛选
@@ -114,20 +128,6 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
     };
   }, [checkedKeys, apiList]);
 
-  const getMethodColor = (method?: string) => {
-    switch (method) {
-      case 'GET':
-        return 'green';
-      case 'POST':
-        return 'blue';
-      case 'PUT':
-        return 'orange';
-      case 'DELETE':
-        return 'red';
-      default:
-        return 'default';
-    }
-  };
 
   const handleOk = async () => {
     setLoading(true);
