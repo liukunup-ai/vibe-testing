@@ -94,7 +94,7 @@ func NewHTTPServer(
 		}
 
 		// Strict permission routing group
-		strictAuthRouter := v1.Group("/").Use(middleware.StrictAuth(jwt, logger), middleware.AuthMiddleware(e))
+		strictAuthRouter := v1.Group("/", middleware.StrictAuth(jwt, logger), middleware.AuthMiddleware(e))
 		{
 			// User
 			strictAuthRouter.GET("/users/profile", userHandler.GetProfile)
@@ -122,6 +122,12 @@ func NewHTTPServer(
 			// Admin Role Permission
 			strictAuthRouter.GET("/admin/roles/permissions", roleHandler.GetRolePermissions)
 			strictAuthRouter.PUT("/admin/roles/permissions", roleHandler.UpdateRolePermissions)
+			// Admin Role-API
+			roleGroup := strictAuthRouter.Group("/admin/roles")
+			{
+				roleGroup.GET("/:id/apis", roleHandler.GetRoleApis)
+				roleGroup.PUT("/:id/apis", roleHandler.UpdateRoleApis)
+			}
 
 			// Admin Menu
 			strictAuthRouter.GET("/admin/menus", menuHandler.ListMenus)
@@ -134,6 +140,12 @@ func NewHTTPServer(
 			strictAuthRouter.POST("/admin/apis", apiHandler.CreateApi)
 			strictAuthRouter.PUT("/admin/apis/:id", apiHandler.UpdateApi)
 			strictAuthRouter.DELETE("/admin/apis/:id", apiHandler.DeleteApi)
+			// Admin API-Role
+			apiGroup := strictAuthRouter.Group("/admin/apis")
+			{
+				apiGroup.GET("/:id/roles", apiHandler.GetApiRoles)
+				apiGroup.PUT("/:id/roles", apiHandler.UpdateApiRoles)
+			}
 
 			// Admin Setting
 			strictAuthRouter.GET("/admin/settings", settingHandler.GetSetting)

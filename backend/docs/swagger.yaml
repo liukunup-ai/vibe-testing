@@ -373,6 +373,13 @@ definitions:
         example: true
         type: boolean
     type: object
+  backend_api_v1.ApiRoleResponse:
+    properties:
+      roleIds:
+        items:
+          type: integer
+        type: array
+    type: object
   backend_api_v1.ApiSearchResponse:
     properties:
       data:
@@ -872,6 +879,13 @@ definitions:
         example: true
         type: boolean
     type: object
+  backend_api_v1.RoleApiResponse:
+    properties:
+      apiIds:
+        items:
+          type: integer
+        type: array
+    type: object
   backend_api_v1.RoleRequest:
     properties:
       casbinRole:
@@ -1011,6 +1025,15 @@ definitions:
         description: 凭证类型
         type: string
     type: object
+  backend_api_v1.UpdateApiRolesRequest:
+    properties:
+      roleIds:
+        items:
+          type: integer
+        type: array
+    required:
+    - roleIds
+    type: object
   backend_api_v1.UpdatePasswordRequest:
     properties:
       newPassword:
@@ -1024,6 +1047,15 @@ definitions:
     required:
     - newPassword
     - oldPassword
+    type: object
+  backend_api_v1.UpdateRoleApisRequest:
+    properties:
+      apiIds:
+        items:
+          type: integer
+        type: array
+    required:
+    - apiIds
     type: object
   backend_api_v1.UpdateRolePermissionRequest:
     properties:
@@ -1863,6 +1895,57 @@ paths:
       summary: 更新用户状态
       tags:
       - User
+  /apis/{id}/roles:
+    get:
+      consumes:
+      - application/json
+      operationId: GetApiRoles
+      parameters:
+      - description: 接口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.ApiRoleResponse'
+      security:
+      - Bearer: []
+      summary: 获取接口授权的角色列表
+      tags:
+      - Api
+    put:
+      consumes:
+      - application/json
+      operationId: UpdateApiRoles
+      parameters:
+      - description: 接口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 角色ID列表
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.UpdateApiRolesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新接口授权的角色
+      tags:
+      - Api
   /auth/oidc:
     post:
       consumes:
@@ -2160,6 +2243,57 @@ paths:
       summary: 重置密码
       tags:
       - Auth
+  /roles/{id}/apis:
+    get:
+      consumes:
+      - application/json
+      operationId: GetRoleApis
+      parameters:
+      - description: 角色ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.RoleApiResponse'
+      security:
+      - Bearer: []
+      summary: 获取角色授权的接口列表
+      tags:
+      - Role
+    put:
+      consumes:
+      - application/json
+      operationId: UpdateRoleApis
+      parameters:
+      - description: 角色ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 接口ID列表
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.UpdateRoleApisRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新角色授权的接口
+      tags:
+      - Role
   /settings:
     get:
       consumes:
