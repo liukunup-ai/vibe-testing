@@ -13,9 +13,9 @@ import {
 } from '@ant-design/icons';
 import { useIntl, useRequest } from '@umijs/max';
 import { listProjects } from '@/services/backend/project';
-import { listTestCases } from '@/services/backend/testcase';
+import { listTestCases } from '@/services/backend/testCase';
 import { listDevices } from '@/services/backend/device';
-import { listTestRecords } from '@/services/backend/testrecord';
+import { listTestRecords } from '@/services/backend/testRecord';
 import React from 'react';
 
 const { Text } = Typography;

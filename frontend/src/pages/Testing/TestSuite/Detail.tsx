@@ -1,8 +1,8 @@
 import { PageContainer } from '@ant-design/pro-components';
 import { Card, Descriptions, Tag, Button, Table, Tabs } from 'antd';
 import { useIntl, useParams, useRequest } from '@umijs/max';
-import { getTestSuite } from '@/services/backend/testsuite';
-import { listTestCases } from '@/services/backend/testcase';
+import { getTestSuite } from '@/services/backend/testSuite';
+import { listTestCases } from '@/services/backend/testCase';
 import {
   EditOutlined,
   PlayCircleOutlined,

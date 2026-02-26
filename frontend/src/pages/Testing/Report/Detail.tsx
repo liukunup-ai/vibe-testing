@@ -4,7 +4,7 @@ import type { ProColumns } from '@ant-design/pro-components';
 import { Col, Progress, Row, Space, Statistic, Tag, message } from 'antd';
 import { useIntl, useParams, useRequest, FormattedMessage } from '@umijs/max';
 import { useMemo } from 'react';
-import { getTestRecord } from '@/services/backend/testrecord';
+import { getTestRecord } from '@/services/backend/testRecord';
 import { getProject } from '@/services/backend/project';
 
 interface FailedCaseRecord {

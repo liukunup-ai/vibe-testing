@@ -2,7 +2,7 @@ import { Select, Form, Input, Modal, message, DatePicker, InputNumber } from 'an
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { useForm } from 'antd/es/form/Form';
 import { useState, useEffect } from 'react';
-import { createTestPlan } from '@/services/backend/testplan';
+import { createTestPlan } from '@/services/backend/testPlan';
 import { listProjects } from '@/services/backend/project';
 
 const { TextArea } = Input;

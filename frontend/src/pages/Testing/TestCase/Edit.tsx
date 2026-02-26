@@ -10,7 +10,7 @@ import {
 import { useIntl, history } from '@umijs/max';
 import { Tabs, Form, Input, Button, Space, message, Tag, Table, Upload, Tooltip } from 'antd';
 import { useState, useEffect, useRef } from 'react';
-import { getTestCase, createTestCase, updateTestCase } from '@/services/backend/testcase';
+import { getTestCase, createTestCase, updateTestCase } from '@/services/backend/testCase';
 import { listProjects } from '@/services/backend/project';
 import {
   PlusOutlined,

@@ -2,7 +2,7 @@ import { Select, Form, Input, Modal, InputNumber, Switch, message } from 'antd';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { useForm } from 'antd/es/form/Form';
 import { useState, useEffect } from 'react';
-import { createTestSuite } from '@/services/backend/testsuite';
+import { createTestSuite } from '@/services/backend/testSuite';
 import { listProjects } from '@/services/backend/project';
 
 interface CreateFormProps {

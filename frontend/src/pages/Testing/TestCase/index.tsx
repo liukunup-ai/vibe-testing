@@ -4,7 +4,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Space, Tag, message } from 'antd';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { useRef, useEffect, useState } from 'react';
-import { listTestCases, deleteTestCase } from '@/services/backend/testcase';
+import { listTestCases, deleteTestCase } from '@/services/backend/testCase';
 import { listProjects } from '@/services/backend/project';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';

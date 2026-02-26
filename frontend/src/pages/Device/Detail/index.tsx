@@ -14,7 +14,7 @@ import {
 } from '@ant-design/icons';
 import React from 'react';
 import { getDevice } from '@/services/backend/device';
-import { listTestRecords } from '@/services/backend/testrecord';
+import { listTestRecords } from '@/services/backend/testRecord';
 
 const DeviceDetail: React.FC = () => {
   const intl = useIntl();

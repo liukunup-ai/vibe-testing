@@ -14,9 +14,9 @@ import {
   Tag,
 } from 'antd';
 import { useIntl, useRequest, history } from '@umijs/max';
-import { createTestSuite, getTestSuite, updateTestSuite } from '@/services/backend/testsuite';
+import { createTestSuite, getTestSuite, updateTestSuite } from '@/services/backend/testSuite';
 import { listProjects } from '@/services/backend/project';
-import { listTestCases } from '@/services/backend/testcase';
+import { listTestCases } from '@/services/backend/testCase';
 import { useParams } from '@umijs/max';
 import React, { useState, useEffect } from 'react';
 

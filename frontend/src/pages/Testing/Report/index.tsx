@@ -4,7 +4,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Modal, Progress, Space, Tag, message } from 'antd';
 import { FormattedMessage, useIntl, useNavigate } from '@umijs/max';
 import { useRef, useState } from 'react';
-import { deleteTestRecord, listTestRecords } from '@/services/backend/testrecord';
+import { deleteTestRecord, listTestRecords } from '@/services/backend/testRecord';
 import { listProjects } from '@/services/backend/project';
 
 const Report: React.FC = () => {

@@ -6,7 +6,7 @@ ARG USE_CHINA_MIRROR=true
 
 # 构建镜像的版本
 ARG NODE_VERSION=22-alpine
-ARG GO_VERSION=1.23-alpine
+ARG GO_VERSION=1.24-alpine
 ARG NGINX_VERSION=1.29-alpine
 
 

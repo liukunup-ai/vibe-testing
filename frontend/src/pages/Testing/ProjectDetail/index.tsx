@@ -14,9 +14,9 @@ import {
 } from 'antd';
 import { useIntl, useParams, useRequest, history } from '@umijs/max';
 import { getProject } from '@/services/backend/project';
-import { listTestCases } from '@/services/backend/testcase';
-import { listTestSuites } from '@/services/backend/testsuite';
-import { listTestRecords } from '@/services/backend/testrecord';
+import { listTestCases } from '@/services/backend/testCase';
+import { listTestSuites } from '@/services/backend/testSuite';
+import { listTestRecords } from '@/services/backend/testRecord';
 import {
   EditOutlined,
   DeleteOutlined,

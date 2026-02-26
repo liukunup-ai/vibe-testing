@@ -22,10 +22,10 @@ import {
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { history } from '@umijs/max';
 import { listProjects } from '@/services/backend/project';
-import { listTestCases } from '@/services/backend/testcase';
-import { listTestSuites } from '@/services/backend/testsuite';
+import { listTestCases } from '@/services/backend/testCase';
+import { listTestSuites } from '@/services/backend/testSuite';
 import { listDevices } from '@/services/backend/device';
-import { createTestPlan } from '@/services/backend/testplan';
+import { createTestPlan } from '@/services/backend/testPlan';
 
 const { TextArea } = Input;
 

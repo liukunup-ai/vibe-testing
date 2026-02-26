@@ -8,7 +8,7 @@ import {
   CloseCircleOutlined,
 } from '@ant-design/icons';
 import { listProjects } from '@/services/backend/project';
-import { createTestCase } from '@/services/backend/testcase';
+import { createTestCase } from '@/services/backend/testCase';
 import React, { useState } from 'react';
 
 const CaseImport: React.FC = () => {

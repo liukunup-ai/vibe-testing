@@ -2,7 +2,7 @@ import { Select, Form, Input, Modal, message, InputNumber } from 'antd';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { useForm } from 'antd/es/form/Form';
 import { useState, useEffect } from 'react';
-import { updateTestCase } from '@/services/backend/testcase';
+import { updateTestCase } from '@/services/backend/testCase';
 
 const { TextArea } = Input;
 
