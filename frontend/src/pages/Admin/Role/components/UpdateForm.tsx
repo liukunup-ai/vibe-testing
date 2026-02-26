@@ -2,7 +2,7 @@ import { Form, Input, Modal, message, Tabs, Tree, Spin, Space, Select, Tag } fro
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { useForm } from 'antd/es/form/Form';
 import { useState, useEffect, useMemo } from 'react';
-import { updateRole, getRoleApis, updateRoleApis } from '@/services/backend/role';
+import { updateRole, getAdminRolesIdApis, putAdminRolesIdApis } from '@/services/backend/role';
 import { listApis } from '@/services/backend/api';
 import type { DataNode } from 'antd/es/tree';
 import { SearchOutlined } from '@ant-design/icons';
@@ -30,6 +30,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
     const loadApis = async () => {
       try {
         const response = await listApis({ page: 1, pageSize: 100 });
+        if (response.data?.list) {
           setApiList(response.data.list);
         }
       } catch (error) {
@@ -44,16 +45,12 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
     if (visible && initialValues?.id) {
       form.setFieldsValue(initialValues);
       setLoadingApis(true);
-      getRoleApis({ id: initialValues.id })
+      getAdminRolesIdApis({ id: initialValues.id })
         .then((response) => {
           if (response) {
             setCheckedKeys(response.apiIds || []);
           }
         })
-        .catch(() => {
-          setCheckedKeys([]);
-        })
-        .finally(() => setLoadingApis(false));
     } else if (!visible) {
       setCheckedKeys([]);
       setActiveTab('basic');
@@ -143,8 +140,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
       await updateRole({id: values.id}, values as API.RoleRequest);
       // 更新接口权限
       const apiIds = checkedKeys.filter((k) => typeof k === 'number') as number[];
-      await updateRoleApis({ id: values.id }, { apiIds });
-      message.success(intl.formatMessage({ id: 'pages.common.update.success', defaultMessage: '更新成功' }));
+      await putAdminRolesIdApis({ id: values.id }, { apiIds });
       form.resetFields();
       setCheckedKeys([]);
       onSuccess();

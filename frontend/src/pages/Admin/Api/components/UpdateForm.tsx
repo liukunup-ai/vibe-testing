@@ -2,9 +2,8 @@ import { Form, Input, Modal, message, Select, Spin, Tag } from 'antd';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { useForm } from 'antd/es/form/Form';
 import { useState, useEffect } from 'react';
-import { updateApi, getApiRoles, updateApiRoles } from '@/services/backend/api';
+import { updateApi, getAdminApisIdRoles, putAdminApisIdRoles } from '@/services/backend/api';
 import { listRoles } from '@/services/backend/role';
-
 interface UpdateFormProps {
   visible: boolean; // 弹窗是否可见
   onCancel: () => void; // 取消回调
@@ -39,16 +38,12 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
     if (visible && initialValues?.id) {
       form.setFieldsValue(initialValues);
       setLoadingRoles(true);
-      getApiRoles({ id: initialValues.id })
+      getAdminApisIdRoles({ id: initialValues.id })
         .then((response) => {
           if (response) {
             setSelectedRoles(response.roleIds || []);
           }
         })
-        .catch(() => {
-          setSelectedRoles([]);
-        })
-        .finally(() => setLoadingRoles(false));
     } else if (!visible) {
       setSelectedRoles([]);
     }
@@ -64,8 +59,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
       // 更新接口信息
       await updateApi({id: values.id}, values as API.ApiRequest);
       // 更新角色授权
-      await updateApiRoles({ id: values.id }, { roleIds: selectedRoles });
-      message.success(intl.formatMessage({ id: 'pages.common.object.update.success', defaultMessage: '更新成功' }));
+      await putAdminApisIdRoles({ id: values.id }, { roleIds: selectedRoles });
       form.resetFields();
       setSelectedRoles([]);
       onSuccess();

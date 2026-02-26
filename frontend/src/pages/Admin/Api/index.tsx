@@ -86,6 +86,13 @@ const Api: React.FC = () => {
       },
     },
     {
+      title: intl.formatMessage({ id: 'pages.admin.api.key.roles', defaultMessage: '授权角色' }),
+      dataIndex: 'roleCount',
+      ellipsis: true,
+      hideInSearch: true,
+      render: (_: any, record: API.Api) => ((record as any).roleCount ?? 0),
+    },
+    {
       title: intl.formatMessage({
         id: 'pages.common.key.createdAt',
         defaultMessage: '创建时间',
