@@ -190,3 +190,69 @@ func (h *ApiHandler) GetApi(ctx *gin.Context) {
 		Method:    api.Method,
 	})
 }
+
+
+// GetApiRoles godoc
+// @Summary 获取接口授权的角色列表
+// @Tags Api
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "接口ID"
+// @Success 200 {object} v1.ApiRoleResponse
+// @Router /apis/{id}/roles [get]
+// @ID GetApiRoles
+func (h *ApiHandler) GetApiRoles(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		h.logger.WithContext(ctx).Error("parse id error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+
+	roleIds, err := h.apiService.GetRoles(ctx, uint(id))
+	if err != nil {
+		h.logger.WithContext(ctx).Error("get api roles error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)
+		return
+	}
+
+	v1.HandleSuccess(ctx, v1.ApiRoleResponse{RoleIds: roleIds})
+}
+
+// UpdateApiRoles godoc
+// @Summary 更新接口授权的角色
+// @Tags Api
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "接口ID"
+// @Param body body v1.UpdateApiRolesRequest true "角色ID列表"
+// @Success 200 {object} v1.Response
+// @Router /apis/{id}/roles [put]
+// @ID UpdateApiRoles
+func (h *ApiHandler) UpdateApiRoles(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		h.logger.WithContext(ctx).Error("parse id error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+
+	var req v1.UpdateApiRolesRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		h.logger.WithContext(ctx).Error("bind request error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+
+	if err := h.apiService.UpdateRoles(ctx, uint(id), req.RoleIds); err != nil {
+		h.logger.WithContext(ctx).Error("update api roles error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)
+		return
+	}
+
+	v1.HandleSuccess(ctx, nil)
+}
