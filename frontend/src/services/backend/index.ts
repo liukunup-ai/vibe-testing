@@ -9,6 +9,16 @@ import * as setting from './setting';
 import * as user from './user';
 import * as auth from './auth';
 import * as item from './item';
+import * as aiProvider from './aiProvider';
+import * as bug from './bug';
+import * as device from './device';
+import * as userFeedback from './userFeedback';
+import * as project from './project';
+import * as requirement from './requirement';
+import * as testCase from './testCase';
+import * as testPlan from './testPlan';
+import * as testRecord from './testRecord';
+import * as testSuite from './testSuite';
 export default {
   api,
   menu,
@@ -17,4 +27,14 @@ export default {
   user,
   auth,
   item,
+  aiProvider,
+  bug,
+  device,
+  userFeedback,
+  project,
+  requirement,
+  testCase,
+  testPlan,
+  testRecord,
+  testSuite,
 };

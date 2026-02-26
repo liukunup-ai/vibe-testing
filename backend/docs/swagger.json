@@ -1995,6 +1995,2227 @@
                     }
                 }
             }
+        },
+        "/v1/ai-providers": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取所有AI供应商列表，支持分页",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AIProvider"
+                ],
+                "summary": "获取AI供应商列表",
+                "operationId": "ListAIProviders",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "供应商名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "供应商类型",
+                        "name": "providerType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.AIProviderSearchResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建一个新的AI供应商配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AIProvider"
+                ],
+                "summary": "创建AI供应商",
+                "operationId": "CreateAIProvider",
+                "parameters": [
+                    {
+                        "description": "供应商信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.AIProviderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/ai-providers/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定ID的AI供应商详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AIProvider"
+                ],
+                "summary": "获取AI供应商详情",
+                "operationId": "GetAIProvider",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "供应商ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.AIProviderResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新指定ID的AI供应商信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AIProvider"
+                ],
+                "summary": "更新AI供应商",
+                "operationId": "UpdateAIProvider",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "供应商ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "供应商信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.AIProviderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除指定ID的AI供应商",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AIProvider"
+                ],
+                "summary": "删除AI供应商",
+                "operationId": "DeleteAIProvider",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "供应商ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/bugs": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "搜索时支持编号、标题、严重程度、优先级、状态等筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bug"
+                ],
+                "summary": "获取缺陷列表",
+                "operationId": "ListBugs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "projectId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "缺陷编号",
+                        "name": "bugNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "标题",
+                        "name": "title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "严重程度",
+                        "name": "severity",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "优先级",
+                        "name": "priority",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.BugSearchResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建一个新的缺陷",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bug"
+                ],
+                "summary": "创建缺陷",
+                "operationId": "CreateBug",
+                "parameters": [
+                    {
+                        "description": "缺陷信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.BugRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/bugs/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定ID的缺陷详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bug"
+                ],
+                "summary": "获取缺陷详情",
+                "operationId": "GetBug",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "缺陷ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.BugResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新缺陷信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bug"
+                ],
+                "summary": "更新缺陷",
+                "operationId": "UpdateBug",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "缺陷ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "缺陷信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.BugRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除指定ID的缺陷",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bug"
+                ],
+                "summary": "删除缺陷",
+                "operationId": "DeleteBug",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "缺陷ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/devices": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "搜索时支持设备名称、设备类型和状态筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "获取设备列表",
+                "operationId": "ListDevices",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备类型",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备状态",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.DeviceSearchResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建一个新的设备",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "创建设备",
+                "operationId": "CreateDevice",
+                "parameters": [
+                    {
+                        "description": "设备信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.DeviceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/devices/heartbeat": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "接收设备心跳请求",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "设备心跳",
+                "operationId": "DeviceHeartbeat",
+                "parameters": [
+                    {
+                        "description": "心跳信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.DeviceHeartbeatRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/devices/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定ID的设备详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "获取设备详情",
+                "operationId": "GetDevice",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "设备ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.DeviceResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新设备信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "更新设备",
+                "operationId": "UpdateDevice",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "设备ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "设备信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.DeviceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除指定ID的设备",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "删除设备",
+                "operationId": "DeleteDevice",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "设备ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/feedbacks": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取用户反馈列表，支持分页和筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserFeedback"
+                ],
+                "summary": "获取用户反馈列表",
+                "operationId": "ListUserFeedbacks",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "projectId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "反馈类型",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "反馈状态",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.UserFeedbackSearchResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建一个新的用户反馈",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserFeedback"
+                ],
+                "summary": "创建用户反馈",
+                "operationId": "CreateUserFeedback",
+                "parameters": [
+                    {
+                        "description": "反馈信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.UserFeedbackRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/feedbacks/project/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定项目的所有用户反馈",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserFeedback"
+                ],
+                "summary": "获取项目用户反馈",
+                "operationId": "GetUserFeedbacksByProject",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.UserFeedbackSearchResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/feedbacks/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定ID的用户反馈详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserFeedback"
+                ],
+                "summary": "获取用户反馈详情",
+                "operationId": "GetUserFeedback",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "反馈ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.UserFeedbackResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新用户反馈信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserFeedback"
+                ],
+                "summary": "更新用户反馈",
+                "operationId": "UpdateUserFeedback",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "反馈ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "反馈信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.UserFeedbackRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除指定ID的用户反馈",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserFeedback"
+                ],
+                "summary": "删除用户反馈",
+                "operationId": "DeleteUserFeedback",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "反馈ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/projects": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "搜索时支持项目名称、描述筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project"
+                ],
+                "summary": "获取项目列表",
+                "operationId": "ListProjects",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目描述",
+                        "name": "description",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.ProjectSearchResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建一个新的项目",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project"
+                ],
+                "summary": "创建项目",
+                "operationId": "CreateProject",
+                "parameters": [
+                    {
+                        "description": "项目信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.ProjectRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/projects/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定ID的项目详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project"
+                ],
+                "summary": "获取项目详情",
+                "operationId": "GetProject",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.ProjectResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新项目信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project"
+                ],
+                "summary": "更新项目",
+                "operationId": "UpdateProject",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "项目信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.ProjectRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除指定ID的项目",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project"
+                ],
+                "summary": "删除项目",
+                "operationId": "DeleteProject",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/requirements": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "分页获取需求列表，支持筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Requirement"
+                ],
+                "summary": "获取需求列表",
+                "operationId": "ListRequirements",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "需求标题",
+                        "name": "title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "需求状态",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.RequirementSearchResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建一个新的需求",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Requirement"
+                ],
+                "summary": "创建需求",
+                "operationId": "CreateRequirement",
+                "parameters": [
+                    {
+                        "description": "需求信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.RequirementRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/requirements/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定ID的需求详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Requirement"
+                ],
+                "summary": "获取需求详情",
+                "operationId": "GetRequirement",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "需求ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.RequirementResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新指定ID的需求信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Requirement"
+                ],
+                "summary": "更新需求",
+                "operationId": "UpdateRequirement",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "需求ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "需求信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.RequirementRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除指定ID的需求",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Requirement"
+                ],
+                "summary": "删除需求",
+                "operationId": "DeleteRequirement",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "需求ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/testcases": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "搜索时支持名称、描述、项目ID等筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestCase"
+                ],
+                "summary": "获取测试用例列表",
+                "operationId": "ListTestCases",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用例名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "projectId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestCaseSearchResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建一个新的测试用例",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestCase"
+                ],
+                "summary": "创建测试用例",
+                "operationId": "CreateTestCase",
+                "parameters": [
+                    {
+                        "description": "测试用例信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestCaseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/testcases/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定ID的测试用例详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestCase"
+                ],
+                "summary": "获取测试用例详情",
+                "operationId": "GetTestCase",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "测试用例ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestCaseResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新测试用例信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestCase"
+                ],
+                "summary": "更新测试用例",
+                "operationId": "UpdateTestCase",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "测试用例ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "测试用例信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestCaseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除指定ID的测试用例",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestCase"
+                ],
+                "summary": "删除测试用例",
+                "operationId": "DeleteTestCase",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "测试用例ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/testplans": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取测试计划列表，支持分页和筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestPlan"
+                ],
+                "summary": "获取测试计划列表",
+                "operationId": "ListTestPlans",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "计划名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "projectId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestPlanSearchResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建一个新的测试计划",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestPlan"
+                ],
+                "summary": "创建测试计划",
+                "operationId": "CreateTestPlan",
+                "parameters": [
+                    {
+                        "description": "测试计划信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestPlanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/testplans/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定ID的测试计划详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestPlan"
+                ],
+                "summary": "获取测试计划详情",
+                "operationId": "GetTestPlan",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "计划ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestPlanResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新测试计划信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestPlan"
+                ],
+                "summary": "更新测试计划",
+                "operationId": "UpdateTestPlan",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "计划ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "测试计划信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestPlanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除指定ID的测试计划",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestPlan"
+                ],
+                "summary": "删除测试计划",
+                "operationId": "DeleteTestPlan",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "计划ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/testrecords": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取测试记录列表，支持按项目、用例等筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestRecord"
+                ],
+                "summary": "获取测试记录列表",
+                "operationId": "ListTestRecords",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "projectID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用例ID",
+                        "name": "testCaseID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "执行状态",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestRecordSearchResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建一个新的测试记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestRecord"
+                ],
+                "summary": "创建测试记录",
+                "operationId": "CreateTestRecord",
+                "parameters": [
+                    {
+                        "description": "测试记录信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestRecordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestRecordResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/testrecords/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定ID的测试记录详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestRecord"
+                ],
+                "summary": "获取测试记录详情",
+                "operationId": "GetTestRecord",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "测试记录ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestRecordResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除指定ID的测试记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestRecord"
+                ],
+                "summary": "删除测试记录",
+                "operationId": "DeleteTestRecord",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "测试记录ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/testsuites": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取测试套件列表，支持分页和筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestSuite"
+                ],
+                "summary": "获取测试套件列表",
+                "operationId": "ListTestSuites",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "套件名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "项目ID",
+                        "name": "projectId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestSuiteSearchResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建一个新的测试套件",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestSuite"
+                ],
+                "summary": "创建测试套件",
+                "operationId": "CreateTestSuite",
+                "parameters": [
+                    {
+                        "description": "测试套件信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestSuiteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/testsuites/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取指定ID的测试套件详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestSuite"
+                ],
+                "summary": "获取测试套件详情",
+                "operationId": "GetTestSuite",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "测试套件ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestSuiteResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新指定ID的测试套件信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestSuite"
+                ],
+                "summary": "更新测试套件",
+                "operationId": "UpdateTestSuite",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "测试套件ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "测试套件信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestSuiteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除指定ID的测试套件",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TestSuite"
+                ],
+                "summary": "删除测试套件",
+                "operationId": "DeleteTestSuite",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "测试套件ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2373,6 +4594,261 @@
                 }
             }
         },
+        "backend_api_v1.AIProviderDataItem": {
+            "type": "object",
+            "properties": {
+                "advancedConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "avgResponseTime": {
+                    "type": "integer",
+                    "example": 1500
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "example": "https://api.openai.com/v1"
+                },
+                "costConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "createdBy": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "desc": {
+                    "type": "string",
+                    "example": "OpenAI API configuration"
+                },
+                "failedCalls": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "inputTokens": {
+                    "type": "integer",
+                    "example": 300000
+                },
+                "lastCost": {
+                    "type": "string",
+                    "example": "0.005000"
+                },
+                "lastSuccessAt": {
+                    "type": "string",
+                    "example": "2024-01-01 12:00:00"
+                },
+                "lastUsedAt": {
+                    "type": "string",
+                    "example": "2024-01-01 12:00:00"
+                },
+                "modelConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "organizationId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "outputTokens": {
+                    "type": "integer",
+                    "example": 200000
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "providerName": {
+                    "type": "string",
+                    "example": "OpenAI"
+                },
+                "providerNo": {
+                    "type": "string",
+                    "example": "PROVIDER001"
+                },
+                "providerType": {
+                    "type": "string",
+                    "example": "openai"
+                },
+                "rateLimitConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "region": {
+                    "type": "string",
+                    "example": "us-east-1"
+                },
+                "securityConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "successCalls": {
+                    "type": "integer",
+                    "example": 980
+                },
+                "totalCalls": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "totalCost": {
+                    "type": "string",
+                    "example": "10.500000"
+                },
+                "totalTokens": {
+                    "type": "integer",
+                    "example": 500000
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "updatedBy": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "backend_api_v1.AIProviderRequest": {
+            "type": "object",
+            "required": [
+                "providerName",
+                "providerNo",
+                "providerType"
+            ],
+            "properties": {
+                "advancedConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "example": "https://api.openai.com/v1"
+                },
+                "costConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "desc": {
+                    "type": "string",
+                    "example": "OpenAI API configuration"
+                },
+                "modelConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "organizationId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "providerName": {
+                    "type": "string",
+                    "example": "OpenAI"
+                },
+                "providerNo": {
+                    "type": "string",
+                    "example": "PROVIDER001"
+                },
+                "providerType": {
+                    "type": "string",
+                    "example": "openai"
+                },
+                "rateLimitConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "region": {
+                    "type": "string",
+                    "example": "us-east-1"
+                },
+                "securityConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "backend_api_v1.AIProviderResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.AIProviderDataItem"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.AIProviderSearchResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.AIProviderSearchResponseData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.AIProviderSearchResponseData": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_api_v1.AIProviderDataItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "backend_api_v1.AdminSetting": {
             "type": "object",
             "properties": {
@@ -2556,6 +5032,572 @@
                 },
                 "gravatarEndpoint": {
                     "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.BugDataItem": {
+            "type": "object",
+            "properties": {
+                "actualResult": {
+                    "type": "string",
+                    "example": "Login failed"
+                },
+                "assigneeId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "attachmentPaths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "[\"/uploads/bug/1.png\"]"
+                    ]
+                },
+                "browser": {
+                    "type": "string",
+                    "example": "Safari"
+                },
+                "bugNo": {
+                    "type": "string",
+                    "example": "BUG001"
+                },
+                "closedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "creatorId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description": {
+                    "type": "string",
+                    "example": "User cannot login"
+                },
+                "deviceInfo": {
+                    "type": "string",
+                    "example": "iPhone 14"
+                },
+                "environment": {
+                    "type": "string",
+                    "example": "dev"
+                },
+                "expectedResult": {
+                    "type": "string",
+                    "example": "Login successful"
+                },
+                "fixedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "os": {
+                    "type": "string",
+                    "example": "iOS 16.0"
+                },
+                "preconditions": {
+                    "type": "string",
+                    "example": "User is logged in"
+                },
+                "priority": {
+                    "type": "string",
+                    "example": "P0"
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "requirementId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "severity": {
+                    "type": "string",
+                    "example": "critical"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "new"
+                },
+                "steps": {
+                    "type": "string",
+                    "example": "1. Click login..."
+                },
+                "testCaseId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "testRecordId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Login failed"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "userFeedbackId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "verifiedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "verifierId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "backend_api_v1.BugRequest": {
+            "type": "object",
+            "required": [
+                "bugNo",
+                "priority",
+                "projectId",
+                "severity",
+                "title"
+            ],
+            "properties": {
+                "actualResult": {
+                    "type": "string",
+                    "example": "Login failed"
+                },
+                "assigneeId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "attachmentPaths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "[\"/uploads/bug/1.png\"]"
+                    ]
+                },
+                "browser": {
+                    "type": "string",
+                    "example": "Safari"
+                },
+                "bugNo": {
+                    "type": "string",
+                    "example": "BUG001"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "User cannot login"
+                },
+                "deviceInfo": {
+                    "type": "string",
+                    "example": "iPhone 14"
+                },
+                "environment": {
+                    "type": "string",
+                    "example": "dev"
+                },
+                "expectedResult": {
+                    "type": "string",
+                    "example": "Login successful"
+                },
+                "os": {
+                    "type": "string",
+                    "example": "iOS 16.0"
+                },
+                "preconditions": {
+                    "type": "string",
+                    "example": "User is logged in"
+                },
+                "priority": {
+                    "type": "string",
+                    "example": "P0"
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "requirementId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "severity": {
+                    "type": "string",
+                    "example": "critical"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "new"
+                },
+                "steps": {
+                    "type": "string",
+                    "example": "1. Click login..."
+                },
+                "testCaseId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "testRecordId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Login failed"
+                },
+                "userFeedbackId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "verifierId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "backend_api_v1.BugResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.BugDataItem"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.BugSearchResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.BugSearchResponseData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.BugSearchResponseData": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_api_v1.BugDataItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "backend_api_v1.DeviceDataItem": {
+            "type": "object",
+            "properties": {
+                "battery": {
+                    "type": "integer",
+                    "example": 85
+                },
+                "connectMode": {
+                    "type": "string",
+                    "example": "usb"
+                },
+                "cpuUsage": {
+                    "type": "number",
+                    "example": 25.5
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "deviceModel": {
+                    "type": "string",
+                    "example": "Pixel 6"
+                },
+                "deviceNo": {
+                    "type": "string",
+                    "example": "DEV001"
+                },
+                "deviceType": {
+                    "type": "string",
+                    "example": "android"
+                },
+                "groupId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "ipAddress": {
+                    "type": "string",
+                    "example": "192.168.1.100"
+                },
+                "isCharging": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "lastHeartbeat": {
+                    "type": "string",
+                    "example": "2024-01-01 12:00:00"
+                },
+                "memoryTotal": {
+                    "type": "integer",
+                    "example": 8192
+                },
+                "memoryUsage": {
+                    "type": "number",
+                    "example": 45.2
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Pixel 6"
+                },
+                "osVersion": {
+                    "type": "string",
+                    "example": "13"
+                },
+                "platform": {
+                    "type": "string",
+                    "example": "android"
+                },
+                "port": {
+                    "type": "integer",
+                    "example": 5555
+                },
+                "screenDpi": {
+                    "type": "integer",
+                    "example": 420
+                },
+                "screenSize": {
+                    "type": "string",
+                    "example": "1080x2400"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "storageFree": {
+                    "type": "integer",
+                    "example": 32768
+                },
+                "tags": {
+                    "type": "string",
+                    "example": "[\"phone\",\"test\"]"
+                },
+                "udid": {
+                    "type": "string",
+                    "example": "emulator-5554"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                }
+            }
+        },
+        "backend_api_v1.DeviceHeartbeatRequest": {
+            "type": "object",
+            "required": [
+                "deviceId"
+            ],
+            "properties": {
+                "battery": {
+                    "type": "integer",
+                    "example": 85
+                },
+                "cpuUsage": {
+                    "type": "number",
+                    "example": 25.5
+                },
+                "deviceId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "isCharging": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "memoryUsage": {
+                    "type": "number",
+                    "example": 45.2
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "storageFree": {
+                    "type": "integer",
+                    "example": 32768
+                }
+            }
+        },
+        "backend_api_v1.DeviceRequest": {
+            "type": "object",
+            "required": [
+                "deviceNo",
+                "deviceType",
+                "name"
+            ],
+            "properties": {
+                "connectMode": {
+                    "type": "string",
+                    "example": "usb"
+                },
+                "deviceModel": {
+                    "type": "string",
+                    "example": "Pixel 6"
+                },
+                "deviceNo": {
+                    "type": "string",
+                    "example": "DEV001"
+                },
+                "deviceType": {
+                    "type": "string",
+                    "example": "android"
+                },
+                "groupId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "ipAddress": {
+                    "type": "string",
+                    "example": "192.168.1.100"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Pixel 6"
+                },
+                "osVersion": {
+                    "type": "string",
+                    "example": "13"
+                },
+                "platform": {
+                    "type": "string",
+                    "example": "android"
+                },
+                "port": {
+                    "type": "integer",
+                    "example": 5555
+                },
+                "screenDpi": {
+                    "type": "integer",
+                    "example": 420
+                },
+                "screenSize": {
+                    "type": "string",
+                    "example": "1080x2400"
+                },
+                "tags": {
+                    "type": "string",
+                    "example": "[\"phone\",\"test\"]"
+                },
+                "udid": {
+                    "type": "string",
+                    "example": "emulator-5554"
+                }
+            }
+        },
+        "backend_api_v1.DeviceResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.DeviceDataItem"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.DeviceSearchResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.DeviceSearchResponseData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.DeviceSearchResponseData": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_api_v1.DeviceDataItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -3117,6 +6159,168 @@
                 }
             }
         },
+        "backend_api_v1.ProjectDataItem": {
+            "type": "object",
+            "properties": {
+                "caseCount": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "code": {
+                    "type": "string",
+                    "example": "PROJ001"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "creatorId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Project description"
+                },
+                "execCount": {
+                    "type": "integer",
+                    "example": 50
+                },
+                "gitRepo": {
+                    "type": "string",
+                    "example": "https://github.com/org/repo.git"
+                },
+                "icon": {
+                    "type": "string",
+                    "example": "https://example.com/icon.png"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "My Project"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "tags": {
+                    "type": "string",
+                    "example": "mobile,web"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                }
+            }
+        },
+        "backend_api_v1.ProjectRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "PROJ001"
+                },
+                "defaultEnvId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Project description"
+                },
+                "gitRepo": {
+                    "type": "string",
+                    "example": "https://github.com/org/repo.git"
+                },
+                "icon": {
+                    "type": "string",
+                    "example": "https://example.com/icon.png"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "My Project"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "tags": {
+                    "type": "string",
+                    "example": "mobile,web"
+                }
+            }
+        },
+        "backend_api_v1.ProjectResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.ProjectDataItem"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.ProjectSearchResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.ProjectSearchResponseData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.ProjectSearchResponseData": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_api_v1.ProjectDataItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "backend_api_v1.RedisConfig": {
             "type": "object",
             "properties": {
@@ -3174,6 +6378,202 @@
                     "type": "string",
                     "minLength": 6,
                     "example": "123456"
+                }
+            }
+        },
+        "backend_api_v1.RequirementDataItem": {
+            "type": "object",
+            "properties": {
+                "bugIds": {
+                    "type": "string",
+                    "example": "[]"
+                },
+                "changeHistory": {
+                    "type": "string",
+                    "example": "[]"
+                },
+                "completedAt": {
+                    "type": "string",
+                    "example": ""
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "creatorId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description": {
+                    "type": "string",
+                    "example": "User login requirement"
+                },
+                "expectedAt": {
+                    "type": "string",
+                    "example": "2024-12-31"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "owner": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "parentId": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "priority": {
+                    "type": "string",
+                    "example": "P1"
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "requirementNo": {
+                    "type": "string",
+                    "example": "REQ001"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "pending-review"
+                },
+                "testCaseIds": {
+                    "type": "string",
+                    "example": "[]"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "User Login"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "backend_api_v1.RequirementRequest": {
+            "type": "object",
+            "required": [
+                "owner",
+                "projectId",
+                "requirementNo",
+                "title"
+            ],
+            "properties": {
+                "bugIds": {
+                    "type": "string",
+                    "example": "[]"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "User login requirement"
+                },
+                "expectedAt": {
+                    "type": "string",
+                    "example": "2024-12-31"
+                },
+                "owner": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "parentId": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "priority": {
+                    "type": "string",
+                    "example": "P1"
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "requirementNo": {
+                    "type": "string",
+                    "example": "REQ001"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "pending-review"
+                },
+                "testCaseIds": {
+                    "type": "string",
+                    "example": "[]"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "User Login"
+                }
+            }
+        },
+        "backend_api_v1.RequirementResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.RequirementDataItem"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.RequirementSearchResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.RequirementSearchResponseData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.RequirementSearchResponseData": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_api_v1.RequirementDataItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -3401,6 +6801,188 @@
                 }
             }
         },
+        "backend_api_v1.TestCaseDataItem": {
+            "type": "object",
+            "properties": {
+                "caseNo": {
+                    "type": "string",
+                    "example": "TC001"
+                },
+                "caseType": {
+                    "type": "string",
+                    "example": "functional"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "creatorId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Test user login flow"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "module": {
+                    "type": "string",
+                    "example": "auth"
+                },
+                "priority": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "requirementId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "stepsData": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "tags": {
+                    "type": "string",
+                    "example": "smoke,regression"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Login Test Case"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "backend_api_v1.TestCaseRequest": {
+            "type": "object",
+            "required": [
+                "projectId",
+                "title"
+            ],
+            "properties": {
+                "caseType": {
+                    "type": "string",
+                    "example": "functional"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Test user login flow"
+                },
+                "module": {
+                    "type": "string",
+                    "example": "auth"
+                },
+                "priority": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "requirementId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "stepsData": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "tags": {
+                    "type": "string",
+                    "example": "smoke,regression"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Login Test Case"
+                }
+            }
+        },
+        "backend_api_v1.TestCaseResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.TestCaseDataItem"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.TestCaseSearchResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.TestCaseSearchResponseData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.TestCaseSearchResponseData": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_api_v1.TestCaseDataItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "backend_api_v1.TestEmailRequest": {
             "type": "object",
             "required": [
@@ -3411,6 +6993,579 @@
                     "description": "邮箱",
                     "type": "string",
                     "example": "zhangsan@example.com"
+                }
+            }
+        },
+        "backend_api_v1.TestPlanDataItem": {
+            "type": "object",
+            "properties": {
+                "actualEndTime": {
+                    "type": "string",
+                    "example": "2024-01-01 16:00:00"
+                },
+                "actualStartTime": {
+                    "type": "string",
+                    "example": "2024-01-01 10:00:00"
+                },
+                "contentData": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "creatorId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "cronExpr": {
+                    "type": "string",
+                    "example": "0 0 * * *"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Test plan for release 1.0"
+                },
+                "execStatus": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "executorId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "expectedEndTime": {
+                    "type": "string",
+                    "example": "2024-01-01 18:00:00"
+                },
+                "expectedStartTime": {
+                    "type": "string",
+                    "example": "2024-01-01 10:00:00"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Release 1.0 Test Plan"
+                },
+                "notifyConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "parallelism": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "planNo": {
+                    "type": "string",
+                    "example": "TP001"
+                },
+                "planType": {
+                    "type": "string",
+                    "example": "manual"
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "retryCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "timeout": {
+                    "type": "integer",
+                    "example": 7200
+                },
+                "triggerType": {
+                    "type": "string",
+                    "example": "manual"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                }
+            }
+        },
+        "backend_api_v1.TestPlanRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "projectId"
+            ],
+            "properties": {
+                "contentData": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "cronExpr": {
+                    "type": "string",
+                    "example": "0 0 * * *"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Test plan for release 1.0"
+                },
+                "expectedEndTime": {
+                    "type": "string",
+                    "example": "2024-01-01 18:00:00"
+                },
+                "expectedStartTime": {
+                    "type": "string",
+                    "example": "2024-01-01 10:00:00"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Release 1.0 Test Plan"
+                },
+                "notifyConfig": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "parallelism": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "planType": {
+                    "type": "string",
+                    "example": "manual"
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "retryCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "timeout": {
+                    "type": "integer",
+                    "example": 7200
+                },
+                "triggerType": {
+                    "type": "string",
+                    "example": "manual"
+                }
+            }
+        },
+        "backend_api_v1.TestPlanResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.TestPlanDataItem"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.TestPlanSearchResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.TestPlanSearchResponseData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.TestPlanSearchResponseData": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_api_v1.TestPlanDataItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "backend_api_v1.TestRecordDataItem": {
+            "type": "object",
+            "properties": {
+                "blockedCases": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "duration": {
+                    "type": "integer",
+                    "example": 7200
+                },
+                "endTime": {
+                    "type": "string",
+                    "example": "2024-01-01 12:00:00"
+                },
+                "execContext": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "execStatus": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "executorId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "failedCases": {
+                    "type": "integer",
+                    "example": 3
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "passRate": {
+                    "type": "integer",
+                    "example": 95
+                },
+                "passedCases": {
+                    "type": "integer",
+                    "example": 95
+                },
+                "planId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "reportFormat": {
+                    "type": "string",
+                    "example": "html"
+                },
+                "reportUrl": {
+                    "type": "string",
+                    "example": "https://example.com/report.html"
+                },
+                "skippedCases": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "startTime": {
+                    "type": "string",
+                    "example": "2024-01-01 10:00:00"
+                },
+                "totalCases": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                }
+            }
+        },
+        "backend_api_v1.TestRecordRequest": {
+            "type": "object",
+            "required": [
+                "projectId"
+            ],
+            "properties": {
+                "execContext": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "executorId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "planId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "backend_api_v1.TestRecordResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.TestRecordDataItem"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.TestRecordSearchResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.TestRecordSearchResponseData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.TestRecordSearchResponseData": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_api_v1.TestRecordDataItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "backend_api_v1.TestSuiteDataItem": {
+            "type": "object",
+            "properties": {
+                "caseIds": {
+                    "type": "string",
+                    "example": "[1,2,3]"
+                },
+                "continueOnFail": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "creatorId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Smoke test suite"
+                },
+                "filterRule": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Smoke Suite"
+                },
+                "parallelism": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "retryCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "suiteNo": {
+                    "type": "string",
+                    "example": "TS001"
+                },
+                "suiteType": {
+                    "type": "string",
+                    "example": "static"
+                },
+                "timeout": {
+                    "type": "integer",
+                    "example": 3600
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                }
+            }
+        },
+        "backend_api_v1.TestSuiteRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "projectId"
+            ],
+            "properties": {
+                "caseIds": {
+                    "type": "string",
+                    "example": "[1,2,3]"
+                },
+                "continueOnFail": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Smoke test suite"
+                },
+                "filterRule": {
+                    "type": "string",
+                    "example": "{}"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Smoke Suite"
+                },
+                "parallelism": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "retryCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "suiteType": {
+                    "type": "string",
+                    "example": "static"
+                },
+                "timeout": {
+                    "type": "integer",
+                    "example": 3600
+                }
+            }
+        },
+        "backend_api_v1.TestSuiteResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.TestSuiteDataItem"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.TestSuiteSearchResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.TestSuiteSearchResponseData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.TestSuiteSearchResponseData": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_api_v1.TestSuiteDataItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -3518,6 +7673,255 @@
                         2
                     ],
                     "example": 1
+                }
+            }
+        },
+        "backend_api_v1.UserFeedbackDataItem": {
+            "type": "object",
+            "properties": {
+                "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                },
+                "attachmentPaths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "[]"
+                    ]
+                },
+                "bugId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "channel": {
+                    "type": "string",
+                    "example": "in-app"
+                },
+                "closedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "content": {
+                    "type": "string",
+                    "example": "Cannot login with correct password"
+                },
+                "convertedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "convertedBy": {
+                    "type": "string",
+                    "example": "admin"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "deviceModel": {
+                    "type": "string",
+                    "example": "iPhone 14"
+                },
+                "feedbackNo": {
+                    "type": "string",
+                    "example": "FB001"
+                },
+                "handler": {
+                    "type": "string",
+                    "example": "admin"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "occurredAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "osVersion": {
+                    "type": "string",
+                    "example": "iOS 16.0"
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "reporter": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "testRecordId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Login issue"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                }
+            }
+        },
+        "backend_api_v1.UserFeedbackRequest": {
+            "type": "object",
+            "required": [
+                "channel",
+                "content",
+                "feedbackNo",
+                "occurredAt",
+                "projectId",
+                "reporter",
+                "title"
+            ],
+            "properties": {
+                "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                },
+                "attachmentPaths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "[]"
+                    ]
+                },
+                "bugId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "channel": {
+                    "type": "string",
+                    "example": "in-app"
+                },
+                "closedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "content": {
+                    "type": "string",
+                    "example": "Cannot login with correct password"
+                },
+                "convertedAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "convertedBy": {
+                    "type": "string",
+                    "example": "admin"
+                },
+                "deviceModel": {
+                    "type": "string",
+                    "example": "iPhone 14"
+                },
+                "feedbackNo": {
+                    "type": "string",
+                    "example": "FB001"
+                },
+                "handler": {
+                    "type": "string",
+                    "example": "admin"
+                },
+                "occurredAt": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "osVersion": {
+                    "type": "string",
+                    "example": "iOS 16.0"
+                },
+                "projectId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "reporter": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "testRecordId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Login issue"
+                }
+            }
+        },
+        "backend_api_v1.UserFeedbackResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.UserFeedbackDataItem"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.UserFeedbackSearchResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.UserFeedbackSearchResponseData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.UserFeedbackSearchResponseData": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/backend_api_v1.UserFeedbackDataItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

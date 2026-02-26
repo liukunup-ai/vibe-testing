@@ -21,6 +21,75 @@ func NewAIAnalysisResultHandler(handler *Handler, aiAnalysisResultService servic
 		aiAnalysisResultService: aiAnalysisResultService,
 	}
 }
+// ListAIAnalysisResults godoc
+// @Summary 获取AI分析结果列表
+// @Schemes
+// @Description 获取AI分析结果列表，支持分页和筛选
+// @Tags AIAnalysisResult
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param page query int true "页码"
+// @Param pageSize query int true "分页大小"
+// @Param projectId query uint false "项目ID"
+// @Param testCaseId query uint false "测试用例ID"
+// @Param analysisType query string false "分析类型"
+// @Success 200 {object} v1.AIAnalysisResultSearchResponse
+// @Router /v1/ai-analysis-results [get]
+// @ID ListAIAnalysisResults
+
+// CreateAIAnalysisResult godoc
+// @Summary 创建AI分析结果
+// @Schemes
+// @Description 创建新的AI分析结果
+// @Tags AIAnalysisResult
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param request body v1.AIAnalysisResultRequest true "AI分析结果信息"
+// @Success 200 {object} v1.Response
+// @Router /v1/ai-analysis-results [post]
+// @ID CreateAIAnalysisResult
+
+// UpdateAIAnalysisResult godoc
+// @Summary 更新AI分析结果
+// @Schemes
+// @Description 更新指定ID的AI分析结果
+// @Tags AIAnalysisResult
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "AI分析结果ID"
+// @Param request body v1.AIAnalysisResultRequest true "AI分析结果信息"
+// @Success 200 {object} v1.Response
+// @Router /v1/ai-analysis-results/{id} [put]
+// @ID UpdateAIAnalysisResult
+
+// DeleteAIAnalysisResult godoc
+// @Summary 删除AI分析结果
+// @Schemes
+// @Description 删除指定ID的AI分析结果
+// @Tags AIAnalysisResult
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "AI分析结果ID"
+// @Success 200 {object} v1.Response
+// @Router /v1/ai-analysis-results/{id} [delete]
+// @ID DeleteAIAnalysisResult
+
+// GetAIAnalysisResult godoc
+// @Summary 获取AI分析结果详情
+// @Schemes
+// @Description 获取指定ID的AI分析结果详情
+// @Tags AIAnalysisResult
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "AI分析结果ID"
+// @Success 200 {object} v1.AIAnalysisResultResponse
+// @Router /v1/ai-analysis-results/{id} [get]
+// @ID GetAIAnalysisResult
 
 func (h *AIAnalysisResultHandler) ListAIAnalysisResults(ctx *gin.Context) {
 	var req v1.AIAnalysisResultSearchRequest

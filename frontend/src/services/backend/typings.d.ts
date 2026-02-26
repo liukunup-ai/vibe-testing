@@ -42,6 +42,85 @@ declare namespace API {
     provider?: string;
   };
 
+  type AIProviderDataItem = {
+    advancedConfig?: string;
+    avgResponseTime?: number;
+    baseUrl?: string;
+    costConfig?: string;
+    createdAt?: string;
+    createdBy?: number;
+    desc?: string;
+    failedCalls?: number;
+    id?: number;
+    inputTokens?: number;
+    lastCost?: string;
+    lastSuccessAt?: string;
+    lastUsedAt?: string;
+    modelConfig?: string;
+    organizationId?: number;
+    outputTokens?: number;
+    projectId?: number;
+    providerName?: string;
+    providerNo?: string;
+    providerType?: string;
+    rateLimitConfig?: string;
+    region?: string;
+    securityConfig?: string;
+    status?: number;
+    successCalls?: number;
+    totalCalls?: number;
+    totalCost?: string;
+    totalTokens?: number;
+    updatedAt?: string;
+    updatedBy?: number;
+  };
+
+  type AIProviderRequest = {
+    advancedConfig?: string;
+    baseUrl?: string;
+    costConfig?: string;
+    desc?: string;
+    modelConfig?: string;
+    organizationId?: number;
+    projectId?: number;
+    providerName: string;
+    providerNo: string;
+    providerType: string;
+    rateLimitConfig?: string;
+    region?: string;
+    securityConfig?: string;
+    status?: number;
+  };
+
+  type AIProviderResponse = {
+    data?: AIProviderDataItem;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type AIProviderSearchResponse = {
+    data?: AIProviderSearchResponseData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type AIProviderSearchResponseData = {
+    list?: AIProviderDataItem[];
+    total?: number;
+  };
+
   type Api = {
     /** 创建时间 */
     createdAt?: string;
@@ -110,8 +189,109 @@ declare namespace API {
     gravatarEndpoint?: string;
   };
 
+  type BugDataItem = {
+    actualResult?: string;
+    assigneeId?: number;
+    attachmentPaths?: string[];
+    browser?: string;
+    bugNo?: string;
+    closedAt?: string;
+    createdAt?: string;
+    creatorId?: number;
+    description?: string;
+    deviceInfo?: string;
+    environment?: string;
+    expectedResult?: string;
+    fixedAt?: string;
+    id?: number;
+    os?: string;
+    preconditions?: string;
+    priority?: string;
+    projectId?: number;
+    requirementId?: number;
+    severity?: string;
+    status?: string;
+    steps?: string;
+    testCaseId?: number;
+    testRecordId?: number;
+    title?: string;
+    updatedAt?: string;
+    userFeedbackId?: number;
+    verifiedAt?: string;
+    verifierId?: number;
+  };
+
+  type BugRequest = {
+    actualResult?: string;
+    assigneeId?: number;
+    attachmentPaths?: string[];
+    browser?: string;
+    bugNo: string;
+    description?: string;
+    deviceInfo?: string;
+    environment?: string;
+    expectedResult?: string;
+    os?: string;
+    preconditions?: string;
+    priority: string;
+    projectId: number;
+    requirementId?: number;
+    severity: string;
+    status?: string;
+    steps?: string;
+    testCaseId?: number;
+    testRecordId?: number;
+    title: string;
+    userFeedbackId?: number;
+    verifierId?: number;
+  };
+
+  type BugResponse = {
+    data?: BugDataItem;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type BugSearchResponse = {
+    data?: BugSearchResponseData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type BugSearchResponseData = {
+    list?: BugDataItem[];
+    total?: number;
+  };
+
+  type DeleteAIProviderParams = {
+    /** 供应商ID */
+    id: number;
+  };
+
   type DeleteApiParams = {
     /** 接口ID */
+    id: number;
+  };
+
+  type DeleteBugParams = {
+    /** 缺陷ID */
+    id: number;
+  };
+
+  type DeleteDeviceParams = {
+    /** 设备ID */
     id: number;
   };
 
@@ -125,14 +305,133 @@ declare namespace API {
     id: number;
   };
 
+  type DeleteProjectParams = {
+    /** 项目ID */
+    id: number;
+  };
+
+  type DeleteRequirementParams = {
+    /** 需求ID */
+    id: number;
+  };
+
   type DeleteRoleParams = {
     /** 角色ID */
+    id: number;
+  };
+
+  type DeleteTestCaseParams = {
+    /** 测试用例ID */
+    id: number;
+  };
+
+  type DeleteTestPlanParams = {
+    /** 计划ID */
+    id: number;
+  };
+
+  type DeleteTestRecordParams = {
+    /** 测试记录ID */
+    id: number;
+  };
+
+  type DeleteTestSuiteParams = {
+    /** 测试套件ID */
+    id: number;
+  };
+
+  type DeleteUserFeedbackParams = {
+    /** 反馈ID */
     id: number;
   };
 
   type DeleteUserParams = {
     /** 用户ID */
     id: string;
+  };
+
+  type DeviceDataItem = {
+    battery?: number;
+    connectMode?: string;
+    cpuUsage?: number;
+    createdAt?: string;
+    deviceModel?: string;
+    deviceNo?: string;
+    deviceType?: string;
+    groupId?: number;
+    id?: number;
+    ipAddress?: string;
+    isCharging?: boolean;
+    lastHeartbeat?: string;
+    memoryTotal?: number;
+    memoryUsage?: number;
+    name?: string;
+    osVersion?: string;
+    platform?: string;
+    port?: number;
+    screenDpi?: number;
+    screenSize?: string;
+    status?: number;
+    storageFree?: number;
+    tags?: string;
+    udid?: string;
+    updatedAt?: string;
+  };
+
+  type DeviceHeartbeatRequest = {
+    battery?: number;
+    cpuUsage?: number;
+    deviceId: number;
+    isCharging?: boolean;
+    memoryUsage?: number;
+    status?: number;
+    storageFree?: number;
+  };
+
+  type DeviceRequest = {
+    connectMode?: string;
+    deviceModel?: string;
+    deviceNo: string;
+    deviceType: string;
+    groupId?: number;
+    ipAddress?: string;
+    name: string;
+    osVersion?: string;
+    platform?: string;
+    port?: number;
+    screenDpi?: number;
+    screenSize?: string;
+    tags?: string;
+    udid?: string;
+  };
+
+  type DeviceResponse = {
+    data?: DeviceDataItem;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type DeviceSearchResponse = {
+    data?: DeviceSearchResponseData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type DeviceSearchResponseData = {
+    list?: DeviceDataItem[];
+    total?: number;
   };
 
   type DynamicMenuResponse = {
@@ -167,13 +466,38 @@ declare namespace API {
     id: number;
   };
 
+  type GetAIProviderParams = {
+    /** 供应商ID */
+    id: number;
+  };
+
   type GetApiParams = {
     /** 接口ID */
     id: number;
   };
 
+  type GetBugParams = {
+    /** 缺陷ID */
+    id: number;
+  };
+
+  type GetDeviceParams = {
+    /** 设备ID */
+    id: number;
+  };
+
   type GetItemParams = {
     /** 项目ID */
+    id: number;
+  };
+
+  type GetProjectParams = {
+    /** 项目ID */
+    id: number;
+  };
+
+  type GetRequirementParams = {
+    /** 需求ID */
     id: number;
   };
 
@@ -206,9 +530,39 @@ declare namespace API {
     version?: string;
   };
 
+  type GetTestCaseParams = {
+    /** 测试用例ID */
+    id: number;
+  };
+
+  type GetTestPlanParams = {
+    /** 计划ID */
+    id: number;
+  };
+
+  type GetTestRecordParams = {
+    /** 测试记录ID */
+    id: number;
+  };
+
+  type GetTestSuiteParams = {
+    /** 测试套件ID */
+    id: number;
+  };
+
   type GetUserByIDParams = {
     /** 用户ID */
     id: string;
+  };
+
+  type GetUserFeedbackParams = {
+    /** 反馈ID */
+    id: number;
+  };
+
+  type GetUserFeedbacksByProjectParams = {
+    /** 项目ID */
+    id: number;
   };
 
   type Item = {
@@ -279,6 +633,17 @@ declare namespace API {
     userFilter?: string;
   };
 
+  type ListAIProvidersParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 供应商名称 */
+    name?: string;
+    /** 供应商类型 */
+    providerType?: string;
+  };
+
   type ListApisParams = {
     /** 页码 */
     page: number;
@@ -292,6 +657,38 @@ declare namespace API {
     path?: string;
     /** 方法 */
     method?: string;
+  };
+
+  type ListBugsParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 项目ID */
+    projectId?: number;
+    /** 缺陷编号 */
+    bugNo?: string;
+    /** 标题 */
+    title?: string;
+    /** 严重程度 */
+    severity?: string;
+    /** 优先级 */
+    priority?: string;
+    /** 状态 */
+    status?: string;
+  };
+
+  type ListDevicesParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 设备名称 */
+    name?: string;
+    /** 设备类型 */
+    type?: string;
+    /** 设备状态 */
+    status?: string;
   };
 
   type ListItemsParams = {
@@ -320,6 +717,28 @@ declare namespace API {
     access?: string;
   };
 
+  type ListProjectsParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 项目名称 */
+    name?: string;
+    /** 项目描述 */
+    description?: string;
+  };
+
+  type ListRequirementsParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 需求标题 */
+    title?: string;
+    /** 需求状态 */
+    status?: string;
+  };
+
   type ListRolesParams = {
     /** 页码 */
     page?: number;
@@ -329,6 +748,67 @@ declare namespace API {
     name?: string;
     /** Casbin Role */
     casbinRole?: string;
+  };
+
+  type ListTestCasesParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 用例名称 */
+    name?: string;
+    /** 项目ID */
+    projectId?: number;
+    /** 状态 */
+    status?: string;
+  };
+
+  type ListTestPlansParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 计划名称 */
+    name?: string;
+    /** 项目ID */
+    projectId?: number;
+  };
+
+  type ListTestRecordsParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 项目ID */
+    projectID?: number;
+    /** 用例ID */
+    testCaseID?: number;
+    /** 执行状态 */
+    status?: string;
+  };
+
+  type ListTestSuitesParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 套件名称 */
+    name?: string;
+    /** 项目ID */
+    projectId?: number;
+  };
+
+  type ListUserFeedbacksParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 项目ID */
+    projectId?: number;
+    /** 反馈类型 */
+    type?: string;
+    /** 反馈状态 */
+    status?: string;
   };
 
   type ListUsersParams = {
@@ -546,6 +1026,62 @@ declare namespace API {
     username?: string;
   };
 
+  type ProjectDataItem = {
+    caseCount?: number;
+    code?: string;
+    createdAt?: string;
+    creatorId?: number;
+    description?: string;
+    execCount?: number;
+    gitRepo?: string;
+    icon?: string;
+    id?: number;
+    name?: string;
+    status?: number;
+    tags?: string;
+    updatedAt?: string;
+  };
+
+  type ProjectRequest = {
+    code: string;
+    defaultEnvId?: number;
+    description?: string;
+    gitRepo?: string;
+    icon?: string;
+    name: string;
+    status?: number;
+    tags?: string;
+  };
+
+  type ProjectResponse = {
+    data?: ProjectDataItem;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type ProjectSearchResponse = {
+    data?: ProjectSearchResponseData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type ProjectSearchResponseData = {
+    list?: ProjectDataItem[];
+    total?: number;
+  };
+
   type putAdminApisIdRolesParams = {
     /** 接口ID */
     id: number;
@@ -576,6 +1112,70 @@ declare namespace API {
     fullName?: string;
     /** 密码 */
     password: string;
+  };
+
+  type RequirementDataItem = {
+    bugIds?: string;
+    changeHistory?: string;
+    completedAt?: string;
+    createdAt?: string;
+    creatorId?: number;
+    description?: string;
+    expectedAt?: string;
+    id?: number;
+    owner?: number;
+    parentId?: number;
+    priority?: string;
+    projectId?: number;
+    requirementNo?: string;
+    status?: string;
+    testCaseIds?: string;
+    title?: string;
+    updatedAt?: string;
+    version?: number;
+  };
+
+  type RequirementRequest = {
+    bugIds?: string;
+    description?: string;
+    expectedAt?: string;
+    owner: number;
+    parentId?: number;
+    priority?: string;
+    projectId: number;
+    requirementNo: string;
+    status?: string;
+    testCaseIds?: string;
+    title: string;
+  };
+
+  type RequirementResponse = {
+    data?: RequirementDataItem;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type RequirementSearchResponse = {
+    data?: RequirementSearchResponseData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type RequirementSearchResponseData = {
+    list?: RequirementDataItem[];
+    total?: number;
   };
 
   type ResetAvatarParams = {
@@ -708,9 +1308,260 @@ declare namespace API {
     user?: string;
   };
 
+  type TestCaseDataItem = {
+    caseNo?: string;
+    caseType?: string;
+    createdAt?: string;
+    creatorId?: number;
+    description?: string;
+    id?: number;
+    module?: string;
+    priority?: number;
+    projectId?: number;
+    requirementId?: number;
+    status?: number;
+    stepsData?: string;
+    tags?: string;
+    title?: string;
+    updatedAt?: string;
+    version?: number;
+  };
+
+  type TestCaseRequest = {
+    caseType?: string;
+    description?: string;
+    module?: string;
+    priority?: number;
+    projectId: number;
+    requirementId?: number;
+    status?: number;
+    stepsData?: string;
+    tags?: string;
+    title: string;
+  };
+
+  type TestCaseResponse = {
+    data?: TestCaseDataItem;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type TestCaseSearchResponse = {
+    data?: TestCaseSearchResponseData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type TestCaseSearchResponseData = {
+    list?: TestCaseDataItem[];
+    total?: number;
+  };
+
   type TestEmailRequest = {
     /** 邮箱 */
     to: string;
+  };
+
+  type TestPlanDataItem = {
+    actualEndTime?: string;
+    actualStartTime?: string;
+    contentData?: string;
+    createdAt?: string;
+    creatorId?: number;
+    cronExpr?: string;
+    description?: string;
+    execStatus?: number;
+    executorId?: number;
+    expectedEndTime?: string;
+    expectedStartTime?: string;
+    id?: number;
+    name?: string;
+    notifyConfig?: string;
+    parallelism?: number;
+    planNo?: string;
+    planType?: string;
+    projectId?: number;
+    retryCount?: number;
+    timeout?: number;
+    triggerType?: string;
+    updatedAt?: string;
+  };
+
+  type TestPlanRequest = {
+    contentData?: string;
+    cronExpr?: string;
+    description?: string;
+    expectedEndTime?: string;
+    expectedStartTime?: string;
+    name: string;
+    notifyConfig?: string;
+    parallelism?: number;
+    planType?: string;
+    projectId: number;
+    retryCount?: number;
+    timeout?: number;
+    triggerType?: string;
+  };
+
+  type TestPlanResponse = {
+    data?: TestPlanDataItem;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type TestPlanSearchResponse = {
+    data?: TestPlanSearchResponseData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type TestPlanSearchResponseData = {
+    list?: TestPlanDataItem[];
+    total?: number;
+  };
+
+  type TestRecordDataItem = {
+    blockedCases?: number;
+    createdAt?: string;
+    duration?: number;
+    endTime?: string;
+    execContext?: string;
+    execStatus?: number;
+    executorId?: number;
+    failedCases?: number;
+    id?: number;
+    passRate?: number;
+    passedCases?: number;
+    planId?: number;
+    projectId?: number;
+    reportFormat?: string;
+    reportUrl?: string;
+    skippedCases?: number;
+    startTime?: string;
+    totalCases?: number;
+    updatedAt?: string;
+  };
+
+  type TestRecordRequest = {
+    execContext?: string;
+    executorId?: number;
+    planId?: number;
+    projectId: number;
+  };
+
+  type TestRecordResponse = {
+    data?: TestRecordDataItem;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type TestRecordSearchResponse = {
+    data?: TestRecordSearchResponseData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type TestRecordSearchResponseData = {
+    list?: TestRecordDataItem[];
+    total?: number;
+  };
+
+  type TestSuiteDataItem = {
+    caseIds?: string;
+    continueOnFail?: boolean;
+    createdAt?: string;
+    creatorId?: number;
+    description?: string;
+    filterRule?: string;
+    id?: number;
+    name?: string;
+    parallelism?: number;
+    projectId?: number;
+    retryCount?: number;
+    status?: number;
+    suiteNo?: string;
+    suiteType?: string;
+    timeout?: number;
+    updatedAt?: string;
+  };
+
+  type TestSuiteRequest = {
+    caseIds?: string;
+    continueOnFail?: boolean;
+    description?: string;
+    filterRule?: string;
+    name: string;
+    parallelism?: number;
+    projectId: number;
+    retryCount?: number;
+    status?: number;
+    suiteType?: string;
+    timeout?: number;
+  };
+
+  type TestSuiteResponse = {
+    data?: TestSuiteDataItem;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type TestSuiteSearchResponse = {
+    data?: TestSuiteSearchResponseData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type TestSuiteSearchResponseData = {
+    list?: TestSuiteDataItem[];
+    total?: number;
   };
 
   type TokenData = {
@@ -724,6 +1575,11 @@ declare namespace API {
     tokenType?: string;
   };
 
+  type UpdateAIProviderParams = {
+    /** 供应商ID */
+    id: number;
+  };
+
   type UpdateApiParams = {
     /** 接口ID */
     id: number;
@@ -731,6 +1587,16 @@ declare namespace API {
 
   type UpdateApiRolesRequest = {
     roleIds: number[];
+  };
+
+  type UpdateBugParams = {
+    /** 缺陷ID */
+    id: number;
+  };
+
+  type UpdateDeviceParams = {
+    /** 设备ID */
+    id: number;
   };
 
   type UpdateItemParams = {
@@ -748,6 +1614,16 @@ declare namespace API {
     newPassword: string;
     /** 旧密码 */
     oldPassword: string;
+  };
+
+  type UpdateProjectParams = {
+    /** 项目ID */
+    id: number;
+  };
+
+  type UpdateRequirementParams = {
+    /** 需求ID */
+    id: number;
   };
 
   type UpdateRoleApisRequest = {
@@ -774,6 +1650,26 @@ declare namespace API {
   type UpdateStatusRequest = {
     /** 状态 0:待激活 1:正常 2:禁用 */
     status: 0 | 1 | 2;
+  };
+
+  type UpdateTestCaseParams = {
+    /** 测试用例ID */
+    id: number;
+  };
+
+  type UpdateTestPlanParams = {
+    /** 计划ID */
+    id: number;
+  };
+
+  type UpdateTestSuiteParams = {
+    /** 测试套件ID */
+    id: number;
+  };
+
+  type UpdateUserFeedbackParams = {
+    /** 反馈ID */
+    id: number;
   };
 
   type UpdateUserParams = {
@@ -812,6 +1708,80 @@ declare namespace API {
     userId?: string;
     /** 用户名 */
     username?: string;
+  };
+
+  type UserFeedbackDataItem = {
+    appVersion?: string;
+    attachmentPaths?: string[];
+    bugId?: number;
+    channel?: string;
+    closedAt?: string;
+    content?: string;
+    convertedAt?: string;
+    convertedBy?: string;
+    createdAt?: string;
+    deviceModel?: string;
+    feedbackNo?: string;
+    handler?: string;
+    id?: number;
+    occurredAt?: string;
+    osVersion?: string;
+    projectId?: number;
+    reporter?: string;
+    status?: number;
+    testRecordId?: number;
+    title?: string;
+    updatedAt?: string;
+  };
+
+  type UserFeedbackRequest = {
+    appVersion?: string;
+    attachmentPaths?: string[];
+    bugId?: number;
+    channel: string;
+    closedAt?: string;
+    content: string;
+    convertedAt?: string;
+    convertedBy?: string;
+    deviceModel?: string;
+    feedbackNo: string;
+    handler?: string;
+    occurredAt: string;
+    osVersion?: string;
+    projectId: number;
+    reporter: string;
+    status?: number;
+    testRecordId?: number;
+    title: string;
+  };
+
+  type UserFeedbackResponse = {
+    data?: UserFeedbackDataItem;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type UserFeedbackSearchResponse = {
+    data?: UserFeedbackSearchResponseData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type UserFeedbackSearchResponseData = {
+    list?: UserFeedbackDataItem[];
+    total?: number;
   };
 
   type UserList = {
@@ -868,1092 +1838,5 @@ declare namespace API {
     errorShowType?: number;
     /** 是否成功 */
     success?: boolean;
-  };
-
-  // ============ Project Types ============
-  type ProjectSearchRequest = {
-    /** 页码 */
-    page: number;
-    /** 分页大小 */
-    pageSize: number;
-    /** 项目名称 */
-    name?: string;
-    /** 项目代码 */
-    code?: string;
-    /** 状态 */
-    status?: number;
-  };
-
-  type Project = {
-    /** ID */
-    id?: number;
-    /** 创建时间 */
-    createdAt?: string;
-    /** 更新时间 */
-    updatedAt?: string;
-    /** 项目代码 */
-    code?: string;
-    /** 项目名称 */
-    name?: string;
-    /** 描述 */
-    description?: string;
-    /** 图标 */
-    icon?: string;
-    /** 标签 */
-    tags?: string;
-    /** Git仓库 */
-    gitRepo?: string;
-    /** 状态 */
-    status?: number;
-    /** 用例数量 */
-    caseCount?: number;
-    /** 执行数量 */
-    execCount?: number;
-    /** 创建者ID */
-    creatorId?: number;
-  };
-
-  type ProjectList = {
-    list?: Project[];
-    total?: number;
-  };
-
-  type ProjectRequest = {
-    /** 项目代码 */
-    code: string;
-    /** 项目名称 */
-    name: string;
-    /** 描述 */
-    description?: string;
-    /** 图标 */
-    icon?: string;
-    /** 标签 */
-    tags?: string;
-    /** Git仓库 */
-    gitRepo?: string;
-    /** 默认环境ID */
-    defaultEnvId?: number;
-    /** 状态 */
-    status?: number;
-  };
-
-  type ProjectSearchResponse = {
-    data?: ProjectList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type ProjectResponse = {
-    data?: Project;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ TestCase Types ============
-  type TestCaseSearchRequest = {
-    page: number;
-    pageSize: number;
-    /** 项目ID */
-    projectId: number;
-    /** 标题 */
-    title?: string;
-    /** 优先级 */
-    priority?: number;
-    /** 状态 */
-    status?: number;
-    /** 模块 */
-    module?: string;
-  };
-
-  type TestCase = {
-    id?: number;
-    createdAt?: string;
-    updatedAt?: string;
-    /** 项目ID */
-    projectId?: number;
-    /** 用例编号 */
-    caseNo?: string;
-    /** 标题 */
-    title?: string;
-    /** 描述 */
-    description?: string;
-    /** 优先级 */
-    priority?: number;
-    /** 用例类型 */
-    caseType?: string;
-    /** 模块 */
-    module?: string;
-    /** 标签 */
-    tags?: string;
-    /** 需求ID */
-    requirementId?: number;
-    /** 状态 */
-    status?: number;
-    /** 版本 */
-    version?: number;
-    /** 步骤数据 */
-    stepsData?: string;
-    /** 创建者ID */
-    creatorId?: number;
-  };
-
-  type TestCaseList = {
-    list?: TestCase[];
-    total?: number;
-  };
-
-  type TestCaseRequest = {
-    projectId: number;
-    title: string;
-    description?: string;
-    priority?: number;
-    caseType?: string;
-    module?: string;
-    tags?: string;
-    requirementId?: number;
-    stepsData?: string;
-    status?: number;
-  };
-
-  type TestCaseSearchResponse = {
-    data?: TestCaseList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type TestCaseResponse = {
-    data?: TestCase;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ TestSuite Types ============
-  type TestSuiteSearchRequest = {
-    page: number;
-    pageSize: number;
-    projectId: number;
-    name?: string;
-    status?: number;
-  };
-
-  type TestSuite = {
-    id?: number;
-    createdAt?: string;
-    updatedAt?: string;
-    projectId?: number;
-    suiteNo?: string;
-    name?: string;
-    description?: string;
-    suiteType?: string;
-    caseIds?: string;
-    filterRule?: string;
-    parallelism?: number;
-    timeout?: number;
-    retryCount?: number;
-    continueOnFail?: boolean;
-    status?: number;
-    creatorId?: number;
-  };
-
-  type TestSuiteList = {
-    list?: TestSuite[];
-    total?: number;
-  };
-
-  type TestSuiteRequest = {
-    projectId: number;
-    name: string;
-    description?: string;
-    suiteType?: string;
-    caseIds?: string;
-    filterRule?: string;
-    parallelism?: number;
-    timeout?: number;
-    retryCount?: number;
-    continueOnFail?: boolean;
-    status?: number;
-  };
-
-  type TestSuiteSearchResponse = {
-    data?: TestSuiteList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type TestSuiteResponse = {
-    data?: TestSuite;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ TestPlan Types ============
-  type TestPlanSearchRequest = {
-    page: number;
-    pageSize: number;
-    projectId: number;
-    name?: string;
-    execStatus?: number;
-  };
-
-  type TestPlan = {
-    id?: number;
-    createdAt?: string;
-    updatedAt?: string;
-    projectId?: number;
-    planNo?: string;
-    name?: string;
-    description?: string;
-    planType?: string;
-    contentData?: string;
-    triggerType?: string;
-    cronExpr?: string;
-    parallelism?: number;
-    timeout?: number;
-    retryCount?: number;
-    notifyConfig?: string;
-    expectedStartTime?: string;
-    expectedEndTime?: string;
-    actualStartTime?: string;
-    actualEndTime?: string;
-    execStatus?: number;
-    executorId?: number;
-    creatorId?: number;
-  };
-
-  type TestPlanList = {
-    list?: TestPlan[];
-    total?: number;
-  };
-
-  type TestPlanRequest = {
-    projectId: number;
-    name: string;
-    description?: string;
-    planType?: string;
-    contentData?: string;
-    triggerType?: string;
-    cronExpr?: string;
-    parallelism?: number;
-    timeout?: number;
-    retryCount?: number;
-    notifyConfig?: string;
-    expectedStartTime?: string;
-    expectedEndTime?: string;
-  };
-
-  type TestPlanSearchResponse = {
-    data?: TestPlanList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type TestPlanResponse = {
-    data?: TestPlan;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ TestRecord Types ============
-  type TestRecordSearchRequest = {
-    page: number;
-    pageSize: number;
-    projectId?: number;
-    planId?: number;
-    execStatus?: number;
-  };
-
-  type TestRecord = {
-    id?: number;
-    createdAt?: string;
-    updatedAt?: string;
-    projectId?: number;
-    planId?: number;
-    executorId?: number;
-    startTime?: string;
-    endTime?: string;
-    duration?: number;
-    execStatus?: number;
-    totalCases?: number;
-    passedCases?: number;
-    failedCases?: number;
-    blockedCases?: number;
-    skippedCases?: number;
-    passRate?: number;
-    execContext?: string;
-    reportUrl?: string;
-    reportFormat?: string;
-  };
-
-  type TestRecordList = {
-    list?: TestRecord[];
-    total?: number;
-  };
-
-  type TestRecordRequest = {
-    projectId: number;
-    planId?: number;
-    executorId?: number;
-    execContext?: string;
-  };
-
-  type TestRecordSearchResponse = {
-    data?: TestRecordList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type TestRecordResponse = {
-    data?: TestRecord;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ Device Types ============
-  type DeviceSearchRequest = {
-    page: number;
-    pageSize: number;
-    deviceType?: string;
-    platform?: string;
-    status?: number;
-    name?: string;
-  };
-
-  type Device = {
-    id?: number;
-    createdAt?: string;
-    updatedAt?: string;
-    deviceNo?: string;
-    name?: string;
-    deviceType?: string;
-    platform?: string;
-    deviceModel?: string;
-    osVersion?: string;
-    screenSize?: string;
-    screenDpi?: number;
-    udid?: string;
-    ipAddress?: string;
-    port?: number;
-    connectMode?: string;
-    status?: number;
-    battery?: number;
-    isCharging?: boolean;
-    cpuUsage?: number;
-    memoryUsage?: number;
-    memoryTotal?: number;
-    storageFree?: number;
-    groupId?: number;
-    tags?: string;
-    lastHeartbeat?: string;
-  };
-
-  type DeviceList = {
-    list?: Device[];
-    total?: number;
-  };
-
-  type DeviceRequest = {
-    deviceNo: string;
-    name: string;
-    deviceType: string;
-    platform?: string;
-    deviceModel?: string;
-    osVersion?: string;
-    screenSize?: string;
-    screenDpi?: number;
-    udid?: string;
-    ipAddress?: string;
-    port?: number;
-    connectMode?: string;
-    groupId?: number;
-    tags?: string;
-  };
-
-  type DeviceHeartbeatRequest = {
-    deviceId: number;
-    status?: number;
-    battery?: number;
-    isCharging?: boolean;
-    cpuUsage?: number;
-    memoryUsage?: number;
-    storageFree?: number;
-  };
-
-  type DeviceSearchResponse = {
-    data?: DeviceList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type DeviceResponse = {
-    data?: Device;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ UserFeedback Types ============
-  type UserFeedbackSearchRequest = {
-    /** 页码 */
-    page: number;
-    /** 分页大小 */
-    pageSize: number;
-    /** 项目ID */
-    projectId?: number;
-    /** 反馈编号 */
-    feedbackNo?: string;
-    /** 标题 */
-    title?: string;
-    /** 渠道 */
-    channel?: string;
-    /** 状态 */
-    status?: number;
-  };
-
-  type UserFeedback = {
-    /** ID */
-    id?: number;
-    /** 创建时间 */
-    createdAt?: string;
-    /** 更新时间 */
-    updatedAt?: string;
-    /** 反馈编号 */
-    feedbackNo?: string;
-    /** 标题 */
-    title?: string;
-    /** 内容 */
-    content?: string;
-    /** 渠道 */
-    channel?: string;
-    /** 报告人 */
-    reporter?: string;
-    /** 发生时间 */
-    occurredAt?: string;
-    /** 状态 */
-    status?: number;
-    /** 处理人 */
-    handler?: string;
-    /** 关闭时间 */
-    closedAt?: string;
-    /** 项目ID */
-    projectId?: number;
-    /** 测试记录ID */
-    testRecordId?: number;
-    /** 设备型号 */
-    deviceModel?: string;
-    /** 系统版本 */
-    osVersion?: string;
-    /** APP版本 */
-    appVersion?: string;
-    /** 附件路径 */
-    attachmentPaths?: string;
-    /** BUG ID */
-    bugId?: number;
-    /** 转换时间 */
-    convertedAt?: string;
-    /** 转换人 */
-    convertedBy?: string;
-  };
-
-  type UserFeedbackList = {
-    list?: UserFeedback[];
-    total?: number;
-  };
-
-  type UserFeedbackRequest = {
-    /** 反馈编号 */
-    feedbackNo: string;
-    /** 标题 */
-    title: string;
-    /** 内容 */
-    content?: string;
-    /** 渠道 */
-    channel?: string;
-    /** 报告人 */
-    reporter?: string;
-    /** 发生时间 */
-    occurredAt?: string;
-    /** 状态 */
-    status?: number;
-    /** 项目ID */
-    projectId: number;
-    /** 测试记录ID */
-    testRecordId?: number;
-    /** 设备型号 */
-    deviceModel?: string;
-    /** 系统版本 */
-    osVersion?: string;
-    /** APP版本 */
-    appVersion?: string;
-    /** 附件路径 */
-    attachmentPaths?: string;
-  };
-
-  type UserFeedbackSearchResponse = {
-    data?: UserFeedbackList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type UserFeedbackResponse = {
-    data?: UserFeedback;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ Bug Types ============
-  type BugSearchRequest = {
-    /** 页码 */
-    page: number;
-    /** 分页大小 */
-    pageSize: number;
-    /** 项目ID */
-    projectId?: number;
-    /** BUG编号 */
-    bugNo?: string;
-    /** 标题 */
-    title?: string;
-    /** 严重程度 */
-    severity?: string;
-    /** 优先级 */
-    priority?: string;
-    /** 状态 */
-    status?: string;
-  };
-
-  type Bug = {
-    /** ID */
-    id?: number;
-    /** 创建时间 */
-    createdAt?: string;
-    /** 更新时间 */
-    updatedAt?: string;
-    /** BUG编号 */
-    bugNo?: string;
-    /** 标题 */
-    title?: string;
-    /** 描述 */
-    description?: string;
-    /** 严重程度 */
-    severity?: string;
-    /** 优先级 */
-    priority?: string;
-    /** 状态 */
-    status?: string;
-    /** 创建人 */
-    creator?: string;
-    /** 指派人 */
-    assignee?: string;
-    /** 修复时间 */
-    fixedAt?: string;
-    /** 验证人 */
-    verifier?: string;
-    /** 验证时间 */
-    verifiedAt?: string;
-    /** 关闭时间 */
-    closedAt?: string;
-    /** 项目ID */
-    projectId?: number;
-    /** 用例ID */
-    testCaseId?: number;
-    /** 测试记录ID */
-    testRecordId?: number;
-    /** 用户反馈ID */
-    userFeedbackId?: number;
-    /** 需求ID */
-    requirementId?: number;
-    /** 环境 */
-    environment?: string;
-    /** 设备信息 */
-    deviceInfo?: string;
-    /** 操作系统 */
-    os?: string;
-    /** 浏览器 */
-    browser?: string;
-    /** 前置条件 */
-    preconditions?: string;
-    /** 测试步骤 */
-    steps?: string;
-    /** 预期结果 */
-    expectedResult?: string;
-    /** 实际结果 */
-    actualResult?: string;
-    /** 附件路径 */
-    attachmentPaths?: string;
-    /** 历史记录 */
-    history?: string;
-    /** 重复ID */
-    duplicateIds?: string;
-    /** 关联ID */
-    relatedIds?: string;
-  };
-
-  type BugList = {
-    list?: Bug[];
-    total?: number;
-  };
-
-  type BugRequest = {
-    /** BUG编号 */
-    bugNo: string;
-    /** 标题 */
-    title: string;
-    /** 描述 */
-    description?: string;
-    /** 严重程度 */
-    severity?: string;
-    /** 优先级 */
-    priority?: string;
-    /** 状态 */
-    status?: string;
-    /** 指派人 */
-    assignee?: string;
-    /** 项目ID */
-    projectId: number;
-    /** 用例ID */
-    testCaseId?: number;
-    /** 测试记录ID */
-    testRecordId?: number;
-    /** 用户反馈ID */
-    userFeedbackId?: number;
-    /** 需求ID */
-    requirementId?: number;
-    /** 环境 */
-    environment?: string;
-    /** 设备信息 */
-    deviceInfo?: string;
-    /** 操作系统 */
-    os?: string;
-    /** 浏览器 */
-    browser?: string;
-    /** 前置条件 */
-    preconditions?: string;
-    /** 测试步骤 */
-    steps?: string;
-    /** 预期结果 */
-    expectedResult?: string;
-    /** 实际结果 */
-    actualResult?: string;
-    /** 附件路径 */
-    attachmentPaths?: string;
-  };
-
-  type BugSearchResponse = {
-    data?: BugList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type BugResponse = {
-    data?: Bug;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ Requirement Types ============
-  type RequirementSearchRequest = {
-    /** 页码 */
-    page: number;
-    /** 分页大小 */
-    pageSize: number;
-    /** 项目ID */
-    projectId?: number;
-    /** 需求编号 */
-    requirementNo?: string;
-    /** 标题 */
-    title?: string;
-    /** 优先级 */
-    priority?: string;
-    /** 状态 */
-    status?: string;
-    /** 负责人 */
-    owner?: string;
-  };
-
-  type Requirement = {
-    /** ID */
-    id?: number;
-    /** 创建时间 */
-    createdAt?: string;
-    /** 更新时间 */
-    updatedAt?: string;
-    /** 需求编号 */
-    requirementNo?: string;
-    /** 标题 */
-    title?: string;
-    /** 描述 */
-    description?: string;
-    /** 优先级 */
-    priority?: string;
-    /** 状态 */
-    status?: string;
-    /** 负责人 */
-    owner?: string;
-    /** 期望完成时间 */
-    expectedAt?: string;
-    /** 完成时间 */
-    completedAt?: string;
-    /** 项目ID */
-    projectId?: number;
-    /** 版本 */
-    version?: number;
-    /** 变更历史 */
-    changeHistory?: string;
-    /** 父需求ID */
-    parentId?: number;
-    /** 用例ID列表 */
-    testCaseIds?: string;
-    /** BUG ID列表 */
-    bugIds?: string;
-    /** 创建人ID */
-    creatorId?: number;
-  };
-
-  type RequirementList = {
-    list?: Requirement[];
-    total?: number;
-  };
-
-  type RequirementRequest = {
-    /** 需求编号 */
-    requirementNo: string;
-    /** 标题 */
-    title: string;
-    /** 描述 */
-    description?: string;
-    /** 优先级 */
-    priority?: string;
-    /** 状态 */
-    status?: string;
-    /** 负责人 */
-    owner?: string;
-    /** 期望完成时间 */
-    expectedAt?: string;
-    /** 项目ID */
-    projectId: number;
-    /** 父需求ID */
-    parentId?: number;
-    /** 用例ID列表 */
-    testCaseIds?: string;
-    /** BUG ID列表 */
-    bugIds?: string;
-  };
-
-  type RequirementSearchResponse = {
-    data?: RequirementList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type RequirementResponse = {
-    data?: Requirement;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ AIProvider Types ============
-  type AIProviderSearchRequest = {
-    /** 页码 */
-    page: number;
-    /** 分页大小 */
-    pageSize: number;
-    /** 提供商编号 */
-    providerNo?: string;
-    /** 提供商名称 */
-    providerName?: string;
-    /** 提供商类型 */
-    providerType?: string;
-    /** 状态 */
-    status?: number;
-  };
-
-  type AIProvider = {
-    /** ID */
-    id?: number;
-    /** 创建时间 */
-    createdAt?: string;
-    /** 更新时间 */
-    updatedAt?: string;
-    /** 提供商编号 */
-    providerNo?: string;
-    /** 提供商名称 */
-    providerName?: string;
-    /** 提供商类型 */
-    providerType?: string;
-    /** 基础URL */
-    baseUrl?: string;
-    /** API密钥 */
-    apiKey?: string;
-    /** 状态 */
-    status?: number;
-    /** 组织ID */
-    organizationId?: string;
-    /** 项目ID */
-    projectId?: string;
-    /** 区域 */
-    region?: string;
-    /** 模型配置 */
-    modelConfig?: string;
-    /** 限流配置 */
-    rateLimitConfig?: string;
-    /** 成本配置 */
-    costConfig?: string;
-    /** 安全配置 */
-    securityConfig?: string;
-    /** 高级配置 */
-    advancedConfig?: string;
-    /** 总调用次数 */
-    totalCalls?: number;
-    /** 成功调用次数 */
-    successCalls?: number;
-    /** 失败调用次数 */
-    failedCalls?: number;
-    /** 平均响应时间 */
-    avgResponseTime?: number;
-    /** 总令牌数 */
-    totalTokens?: number;
-    /** 输入令牌数 */
-    inputTokens?: number;
-    /** 输出令牌数 */
-    outputTokens?: number;
-    /** 总成本 */
-    totalCost?: number;
-    /** 上次成本 */
-    lastCost?: number;
-    /** 上次使用时间 */
-    lastUsedAt?: string;
-    /** 上次成功时间 */
-    lastSuccessAt?: string;
-    /** 创建人ID */
-    createdBy?: number;
-    /** 更新人ID */
-    updatedBy?: number;
-  };
-
-  type AIProviderList = {
-    list?: AIProvider[];
-    total?: number;
-  };
-
-  type AIProviderRequest = {
-    /** 提供商编号 */
-    providerNo: string;
-    /** 提供商名称 */
-    providerName: string;
-    /** 提供商类型 */
-    providerType: string;
-    /** 基础URL */
-    baseUrl?: string;
-    /** API密钥 */
-    apiKey?: string;
-    /** 状态 */
-    status?: number;
-    /** 组织ID */
-    organizationId?: string;
-    /** 项目ID */
-    projectId?: string;
-    /** 区域 */
-    region?: string;
-    /** 模型配置 */
-    modelConfig?: string;
-    /** 限流配置 */
-    rateLimitConfig?: string;
-    /** 成本配置 */
-    costConfig?: string;
-    /** 安全配置 */
-    securityConfig?: string;
-    /** 高级配置 */
-    advancedConfig?: string;
-  };
-
-  type AIProviderSearchResponse = {
-    data?: AIProviderList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type AIProviderResponse = {
-    data?: AIProvider;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ AIAnalysisResult Types ============
-  type AIAnalysisResultSearchRequest = {
-    /** 页码 */
-    page: number;
-    /** 分页大小 */
-    pageSize: number;
-    /** 分析编号 */
-    analysisNo?: string;
-    /** 分析类型 */
-    analysisType?: string;
-    /** 关联对象ID */
-    relatedObjectId?: number;
-    /** 关联对象类型 */
-    relatedObjectType?: string;
-  };
-
-  type AIAnalysisResult = {
-    /** ID */
-    id?: number;
-    /** 创建时间 */
-    createdAt?: string;
-    /** 更新时间 */
-    updatedAt?: string;
-    /** 分析编号 */
-    analysisNo?: string;
-    /** 分析类型 */
-    analysisType?: string;
-    /** 关联对象ID */
-    relatedObjectId?: number;
-    /** 关联对象类型 */
-    relatedObjectType?: string;
-    /** 分析时间 */
-    analyzedAt?: string;
-    /** 模型版本 */
-    modelVersion?: string;
-    /** 分析内容 */
-    analysisContent?: string;
-    /** 关联数据ID */
-    relatedDataIds?: string;
-    /** 人工验证 */
-    humanVerified?: boolean;
-    /** 验证时间 */
-    verifiedAt?: string;
-    /** 准确率 */
-    accuracyScore?: number;
-    /** 提供商ID */
-    providerId?: number;
-    /** 模型ID */
-    modelId?: string;
-    /** API调用时间 */
-    apiCallTime?: number;
-    /** 令牌使用量 */
-    tokenUsage?: number;
-  };
-
-  type AIAnalysisResultList = {
-    list?: AIAnalysisResult[];
-    total?: number;
-  };
-
-  type AIAnalysisResultRequest = {
-    /** 分析编号 */
-    analysisNo: string;
-    /** 分析类型 */
-    analysisType: string;
-    /** 关联对象ID */
-    relatedObjectId?: number;
-    /** 关联对象类型 */
-    relatedObjectType?: string;
-    /** 分析时间 */
-    analyzedAt?: string;
-    /** 模型版本 */
-    modelVersion?: string;
-    /** 分析内容 */
-    analysisContent?: string;
-    /** 关联数据ID */
-    relatedDataIds?: string;
-    /** 提供商ID */
-    providerId?: number;
-    /** 模型ID */
-    modelId?: string;
-    /** API调用时间 */
-    apiCallTime?: number;
-    /** 令牌使用量 */
-    tokenUsage?: number;
-  };
-
-  type AIAnalysisResultSearchResponse = {
-    data?: AIAnalysisResultList;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  type AIAnalysisResultResponse = {
-    data?: AIAnalysisResult;
-    errorCode?: number;
-    errorMessage?: string;
-    errorShowType?: number;
-    success?: boolean;
-  };
-
-  // ============ UI Component Types ============
-  type Notification = {
-    id?: number;
-    title?: string;
-    content?: string;
-    type?: 'info' | 'success' | 'warning' | 'error';
-    read?: boolean;
-    createdAt?: string;
-  };
-
-  type Todo = {
-    id?: number;
-    title?: string;
-    priority?: string;
-    deadline?: string;
-    status?: 'pending' | 'processing' | 'completed';
-  };
-
-  type ProjectMember = {
-    id?: number;
-    username?: string;
-    nickname?: string;
-    role?: 'owner' | 'admin' | 'member';
-    status?: number;
-    joinedAt?: string;
-  };
-
-  type AuditLog = {
-    id?: number;
-    username?: string;
-    action?: string;
-    module?: string;
-    ip?: string;
-    content?: string;
-    status?: 'success' | 'failed';
-    createdAt?: string;
   };
 }

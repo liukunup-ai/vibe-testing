@@ -22,6 +22,21 @@ func NewAIProviderHandler(handler *Handler, aiProviderService service.AIProvider
 	}
 }
 
+// ListAIProviders godoc
+// @Summary 获取AI供应商列表
+// @Schemes
+// @Description 获取所有AI供应商列表，支持分页
+// @Tags AIProvider
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param page query int true "页码"
+// @Param pageSize query int true "分页大小"
+// @Param name query string false "供应商名称"
+// @Param providerType query string false "供应商类型"
+// @Success 200 {object} v1.AIProviderSearchResponse
+// @Router /v1/ai-providers [get]
+// @ID ListAIProviders
 func (h *AIProviderHandler) ListAIProviders(ctx *gin.Context) {
 	var req v1.AIProviderSearchRequest
 	if err := ctx.ShouldBind(&req); err != nil {
@@ -39,6 +54,18 @@ func (h *AIProviderHandler) ListAIProviders(ctx *gin.Context) {
 	v1.HandleSuccess(ctx, data)
 }
 
+// CreateAIProvider godoc
+// @Summary 创建AI供应商
+// @Schemes
+// @Description 创建一个新的AI供应商配置
+// @Tags AIProvider
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param request body v1.AIProviderRequest true "供应商信息"
+// @Success 200 {object} v1.Response
+// @Router /v1/ai-providers [post]
+// @ID CreateAIProvider
 func (h *AIProviderHandler) CreateAIProvider(ctx *gin.Context) {
 	var req v1.AIProviderRequest
 	if err := ctx.ShouldBind(&req); err != nil {
@@ -56,6 +83,19 @@ func (h *AIProviderHandler) CreateAIProvider(ctx *gin.Context) {
 	v1.HandleSuccess(ctx, nil)
 }
 
+// UpdateAIProvider godoc
+// @Summary 更新AI供应商
+// @Schemes
+// @Description 更新指定ID的AI供应商信息
+// @Tags AIProvider
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "供应商ID"
+// @Param request body v1.AIProviderRequest true "供应商信息"
+// @Success 200 {object} v1.Response
+// @Router /v1/ai-providers/{id} [put]
+// @ID UpdateAIProvider
 func (h *AIProviderHandler) UpdateAIProvider(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -81,6 +121,18 @@ func (h *AIProviderHandler) UpdateAIProvider(ctx *gin.Context) {
 	v1.HandleSuccess(ctx, nil)
 }
 
+// DeleteAIProvider godoc
+// @Summary 删除AI供应商
+// @Schemes
+// @Description 删除指定ID的AI供应商
+// @Tags AIProvider
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "供应商ID"
+// @Success 200 {object} v1.Response
+// @Router /v1/ai-providers/{id} [delete]
+// @ID DeleteAIProvider
 func (h *AIProviderHandler) DeleteAIProvider(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -98,6 +150,18 @@ func (h *AIProviderHandler) DeleteAIProvider(ctx *gin.Context) {
 	v1.HandleSuccess(ctx, nil)
 }
 
+// GetAIProvider godoc
+// @Summary 获取AI供应商详情
+// @Schemes
+// @Description 获取指定ID的AI供应商详细信息
+// @Tags AIProvider
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "供应商ID"
+// @Success 200 {object} v1.AIProviderResponse
+// @Router /v1/ai-providers/{id} [get]
+// @ID GetAIProvider
 func (h *AIProviderHandler) GetAIProvider(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)

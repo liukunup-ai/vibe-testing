@@ -276,6 +276,193 @@ definitions:
       provider:
         type: string
     type: object
+  backend_api_v1.AIProviderDataItem:
+    properties:
+      advancedConfig:
+        example: '{}'
+        type: string
+      avgResponseTime:
+        example: 1500
+        type: integer
+      baseUrl:
+        example: https://api.openai.com/v1
+        type: string
+      costConfig:
+        example: '{}'
+        type: string
+      createdAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      createdBy:
+        example: 1
+        type: integer
+      desc:
+        example: OpenAI API configuration
+        type: string
+      failedCalls:
+        example: 20
+        type: integer
+      id:
+        example: 1
+        type: integer
+      inputTokens:
+        example: 300000
+        type: integer
+      lastCost:
+        example: "0.005000"
+        type: string
+      lastSuccessAt:
+        example: "2024-01-01 12:00:00"
+        type: string
+      lastUsedAt:
+        example: "2024-01-01 12:00:00"
+        type: string
+      modelConfig:
+        example: '{}'
+        type: string
+      organizationId:
+        example: 1
+        type: integer
+      outputTokens:
+        example: 200000
+        type: integer
+      projectId:
+        example: 1
+        type: integer
+      providerName:
+        example: OpenAI
+        type: string
+      providerNo:
+        example: PROVIDER001
+        type: string
+      providerType:
+        example: openai
+        type: string
+      rateLimitConfig:
+        example: '{}'
+        type: string
+      region:
+        example: us-east-1
+        type: string
+      securityConfig:
+        example: '{}'
+        type: string
+      status:
+        example: 1
+        type: integer
+      successCalls:
+        example: 980
+        type: integer
+      totalCalls:
+        example: 1000
+        type: integer
+      totalCost:
+        example: "10.500000"
+        type: string
+      totalTokens:
+        example: 500000
+        type: integer
+      updatedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      updatedBy:
+        example: 1
+        type: integer
+    type: object
+  backend_api_v1.AIProviderRequest:
+    properties:
+      advancedConfig:
+        example: '{}'
+        type: string
+      baseUrl:
+        example: https://api.openai.com/v1
+        type: string
+      costConfig:
+        example: '{}'
+        type: string
+      desc:
+        example: OpenAI API configuration
+        type: string
+      modelConfig:
+        example: '{}'
+        type: string
+      organizationId:
+        example: 1
+        type: integer
+      projectId:
+        example: 1
+        type: integer
+      providerName:
+        example: OpenAI
+        type: string
+      providerNo:
+        example: PROVIDER001
+        type: string
+      providerType:
+        example: openai
+        type: string
+      rateLimitConfig:
+        example: '{}'
+        type: string
+      region:
+        example: us-east-1
+        type: string
+      securityConfig:
+        example: '{}'
+        type: string
+      status:
+        example: 1
+        type: integer
+    required:
+    - providerName
+    - providerNo
+    - providerType
+    type: object
+  backend_api_v1.AIProviderResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.AIProviderDataItem'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.AIProviderSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.AIProviderSearchResponseData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.AIProviderSearchResponseData:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/backend_api_v1.AIProviderDataItem'
+        type: array
+      total:
+        type: integer
+    type: object
   backend_api_v1.AdminSetting:
     properties:
       ai:
@@ -404,6 +591,420 @@ definitions:
         type: string
       gravatarEndpoint:
         type: string
+    type: object
+  backend_api_v1.BugDataItem:
+    properties:
+      actualResult:
+        example: Login failed
+        type: string
+      assigneeId:
+        example: 1
+        type: integer
+      attachmentPaths:
+        example:
+        - '["/uploads/bug/1.png"]'
+        items:
+          type: string
+        type: array
+      browser:
+        example: Safari
+        type: string
+      bugNo:
+        example: BUG001
+        type: string
+      closedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      createdAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      creatorId:
+        example: 1
+        type: integer
+      description:
+        example: User cannot login
+        type: string
+      deviceInfo:
+        example: iPhone 14
+        type: string
+      environment:
+        example: dev
+        type: string
+      expectedResult:
+        example: Login successful
+        type: string
+      fixedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      id:
+        example: 1
+        type: integer
+      os:
+        example: iOS 16.0
+        type: string
+      preconditions:
+        example: User is logged in
+        type: string
+      priority:
+        example: P0
+        type: string
+      projectId:
+        example: 1
+        type: integer
+      requirementId:
+        example: 1
+        type: integer
+      severity:
+        example: critical
+        type: string
+      status:
+        example: new
+        type: string
+      steps:
+        example: 1. Click login...
+        type: string
+      testCaseId:
+        example: 1
+        type: integer
+      testRecordId:
+        example: 1
+        type: integer
+      title:
+        example: Login failed
+        type: string
+      updatedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      userFeedbackId:
+        example: 1
+        type: integer
+      verifiedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      verifierId:
+        example: 1
+        type: integer
+    type: object
+  backend_api_v1.BugRequest:
+    properties:
+      actualResult:
+        example: Login failed
+        type: string
+      assigneeId:
+        example: 1
+        type: integer
+      attachmentPaths:
+        example:
+        - '["/uploads/bug/1.png"]'
+        items:
+          type: string
+        type: array
+      browser:
+        example: Safari
+        type: string
+      bugNo:
+        example: BUG001
+        type: string
+      description:
+        example: User cannot login
+        type: string
+      deviceInfo:
+        example: iPhone 14
+        type: string
+      environment:
+        example: dev
+        type: string
+      expectedResult:
+        example: Login successful
+        type: string
+      os:
+        example: iOS 16.0
+        type: string
+      preconditions:
+        example: User is logged in
+        type: string
+      priority:
+        example: P0
+        type: string
+      projectId:
+        example: 1
+        type: integer
+      requirementId:
+        example: 1
+        type: integer
+      severity:
+        example: critical
+        type: string
+      status:
+        example: new
+        type: string
+      steps:
+        example: 1. Click login...
+        type: string
+      testCaseId:
+        example: 1
+        type: integer
+      testRecordId:
+        example: 1
+        type: integer
+      title:
+        example: Login failed
+        type: string
+      userFeedbackId:
+        example: 1
+        type: integer
+      verifierId:
+        example: 1
+        type: integer
+    required:
+    - bugNo
+    - priority
+    - projectId
+    - severity
+    - title
+    type: object
+  backend_api_v1.BugResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.BugDataItem'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.BugSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.BugSearchResponseData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.BugSearchResponseData:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/backend_api_v1.BugDataItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  backend_api_v1.DeviceDataItem:
+    properties:
+      battery:
+        example: 85
+        type: integer
+      connectMode:
+        example: usb
+        type: string
+      cpuUsage:
+        example: 25.5
+        type: number
+      createdAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      deviceModel:
+        example: Pixel 6
+        type: string
+      deviceNo:
+        example: DEV001
+        type: string
+      deviceType:
+        example: android
+        type: string
+      groupId:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      ipAddress:
+        example: 192.168.1.100
+        type: string
+      isCharging:
+        example: true
+        type: boolean
+      lastHeartbeat:
+        example: "2024-01-01 12:00:00"
+        type: string
+      memoryTotal:
+        example: 8192
+        type: integer
+      memoryUsage:
+        example: 45.2
+        type: number
+      name:
+        example: Pixel 6
+        type: string
+      osVersion:
+        example: "13"
+        type: string
+      platform:
+        example: android
+        type: string
+      port:
+        example: 5555
+        type: integer
+      screenDpi:
+        example: 420
+        type: integer
+      screenSize:
+        example: 1080x2400
+        type: string
+      status:
+        example: 2
+        type: integer
+      storageFree:
+        example: 32768
+        type: integer
+      tags:
+        example: '["phone","test"]'
+        type: string
+      udid:
+        example: emulator-5554
+        type: string
+      updatedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+    type: object
+  backend_api_v1.DeviceHeartbeatRequest:
+    properties:
+      battery:
+        example: 85
+        type: integer
+      cpuUsage:
+        example: 25.5
+        type: number
+      deviceId:
+        example: 1
+        type: integer
+      isCharging:
+        example: true
+        type: boolean
+      memoryUsage:
+        example: 45.2
+        type: number
+      status:
+        example: 2
+        type: integer
+      storageFree:
+        example: 32768
+        type: integer
+    required:
+    - deviceId
+    type: object
+  backend_api_v1.DeviceRequest:
+    properties:
+      connectMode:
+        example: usb
+        type: string
+      deviceModel:
+        example: Pixel 6
+        type: string
+      deviceNo:
+        example: DEV001
+        type: string
+      deviceType:
+        example: android
+        type: string
+      groupId:
+        example: 1
+        type: integer
+      ipAddress:
+        example: 192.168.1.100
+        type: string
+      name:
+        example: Pixel 6
+        type: string
+      osVersion:
+        example: "13"
+        type: string
+      platform:
+        example: android
+        type: string
+      port:
+        example: 5555
+        type: integer
+      screenDpi:
+        example: 420
+        type: integer
+      screenSize:
+        example: 1080x2400
+        type: string
+      tags:
+        example: '["phone","test"]'
+        type: string
+      udid:
+        example: emulator-5554
+        type: string
+    required:
+    - deviceNo
+    - deviceType
+    - name
+    type: object
+  backend_api_v1.DeviceResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.DeviceDataItem'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.DeviceSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.DeviceSearchResponseData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.DeviceSearchResponseData:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/backend_api_v1.DeviceDataItem'
+        type: array
+      total:
+        type: integer
     type: object
   backend_api_v1.DynamicMenuResponse:
     properties:
@@ -805,6 +1406,123 @@ definitions:
         example: zhangsan
         type: string
     type: object
+  backend_api_v1.ProjectDataItem:
+    properties:
+      caseCount:
+        example: 100
+        type: integer
+      code:
+        example: PROJ001
+        type: string
+      createdAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      creatorId:
+        example: 1
+        type: integer
+      description:
+        example: Project description
+        type: string
+      execCount:
+        example: 50
+        type: integer
+      gitRepo:
+        example: https://github.com/org/repo.git
+        type: string
+      icon:
+        example: https://example.com/icon.png
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: My Project
+        type: string
+      status:
+        example: 1
+        type: integer
+      tags:
+        example: mobile,web
+        type: string
+      updatedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+    type: object
+  backend_api_v1.ProjectRequest:
+    properties:
+      code:
+        example: PROJ001
+        type: string
+      defaultEnvId:
+        example: 1
+        type: integer
+      description:
+        example: Project description
+        type: string
+      gitRepo:
+        example: https://github.com/org/repo.git
+        type: string
+      icon:
+        example: https://example.com/icon.png
+        type: string
+      name:
+        example: My Project
+        type: string
+      status:
+        example: 1
+        type: integer
+      tags:
+        example: mobile,web
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  backend_api_v1.ProjectResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.ProjectDataItem'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.ProjectSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.ProjectSearchResponseData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.ProjectSearchResponseData:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/backend_api_v1.ProjectDataItem'
+        type: array
+      total:
+        type: integer
+    type: object
   backend_api_v1.RedisConfig:
     properties:
       addrs:
@@ -846,6 +1564,149 @@ definitions:
     required:
     - email
     - password
+    type: object
+  backend_api_v1.RequirementDataItem:
+    properties:
+      bugIds:
+        example: '[]'
+        type: string
+      changeHistory:
+        example: '[]'
+        type: string
+      completedAt:
+        example: ""
+        type: string
+      createdAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      creatorId:
+        example: 1
+        type: integer
+      description:
+        example: User login requirement
+        type: string
+      expectedAt:
+        example: "2024-12-31"
+        type: string
+      id:
+        example: 1
+        type: integer
+      owner:
+        example: 1
+        type: integer
+      parentId:
+        example: 0
+        type: integer
+      priority:
+        example: P1
+        type: string
+      projectId:
+        example: 1
+        type: integer
+      requirementNo:
+        example: REQ001
+        type: string
+      status:
+        example: pending-review
+        type: string
+      testCaseIds:
+        example: '[]'
+        type: string
+      title:
+        example: User Login
+        type: string
+      updatedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      version:
+        example: 1
+        type: integer
+    type: object
+  backend_api_v1.RequirementRequest:
+    properties:
+      bugIds:
+        example: '[]'
+        type: string
+      description:
+        example: User login requirement
+        type: string
+      expectedAt:
+        example: "2024-12-31"
+        type: string
+      owner:
+        example: 1
+        type: integer
+      parentId:
+        example: 0
+        type: integer
+      priority:
+        example: P1
+        type: string
+      projectId:
+        example: 1
+        type: integer
+      requirementNo:
+        example: REQ001
+        type: string
+      status:
+        example: pending-review
+        type: string
+      testCaseIds:
+        example: '[]'
+        type: string
+      title:
+        example: User Login
+        type: string
+    required:
+    - owner
+    - projectId
+    - requirementNo
+    - title
+    type: object
+  backend_api_v1.RequirementResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.RequirementDataItem'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.RequirementSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.RequirementSearchResponseData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.RequirementSearchResponseData:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/backend_api_v1.RequirementDataItem'
+        type: array
+      total:
+        type: integer
     type: object
   backend_api_v1.ResetPasswordRequest:
     properties:
@@ -1001,6 +1862,138 @@ definitions:
         example: true
         type: boolean
     type: object
+  backend_api_v1.TestCaseDataItem:
+    properties:
+      caseNo:
+        example: TC001
+        type: string
+      caseType:
+        example: functional
+        type: string
+      createdAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      creatorId:
+        example: 1
+        type: integer
+      description:
+        example: Test user login flow
+        type: string
+      id:
+        example: 1
+        type: integer
+      module:
+        example: auth
+        type: string
+      priority:
+        example: 0
+        type: integer
+      projectId:
+        example: 1
+        type: integer
+      requirementId:
+        example: 1
+        type: integer
+      status:
+        example: 2
+        type: integer
+      stepsData:
+        example: '{}'
+        type: string
+      tags:
+        example: smoke,regression
+        type: string
+      title:
+        example: Login Test Case
+        type: string
+      updatedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      version:
+        example: 1
+        type: integer
+    type: object
+  backend_api_v1.TestCaseRequest:
+    properties:
+      caseType:
+        example: functional
+        type: string
+      description:
+        example: Test user login flow
+        type: string
+      module:
+        example: auth
+        type: string
+      priority:
+        example: 0
+        type: integer
+      projectId:
+        example: 1
+        type: integer
+      requirementId:
+        example: 1
+        type: integer
+      status:
+        example: 1
+        type: integer
+      stepsData:
+        example: '{}'
+        type: string
+      tags:
+        example: smoke,regression
+        type: string
+      title:
+        example: Login Test Case
+        type: string
+    required:
+    - projectId
+    - title
+    type: object
+  backend_api_v1.TestCaseResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.TestCaseDataItem'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.TestCaseSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.TestCaseSearchResponseData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.TestCaseSearchResponseData:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/backend_api_v1.TestCaseDataItem'
+        type: array
+      total:
+        type: integer
+    type: object
   backend_api_v1.TestEmailRequest:
     properties:
       to:
@@ -1009,6 +2002,422 @@ definitions:
         type: string
     required:
     - to
+    type: object
+  backend_api_v1.TestPlanDataItem:
+    properties:
+      actualEndTime:
+        example: "2024-01-01 16:00:00"
+        type: string
+      actualStartTime:
+        example: "2024-01-01 10:00:00"
+        type: string
+      contentData:
+        example: '{}'
+        type: string
+      createdAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      creatorId:
+        example: 1
+        type: integer
+      cronExpr:
+        example: 0 0 * * *
+        type: string
+      description:
+        example: Test plan for release 1.0
+        type: string
+      execStatus:
+        example: 1
+        type: integer
+      executorId:
+        example: 1
+        type: integer
+      expectedEndTime:
+        example: "2024-01-01 18:00:00"
+        type: string
+      expectedStartTime:
+        example: "2024-01-01 10:00:00"
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Release 1.0 Test Plan
+        type: string
+      notifyConfig:
+        example: '{}'
+        type: string
+      parallelism:
+        example: 1
+        type: integer
+      planNo:
+        example: TP001
+        type: string
+      planType:
+        example: manual
+        type: string
+      projectId:
+        example: 1
+        type: integer
+      retryCount:
+        example: 0
+        type: integer
+      timeout:
+        example: 7200
+        type: integer
+      triggerType:
+        example: manual
+        type: string
+      updatedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+    type: object
+  backend_api_v1.TestPlanRequest:
+    properties:
+      contentData:
+        example: '{}'
+        type: string
+      cronExpr:
+        example: 0 0 * * *
+        type: string
+      description:
+        example: Test plan for release 1.0
+        type: string
+      expectedEndTime:
+        example: "2024-01-01 18:00:00"
+        type: string
+      expectedStartTime:
+        example: "2024-01-01 10:00:00"
+        type: string
+      name:
+        example: Release 1.0 Test Plan
+        type: string
+      notifyConfig:
+        example: '{}'
+        type: string
+      parallelism:
+        example: 1
+        type: integer
+      planType:
+        example: manual
+        type: string
+      projectId:
+        example: 1
+        type: integer
+      retryCount:
+        example: 0
+        type: integer
+      timeout:
+        example: 7200
+        type: integer
+      triggerType:
+        example: manual
+        type: string
+    required:
+    - name
+    - projectId
+    type: object
+  backend_api_v1.TestPlanResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.TestPlanDataItem'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.TestPlanSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.TestPlanSearchResponseData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.TestPlanSearchResponseData:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/backend_api_v1.TestPlanDataItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  backend_api_v1.TestRecordDataItem:
+    properties:
+      blockedCases:
+        example: 2
+        type: integer
+      createdAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      duration:
+        example: 7200
+        type: integer
+      endTime:
+        example: "2024-01-01 12:00:00"
+        type: string
+      execContext:
+        example: '{}'
+        type: string
+      execStatus:
+        example: 2
+        type: integer
+      executorId:
+        example: 1
+        type: integer
+      failedCases:
+        example: 3
+        type: integer
+      id:
+        example: 1
+        type: integer
+      passRate:
+        example: 95
+        type: integer
+      passedCases:
+        example: 95
+        type: integer
+      planId:
+        example: 1
+        type: integer
+      projectId:
+        example: 1
+        type: integer
+      reportFormat:
+        example: html
+        type: string
+      reportUrl:
+        example: https://example.com/report.html
+        type: string
+      skippedCases:
+        example: 0
+        type: integer
+      startTime:
+        example: "2024-01-01 10:00:00"
+        type: string
+      totalCases:
+        example: 100
+        type: integer
+      updatedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+    type: object
+  backend_api_v1.TestRecordRequest:
+    properties:
+      execContext:
+        example: '{}'
+        type: string
+      executorId:
+        example: 1
+        type: integer
+      planId:
+        example: 1
+        type: integer
+      projectId:
+        example: 1
+        type: integer
+    required:
+    - projectId
+    type: object
+  backend_api_v1.TestRecordResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.TestRecordDataItem'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.TestRecordSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.TestRecordSearchResponseData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.TestRecordSearchResponseData:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/backend_api_v1.TestRecordDataItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  backend_api_v1.TestSuiteDataItem:
+    properties:
+      caseIds:
+        example: '[1,2,3]'
+        type: string
+      continueOnFail:
+        example: false
+        type: boolean
+      createdAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      creatorId:
+        example: 1
+        type: integer
+      description:
+        example: Smoke test suite
+        type: string
+      filterRule:
+        example: '{}'
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Smoke Suite
+        type: string
+      parallelism:
+        example: 1
+        type: integer
+      projectId:
+        example: 1
+        type: integer
+      retryCount:
+        example: 0
+        type: integer
+      status:
+        example: 1
+        type: integer
+      suiteNo:
+        example: TS001
+        type: string
+      suiteType:
+        example: static
+        type: string
+      timeout:
+        example: 3600
+        type: integer
+      updatedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+    type: object
+  backend_api_v1.TestSuiteRequest:
+    properties:
+      caseIds:
+        example: '[1,2,3]'
+        type: string
+      continueOnFail:
+        example: false
+        type: boolean
+      description:
+        example: Smoke test suite
+        type: string
+      filterRule:
+        example: '{}'
+        type: string
+      name:
+        example: Smoke Suite
+        type: string
+      parallelism:
+        example: 1
+        type: integer
+      projectId:
+        example: 1
+        type: integer
+      retryCount:
+        example: 0
+        type: integer
+      status:
+        example: 1
+        type: integer
+      suiteType:
+        example: static
+        type: string
+      timeout:
+        example: 3600
+        type: integer
+    required:
+    - name
+    - projectId
+    type: object
+  backend_api_v1.TestSuiteResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.TestSuiteDataItem'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.TestSuiteSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.TestSuiteSearchResponseData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.TestSuiteSearchResponseData:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/backend_api_v1.TestSuiteDataItem'
+        type: array
+      total:
+        type: integer
     type: object
   backend_api_v1.TokenData:
     properties:
@@ -1084,6 +2493,188 @@ definitions:
         type: integer
     required:
     - status
+    type: object
+  backend_api_v1.UserFeedbackDataItem:
+    properties:
+      appVersion:
+        example: 1.0.0
+        type: string
+      attachmentPaths:
+        example:
+        - '[]'
+        items:
+          type: string
+        type: array
+      bugId:
+        example: 1
+        type: integer
+      channel:
+        example: in-app
+        type: string
+      closedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      content:
+        example: Cannot login with correct password
+        type: string
+      convertedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      convertedBy:
+        example: admin
+        type: string
+      createdAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      deviceModel:
+        example: iPhone 14
+        type: string
+      feedbackNo:
+        example: FB001
+        type: string
+      handler:
+        example: admin
+        type: string
+      id:
+        example: 1
+        type: integer
+      occurredAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      osVersion:
+        example: iOS 16.0
+        type: string
+      projectId:
+        example: 1
+        type: integer
+      reporter:
+        example: user@example.com
+        type: string
+      status:
+        example: 0
+        type: integer
+      testRecordId:
+        example: 1
+        type: integer
+      title:
+        example: Login issue
+        type: string
+      updatedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+    type: object
+  backend_api_v1.UserFeedbackRequest:
+    properties:
+      appVersion:
+        example: 1.0.0
+        type: string
+      attachmentPaths:
+        example:
+        - '[]'
+        items:
+          type: string
+        type: array
+      bugId:
+        example: 1
+        type: integer
+      channel:
+        example: in-app
+        type: string
+      closedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      content:
+        example: Cannot login with correct password
+        type: string
+      convertedAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      convertedBy:
+        example: admin
+        type: string
+      deviceModel:
+        example: iPhone 14
+        type: string
+      feedbackNo:
+        example: FB001
+        type: string
+      handler:
+        example: admin
+        type: string
+      occurredAt:
+        example: "2006-01-02 15:04:05"
+        type: string
+      osVersion:
+        example: iOS 16.0
+        type: string
+      projectId:
+        example: 1
+        type: integer
+      reporter:
+        example: user@example.com
+        type: string
+      status:
+        example: 0
+        type: integer
+      testRecordId:
+        example: 1
+        type: integer
+      title:
+        example: Login issue
+        type: string
+    required:
+    - channel
+    - content
+    - feedbackNo
+    - occurredAt
+    - projectId
+    - reporter
+    - title
+    type: object
+  backend_api_v1.UserFeedbackResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.UserFeedbackDataItem'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.UserFeedbackSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.UserFeedbackSearchResponseData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.UserFeedbackSearchResponseData:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/backend_api_v1.UserFeedbackDataItem'
+        type: array
+      total:
+        type: integer
     type: object
   backend_api_v1.UserRequest:
     properties:
@@ -2447,6 +4038,1428 @@ paths:
       summary: 上传头像
       tags:
       - User
+  /v1/ai-providers:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有AI供应商列表，支持分页
+      operationId: ListAIProviders
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 供应商名称
+        in: query
+        name: name
+        type: string
+      - description: 供应商类型
+        in: query
+        name: providerType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.AIProviderSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取AI供应商列表
+      tags:
+      - AIProvider
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的AI供应商配置
+      operationId: CreateAIProvider
+      parameters:
+      - description: 供应商信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.AIProviderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 创建AI供应商
+      tags:
+      - AIProvider
+  /v1/ai-providers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的AI供应商
+      operationId: DeleteAIProvider
+      parameters:
+      - description: 供应商ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除AI供应商
+      tags:
+      - AIProvider
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的AI供应商详细信息
+      operationId: GetAIProvider
+      parameters:
+      - description: 供应商ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.AIProviderResponse'
+      security:
+      - Bearer: []
+      summary: 获取AI供应商详情
+      tags:
+      - AIProvider
+    put:
+      consumes:
+      - application/json
+      description: 更新指定ID的AI供应商信息
+      operationId: UpdateAIProvider
+      parameters:
+      - description: 供应商ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 供应商信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.AIProviderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新AI供应商
+      tags:
+      - AIProvider
+  /v1/bugs:
+    get:
+      consumes:
+      - application/json
+      description: 搜索时支持编号、标题、严重程度、优先级、状态等筛选
+      operationId: ListBugs
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 项目ID
+        in: query
+        name: projectId
+        type: integer
+      - description: 缺陷编号
+        in: query
+        name: bugNo
+        type: string
+      - description: 标题
+        in: query
+        name: title
+        type: string
+      - description: 严重程度
+        in: query
+        name: severity
+        type: string
+      - description: 优先级
+        in: query
+        name: priority
+        type: string
+      - description: 状态
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.BugSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取缺陷列表
+      tags:
+      - Bug
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的缺陷
+      operationId: CreateBug
+      parameters:
+      - description: 缺陷信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.BugRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 创建缺陷
+      tags:
+      - Bug
+  /v1/bugs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的缺陷
+      operationId: DeleteBug
+      parameters:
+      - description: 缺陷ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除缺陷
+      tags:
+      - Bug
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的缺陷详情
+      operationId: GetBug
+      parameters:
+      - description: 缺陷ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.BugResponse'
+      security:
+      - Bearer: []
+      summary: 获取缺陷详情
+      tags:
+      - Bug
+    put:
+      consumes:
+      - application/json
+      description: 更新缺陷信息
+      operationId: UpdateBug
+      parameters:
+      - description: 缺陷ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 缺陷信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.BugRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新缺陷
+      tags:
+      - Bug
+  /v1/devices:
+    get:
+      consumes:
+      - application/json
+      description: 搜索时支持设备名称、设备类型和状态筛选
+      operationId: ListDevices
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 设备名称
+        in: query
+        name: name
+        type: string
+      - description: 设备类型
+        in: query
+        name: type
+        type: string
+      - description: 设备状态
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.DeviceSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取设备列表
+      tags:
+      - Device
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的设备
+      operationId: CreateDevice
+      parameters:
+      - description: 设备信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.DeviceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 创建设备
+      tags:
+      - Device
+  /v1/devices/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的设备
+      operationId: DeleteDevice
+      parameters:
+      - description: 设备ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除设备
+      tags:
+      - Device
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的设备详情
+      operationId: GetDevice
+      parameters:
+      - description: 设备ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.DeviceResponse'
+      security:
+      - Bearer: []
+      summary: 获取设备详情
+      tags:
+      - Device
+    put:
+      consumes:
+      - application/json
+      description: 更新设备信息
+      operationId: UpdateDevice
+      parameters:
+      - description: 设备ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 设备信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.DeviceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新设备
+      tags:
+      - Device
+  /v1/devices/heartbeat:
+    post:
+      consumes:
+      - application/json
+      description: 接收设备心跳请求
+      operationId: DeviceHeartbeat
+      parameters:
+      - description: 心跳信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.DeviceHeartbeatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 设备心跳
+      tags:
+      - Device
+  /v1/feedbacks:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户反馈列表，支持分页和筛选
+      operationId: ListUserFeedbacks
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 项目ID
+        in: query
+        name: projectId
+        type: integer
+      - description: 反馈类型
+        in: query
+        name: type
+        type: string
+      - description: 反馈状态
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.UserFeedbackSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取用户反馈列表
+      tags:
+      - UserFeedback
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的用户反馈
+      operationId: CreateUserFeedback
+      parameters:
+      - description: 反馈信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.UserFeedbackRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户反馈
+      tags:
+      - UserFeedback
+  /v1/feedbacks/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的用户反馈
+      operationId: DeleteUserFeedback
+      parameters:
+      - description: 反馈ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户反馈
+      tags:
+      - UserFeedback
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的用户反馈详情
+      operationId: GetUserFeedback
+      parameters:
+      - description: 反馈ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.UserFeedbackResponse'
+      security:
+      - Bearer: []
+      summary: 获取用户反馈详情
+      tags:
+      - UserFeedback
+    put:
+      consumes:
+      - application/json
+      description: 更新用户反馈信息
+      operationId: UpdateUserFeedback
+      parameters:
+      - description: 反馈ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 反馈信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.UserFeedbackRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新用户反馈
+      tags:
+      - UserFeedback
+  /v1/feedbacks/project/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定项目的所有用户反馈
+      operationId: GetUserFeedbacksByProject
+      parameters:
+      - description: 项目ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.UserFeedbackSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取项目用户反馈
+      tags:
+      - UserFeedback
+  /v1/projects:
+    get:
+      consumes:
+      - application/json
+      description: 搜索时支持项目名称、描述筛选
+      operationId: ListProjects
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 项目名称
+        in: query
+        name: name
+        type: string
+      - description: 项目描述
+        in: query
+        name: description
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.ProjectSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取项目列表
+      tags:
+      - Project
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的项目
+      operationId: CreateProject
+      parameters:
+      - description: 项目信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.ProjectRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 创建项目
+      tags:
+      - Project
+  /v1/projects/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的项目
+      operationId: DeleteProject
+      parameters:
+      - description: 项目ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除项目
+      tags:
+      - Project
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的项目详情
+      operationId: GetProject
+      parameters:
+      - description: 项目ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.ProjectResponse'
+      security:
+      - Bearer: []
+      summary: 获取项目详情
+      tags:
+      - Project
+    put:
+      consumes:
+      - application/json
+      description: 更新项目信息
+      operationId: UpdateProject
+      parameters:
+      - description: 项目ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 项目信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.ProjectRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新项目
+      tags:
+      - Project
+  /v1/requirements:
+    get:
+      consumes:
+      - application/json
+      description: 分页获取需求列表，支持筛选
+      operationId: ListRequirements
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 需求标题
+        in: query
+        name: title
+        type: string
+      - description: 需求状态
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.RequirementSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取需求列表
+      tags:
+      - Requirement
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的需求
+      operationId: CreateRequirement
+      parameters:
+      - description: 需求信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.RequirementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 创建需求
+      tags:
+      - Requirement
+  /v1/requirements/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的需求
+      operationId: DeleteRequirement
+      parameters:
+      - description: 需求ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除需求
+      tags:
+      - Requirement
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的需求详情
+      operationId: GetRequirement
+      parameters:
+      - description: 需求ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.RequirementResponse'
+      security:
+      - Bearer: []
+      summary: 获取需求详情
+      tags:
+      - Requirement
+    put:
+      consumes:
+      - application/json
+      description: 更新指定ID的需求信息
+      operationId: UpdateRequirement
+      parameters:
+      - description: 需求ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 需求信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.RequirementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新需求
+      tags:
+      - Requirement
+  /v1/testcases:
+    get:
+      consumes:
+      - application/json
+      description: 搜索时支持名称、描述、项目ID等筛选
+      operationId: ListTestCases
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 用例名称
+        in: query
+        name: name
+        type: string
+      - description: 项目ID
+        in: query
+        name: projectId
+        type: integer
+      - description: 状态
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.TestCaseSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取测试用例列表
+      tags:
+      - TestCase
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的测试用例
+      operationId: CreateTestCase
+      parameters:
+      - description: 测试用例信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.TestCaseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 创建测试用例
+      tags:
+      - TestCase
+  /v1/testcases/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的测试用例
+      operationId: DeleteTestCase
+      parameters:
+      - description: 测试用例ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除测试用例
+      tags:
+      - TestCase
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的测试用例详情
+      operationId: GetTestCase
+      parameters:
+      - description: 测试用例ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.TestCaseResponse'
+      security:
+      - Bearer: []
+      summary: 获取测试用例详情
+      tags:
+      - TestCase
+    put:
+      consumes:
+      - application/json
+      description: 更新测试用例信息
+      operationId: UpdateTestCase
+      parameters:
+      - description: 测试用例ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 测试用例信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.TestCaseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新测试用例
+      tags:
+      - TestCase
+  /v1/testplans:
+    get:
+      consumes:
+      - application/json
+      description: 获取测试计划列表，支持分页和筛选
+      operationId: ListTestPlans
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 计划名称
+        in: query
+        name: name
+        type: string
+      - description: 项目ID
+        in: query
+        name: projectId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.TestPlanSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取测试计划列表
+      tags:
+      - TestPlan
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的测试计划
+      operationId: CreateTestPlan
+      parameters:
+      - description: 测试计划信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.TestPlanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 创建测试计划
+      tags:
+      - TestPlan
+  /v1/testplans/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的测试计划
+      operationId: DeleteTestPlan
+      parameters:
+      - description: 计划ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除测试计划
+      tags:
+      - TestPlan
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的测试计划详情
+      operationId: GetTestPlan
+      parameters:
+      - description: 计划ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.TestPlanResponse'
+      security:
+      - Bearer: []
+      summary: 获取测试计划详情
+      tags:
+      - TestPlan
+    put:
+      consumes:
+      - application/json
+      description: 更新测试计划信息
+      operationId: UpdateTestPlan
+      parameters:
+      - description: 计划ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 测试计划信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.TestPlanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新测试计划
+      tags:
+      - TestPlan
+  /v1/testrecords:
+    get:
+      consumes:
+      - application/json
+      description: 获取测试记录列表，支持按项目、用例等筛选
+      operationId: ListTestRecords
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 项目ID
+        in: query
+        name: projectID
+        type: integer
+      - description: 用例ID
+        in: query
+        name: testCaseID
+        type: integer
+      - description: 执行状态
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.TestRecordSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取测试记录列表
+      tags:
+      - TestRecord
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的测试记录
+      operationId: CreateTestRecord
+      parameters:
+      - description: 测试记录信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.TestRecordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.TestRecordResponse'
+      security:
+      - Bearer: []
+      summary: 创建测试记录
+      tags:
+      - TestRecord
+  /v1/testrecords/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的测试记录
+      operationId: DeleteTestRecord
+      parameters:
+      - description: 测试记录ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除测试记录
+      tags:
+      - TestRecord
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的测试记录详情
+      operationId: GetTestRecord
+      parameters:
+      - description: 测试记录ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.TestRecordResponse'
+      security:
+      - Bearer: []
+      summary: 获取测试记录详情
+      tags:
+      - TestRecord
+  /v1/testsuites:
+    get:
+      consumes:
+      - application/json
+      description: 获取测试套件列表，支持分页和筛选
+      operationId: ListTestSuites
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 套件名称
+        in: query
+        name: name
+        type: string
+      - description: 项目ID
+        in: query
+        name: projectId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.TestSuiteSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取测试套件列表
+      tags:
+      - TestSuite
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的测试套件
+      operationId: CreateTestSuite
+      parameters:
+      - description: 测试套件信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.TestSuiteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 创建测试套件
+      tags:
+      - TestSuite
+  /v1/testsuites/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的测试套件
+      operationId: DeleteTestSuite
+      parameters:
+      - description: 测试套件ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除测试套件
+      tags:
+      - TestSuite
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的测试套件详情
+      operationId: GetTestSuite
+      parameters:
+      - description: 测试套件ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.TestSuiteResponse'
+      security:
+      - Bearer: []
+      summary: 获取测试套件详情
+      tags:
+      - TestSuite
+    put:
+      consumes:
+      - application/json
+      description: 更新指定ID的测试套件信息
+      operationId: UpdateTestSuite
+      parameters:
+      - description: 测试套件ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 测试套件信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.TestSuiteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新测试套件
+      tags:
+      - TestSuite
 securityDefinitions:
   Bearer:
     in: header

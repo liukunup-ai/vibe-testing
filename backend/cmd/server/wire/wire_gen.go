@@ -19,7 +19,6 @@ import (
 	"backend/pkg/log"
 	"backend/pkg/server/http"
 	"backend/pkg/sid"
-
 	"github.com/google/wire"
 	"github.com/spf13/viper"
 )
@@ -60,7 +59,40 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	itemRepository := repository.NewItemRepository(repositoryRepository)
 	itemService := service.NewItemService(serviceService, itemRepository, userRepository)
 	itemHandler := handler.NewItemHandler(handlerHandler, itemService, userRepository)
-	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, syncedEnforcer, authHandler, userHandler, roleHandler, menuHandler, apiHandler, settingHandler, itemHandler)
+	projectRepository := repository.NewProjectRepository(repositoryRepository)
+	projectService := service.NewProjectService(serviceService, projectRepository)
+	projectHandler := handler.NewProjectHandler(handlerHandler, projectService)
+	testCaseRepository := repository.NewTestCaseRepository(repositoryRepository)
+	testCaseService := service.NewTestCaseService(serviceService, testCaseRepository)
+	testCaseHandler := handler.NewTestCaseHandler(handlerHandler, testCaseService)
+	testSuiteRepository := repository.NewTestSuiteRepository(repositoryRepository)
+	testSuiteService := service.NewTestSuiteService(serviceService, testSuiteRepository)
+	testSuiteHandler := handler.NewTestSuiteHandler(handlerHandler, testSuiteService)
+	testPlanRepository := repository.NewTestPlanRepository(repositoryRepository)
+	testPlanService := service.NewTestPlanService(serviceService, testPlanRepository)
+	testPlanHandler := handler.NewTestPlanHandler(handlerHandler, testPlanService)
+	testRecordRepository := repository.NewTestRecordRepository(repositoryRepository)
+	testRecordService := service.NewTestRecordService(serviceService, testRecordRepository)
+	testRecordHandler := handler.NewTestRecordHandler(handlerHandler, testRecordService)
+	deviceRepository := repository.NewDeviceRepository(repositoryRepository)
+	deviceService := service.NewDeviceService(serviceService, deviceRepository)
+	deviceHandler := handler.NewDeviceHandler(handlerHandler, deviceService)
+	userFeedbackRepository := repository.NewUserFeedbackRepository(repositoryRepository)
+	userFeedbackService := service.NewUserFeedbackService(serviceService, userFeedbackRepository)
+	userFeedbackHandler := handler.NewUserFeedbackHandler(handlerHandler, userFeedbackService)
+	bugRepository := repository.NewBugRepository(repositoryRepository)
+	bugService := service.NewBugService(serviceService, bugRepository)
+	bugHandler := handler.NewBugHandler(handlerHandler, bugService)
+	requirementRepository := repository.NewRequirementRepository(repositoryRepository)
+	requirementService := service.NewRequirementService(serviceService, requirementRepository)
+	requirementHandler := handler.NewRequirementHandler(handlerHandler, requirementService)
+	aiProviderRepository := repository.NewAIProviderRepository(repositoryRepository)
+	aiProviderService := service.NewAIProviderService(serviceService, aiProviderRepository)
+	aiProviderHandler := handler.NewAIProviderHandler(handlerHandler, aiProviderService)
+	aiAnalysisResultRepository := repository.NewAIAnalysisResultRepository(repositoryRepository)
+	aiAnalysisResultService := service.NewAIAnalysisResultService(serviceService, aiAnalysisResultRepository)
+	aiAnalysisResultHandler := handler.NewAIAnalysisResultHandler(handlerHandler, aiAnalysisResultService)
+	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, syncedEnforcer, authHandler, userHandler, roleHandler, menuHandler, apiHandler, settingHandler, itemHandler, projectHandler, testCaseHandler, testSuiteHandler, testPlanHandler, testRecordHandler, deviceHandler, userFeedbackHandler, bugHandler, requirementHandler, aiProviderHandler, aiAnalysisResultHandler)
 	jobJob := job.NewJob(transaction, logger, sidSid)
 	userJob := job.NewUserJob(jobJob, userRepository)
 	jobServer := server.NewJobServer(logger, userJob)
@@ -71,11 +103,11 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 
 // wire.go:
 
-var repositorySet = wire.NewSet(repository.NewDB, repository.NewCache, repository.NewRepository, repository.NewTransaction, repository.NewTokenStore, repository.NewCasbinEnforcer, repository.NewUserRepository, repository.NewAvatarStorage, repository.NewRoleRepository, repository.NewMenuRepository, repository.NewApiRepository, repository.NewSettingRepository, repository.NewItemRepository)
+var repositorySet = wire.NewSet(repository.NewDB, repository.NewCache, repository.NewRepository, repository.NewTransaction, repository.NewTokenStore, repository.NewCasbinEnforcer, repository.NewUserRepository, repository.NewAvatarStorage, repository.NewRoleRepository, repository.NewMenuRepository, repository.NewApiRepository, repository.NewSettingRepository, repository.NewItemRepository, repository.NewProjectRepository, repository.NewProjectUserRepository, repository.NewTestCaseRepository, repository.NewTestSuiteRepository, repository.NewTestPlanRepository, repository.NewTestRecordRepository, repository.NewTestCaseExecutionRepository, repository.NewTestSuiteExecutionRepository, repository.NewDeviceRepository, repository.NewUserFeedbackRepository, repository.NewBugRepository, repository.NewRequirementRepository, repository.NewAIProviderRepository, repository.NewAIAnalysisResultRepository)
 
-var serviceSet = wire.NewSet(service.NewService, service.NewAuthService, service.NewUserService, service.NewRoleService, service.NewMenuService, service.NewApiService, service.NewSettingService, service.NewItemService)
+var serviceSet = wire.NewSet(service.NewService, service.NewAuthService, service.NewUserService, service.NewRoleService, service.NewMenuService, service.NewApiService, service.NewSettingService, service.NewItemService, service.NewProjectService, service.NewTestCaseService, service.NewTestSuiteService, service.NewTestPlanService, service.NewTestRecordService, service.NewDeviceService, service.NewUserFeedbackService, service.NewBugService, service.NewRequirementService, service.NewAIProviderService, service.NewAIAnalysisResultService)
 
-var handlerSet = wire.NewSet(handler.NewHandler, handler.NewAuthHandler, handler.NewUserHandler, handler.NewRoleHandler, handler.NewMenuHandler, handler.NewApiHandler, handler.NewSettingHandler, handler.NewItemHandler)
+var handlerSet = wire.NewSet(handler.NewHandler, handler.NewAuthHandler, handler.NewUserHandler, handler.NewRoleHandler, handler.NewMenuHandler, handler.NewApiHandler, handler.NewSettingHandler, handler.NewItemHandler, handler.NewProjectHandler, handler.NewTestCaseHandler, handler.NewTestSuiteHandler, handler.NewTestPlanHandler, handler.NewTestRecordHandler, handler.NewDeviceHandler, handler.NewUserFeedbackHandler, handler.NewBugHandler, handler.NewRequirementHandler, handler.NewAIProviderHandler, handler.NewAIAnalysisResultHandler)
 
 var jobSet = wire.NewSet(job.NewJob, job.NewUserJob)
 

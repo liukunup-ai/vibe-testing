@@ -22,6 +22,22 @@ func NewTestRecordHandler(handler *Handler, recordService service.TestRecordServ
 	}
 }
 
+// ListTestRecords godoc
+// @Summary 获取测试记录列表
+// @Schemes
+// @Description 获取测试记录列表，支持按项目、用例等筛选
+// @Tags TestRecord
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param page query int true "页码"
+// @Param pageSize query int true "分页大小"
+// @Param projectID query uint false "项目ID"
+// @Param testCaseID query uint false "用例ID"
+// @Param status query string false "执行状态"
+// @Success 200 {object} v1.TestRecordSearchResponse
+// @Router /v1/testrecords [get]
+// @ID ListTestRecords
 func (h *TestRecordHandler) ListTestRecords(ctx *gin.Context) {
 	var req v1.TestRecordSearchRequest
 	if err := ctx.ShouldBind(&req); err != nil {
@@ -39,6 +55,18 @@ func (h *TestRecordHandler) ListTestRecords(ctx *gin.Context) {
 	v1.HandleSuccess(ctx, data)
 }
 
+// CreateTestRecord godoc
+// @Summary 创建测试记录
+// @Schemes
+// @Description 创建一个新的测试记录
+// @Tags TestRecord
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param request body v1.TestRecordRequest true "测试记录信息"
+// @Success 200 {object} v1.TestRecordResponse
+// @Router /v1/testrecords [post]
+// @ID CreateTestRecord
 func (h *TestRecordHandler) CreateTestRecord(ctx *gin.Context) {
 	var req v1.TestRecordRequest
 	if err := ctx.ShouldBind(&req); err != nil {
@@ -58,6 +86,18 @@ func (h *TestRecordHandler) CreateTestRecord(ctx *gin.Context) {
 	v1.HandleSuccess(ctx, data)
 }
 
+// DeleteTestRecord godoc
+// @Summary 删除测试记录
+// @Schemes
+// @Description 删除指定ID的测试记录
+// @Tags TestRecord
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "测试记录ID"
+// @Success 200 {object} v1.Response
+// @Router /v1/testrecords/{id} [delete]
+// @ID DeleteTestRecord
 func (h *TestRecordHandler) DeleteTestRecord(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -75,6 +115,18 @@ func (h *TestRecordHandler) DeleteTestRecord(ctx *gin.Context) {
 	v1.HandleSuccess(ctx, nil)
 }
 
+// GetTestRecord godoc
+// @Summary 获取测试记录详情
+// @Schemes
+// @Description 获取指定ID的测试记录详情
+// @Tags TestRecord
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "测试记录ID"
+// @Success 200 {object} v1.TestRecordResponse
+// @Router /v1/testrecords/{id} [get]
+// @ID GetTestRecord
 func (h *TestRecordHandler) GetTestRecord(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
