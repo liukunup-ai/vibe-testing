@@ -98,8 +98,8 @@ func NewHTTPServer(
 		{
 			// User
 			strictAuthRouter.GET("/users/profile", userHandler.GetProfile)
-		strictAuthRouter.PUT("/users/profile", userHandler.UpdateProfile)
-		strictAuthRouter.POST("/users/profile/avatar", userHandler.UploadAvatar)
+			strictAuthRouter.PUT("/users/profile", userHandler.UpdateProfile)
+			strictAuthRouter.POST("/users/profile/avatar", userHandler.UploadAvatar)
 			strictAuthRouter.GET("/users/menu", userHandler.GetMenu)
 			strictAuthRouter.PUT("/users/password", userHandler.UpdatePassword)
 			strictAuthRouter.POST("/logout", authHandler.Logout)
@@ -119,15 +119,11 @@ func NewHTTPServer(
 			strictAuthRouter.POST("/admin/roles", roleHandler.CreateRole)
 			strictAuthRouter.PUT("/admin/roles/:id", roleHandler.UpdateRole)
 			strictAuthRouter.DELETE("/admin/roles/:id", roleHandler.DeleteRole)
-			// Admin Role Permission
+			// Admin Role Permission API
 			strictAuthRouter.GET("/admin/roles/permissions", roleHandler.GetRolePermissions)
 			strictAuthRouter.PUT("/admin/roles/permissions", roleHandler.UpdateRolePermissions)
-			// Admin Role-API
-			roleGroup := strictAuthRouter.Group("/admin/roles")
-			{
-				roleGroup.GET("/:id/apis", roleHandler.GetRoleApis)
-				roleGroup.PUT("/:id/apis", roleHandler.UpdateRoleApis)
-			}
+			strictAuthRouter.GET("/admin/roles/:id/apis", roleHandler.GetRoleApis)
+			strictAuthRouter.PUT("/admin/roles/:id/apis", roleHandler.UpdateRoleApis)
 
 			// Admin Menu
 			strictAuthRouter.GET("/admin/menus", menuHandler.ListMenus)
@@ -140,12 +136,8 @@ func NewHTTPServer(
 			strictAuthRouter.POST("/admin/apis", apiHandler.CreateApi)
 			strictAuthRouter.PUT("/admin/apis/:id", apiHandler.UpdateApi)
 			strictAuthRouter.DELETE("/admin/apis/:id", apiHandler.DeleteApi)
-			// Admin API-Role
-			apiGroup := strictAuthRouter.Group("/admin/apis")
-			{
-				apiGroup.GET("/:id/roles", apiHandler.GetApiRoles)
-				apiGroup.PUT("/:id/roles", apiHandler.UpdateApiRoles)
-			}
+			strictAuthRouter.GET("/admin/apis/:id/roles", apiHandler.GetApiRoles)
+			strictAuthRouter.PUT("/admin/apis/:id/roles", apiHandler.UpdateApiRoles)
 
 			// Admin Setting
 			strictAuthRouter.GET("/admin/settings", settingHandler.GetSetting)
