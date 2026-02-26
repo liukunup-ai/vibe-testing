@@ -38,3 +38,13 @@ type ApiRequest struct {
 	Path   string `json:"path" example:"/admin/users"` // 路径
 	Method string `json:"method" example:"GET"`        // 方法
 }
+
+// ApiRoleResponse 接口授权角色响应
+type ApiRoleResponse struct {
+	RoleIds []uint `json:"roleIds"`
+}
+
+// UpdateApiRolesRequest 更新接口角色请求
+type UpdateApiRolesRequest struct {
+	RoleIds []uint `json:"roleIds" binding:"required"`
+}

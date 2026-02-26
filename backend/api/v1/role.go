@@ -49,3 +49,13 @@ type UpdateRolePermissionRequest struct {
 	CasbinRole string   `json:"casbinRole" binding:"required" example:"admin"` // Casbin-Role
 	List       []string `form:"list" binding:"required"`                       // 权限列表
 }
+
+// RoleApiResponse 角色接口权限响应
+type RoleApiResponse struct {
+	ApiIds []uint `json:"apiIds"`
+}
+
+// UpdateRoleApisRequest 更新角色接口权限请求
+type UpdateRoleApisRequest struct {
+	ApiIds []uint `json:"apiIds" binding:"required"`
+}
