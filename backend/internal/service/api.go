@@ -14,8 +14,10 @@ type ApiService interface {
 	Create(ctx context.Context, req *v1.ApiRequest) error
 	Update(ctx context.Context, id uint, req *v1.ApiRequest) error
 	Delete(ctx context.Context, id uint) error
-}
 
+	GetRoles(ctx context.Context, apiId uint) ([]uint, error)
+	UpdateRoles(ctx context.Context, apiId uint, roleIds []uint) error
+}
 func NewApiService(
 	service *Service,
 	apiRepository repository.ApiRepository,
@@ -79,4 +81,12 @@ func (s *apiService) Update(ctx context.Context, id uint, req *v1.ApiRequest) er
 
 func (s *apiService) Delete(ctx context.Context, id uint) error {
 	return s.apiRepository.Delete(ctx, id)
+}
+
+func (s *apiService) GetRoles(ctx context.Context, apiId uint) ([]uint, error) {
+	return s.apiRepository.GetRoleIds(ctx, apiId)
+}
+
+func (s *apiService) UpdateRoles(ctx context.Context, apiId uint, roleIds []uint) error {
+	return s.apiRepository.UpdateRoles(ctx, apiId, roleIds)
 }

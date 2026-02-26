@@ -1,8 +1,10 @@
-import { Form, Input, Modal, message } from 'antd';
+import { Form, Input, Modal, message, Avatar, Select } from 'antd';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { useForm } from 'antd/es/form/Form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createItem } from '@/services/backend/item';
+import { listUsers } from '@/services/backend/user';
+import { UserOutlined } from '@ant-design/icons';
 
 interface CreateFormProps {
   visible: boolean;
@@ -12,8 +14,23 @@ interface CreateFormProps {
 
 const CreateForm = ({ visible, onCancel, onSuccess }: CreateFormProps) => {
   const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState<API.User[]>([]);
+  const [fetching, setFetching] = useState(false);
   const [form] = useForm<API.ItemRequest>();
   const intl = useIntl();
+
+  useEffect(() => {
+    if (visible) {
+      setFetching(true);
+      listUsers({ page: 1, pageSize: 100 })
+        .then((res) => {
+          if (res.success && res.data?.list) {
+            setUsers(res.data.list);
+          }
+        })
+        .finally(() => setFetching(false));
+    }
+  }, [visible]);
 
   const handleOk = async () => {
     setLoading(true);
@@ -43,6 +60,29 @@ const CreateForm = ({ visible, onCancel, onSuccess }: CreateFormProps) => {
   const handleCancel = () => {
     form.resetFields();
     onCancel();
+  };
+
+  const renderUserOption = (user: API.User) => {
+    const displayName = user.fullName || user.username || '';
+    return (
+      <Select.Option key={user.username} value={user.username || ''} username={user.username}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Avatar src={user.avatarUrl} size="small" icon={!user.avatarUrl && <UserOutlined />} />
+          <span>{displayName}</span>
+          {user.fullName && <span style={{ color: '#999', fontSize: 12 }}>({user.username})</span>}
+        </div>
+      </Select.Option>
+    );
+  };
+
+  const filterOption = (input: string, option: any) => {
+    const user = option as unknown as API.User;
+    const searchText = input.toLowerCase();
+    return (
+      (user.fullName?.toLowerCase() || '').includes(searchText) ||
+      (user.username?.toLowerCase() || '').includes(searchText) ||
+      (user.email?.toLowerCase() || '').includes(searchText)
+    );
   };
 
   return (
@@ -98,7 +138,16 @@ const CreateForm = ({ visible, onCancel, onSuccess }: CreateFormProps) => {
           name="owner"
           label={<FormattedMessage id="pages.item.key.owner" defaultMessage="所有者" />}
         >
-          <Input />
+          <Select
+            showSearch
+            allowClear
+            placeholder="选择所有者"
+            loading={fetching}
+            filterOption={filterOption}
+            style={{ width: '100%' }}
+          >
+            {users.map(renderUserOption)}
+          </Select>
         </Form.Item>
       </Form>
     </Modal>

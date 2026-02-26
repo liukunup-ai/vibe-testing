@@ -64,55 +64,62 @@ export async function deleteUser(
   });
 }
 
-/** 登录 支持用户名或邮箱登录 POST /login */
-export async function login(body: API.LoginRequest, options?: { [key: string]: any }) {
-  return request<API.LoginResponse>(`/v1/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
-
-/** 刷新令牌 刷新访问令牌和刷新令牌 POST /refresh-token */
-export async function refreshToken(
-  body: API.RefreshTokenRequest,
+/** 重置头像 重置用户头像为默认头像 PUT /admin/users/${param0}/reset-avatar */
+export async function resetAvatar(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.ResetAvatarParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.LoginResponse>(`/v1/refresh-token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  const { id: param0, ...queryParams } = params;
+  return request<API.Response>(`/v1/admin/users/${param0}/reset-avatar`, {
+    method: 'PUT',
+    params: { ...queryParams },
     ...(options || {}),
   });
 }
 
-/** 注册 目前只支持通过邮箱进行注册 POST /register */
-export async function register(body: API.RegisterRequest, options?: { [key: string]: any }) {
-  return request<API.Response>(`/v1/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
-
-/** 重置密码 重置用户密码 POST /reset-password */
-export async function resetPassword(
-  body: API.ResetPasswordRequest,
+/** 撤销登录态 撤销指定用户的所有登录会话 POST /admin/users/${param0}/revoke-sessions */
+export async function revokeSessions(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.RevokeSessionsParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.Response>(`/v1/reset-password`, {
+  const { id: param0, ...queryParams } = params;
+  return request<API.Response>(`/v1/admin/users/${param0}/revoke-sessions`, {
     method: 'POST',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
+/** 发送重置密码邮件 向指定用户发送重置密码邮件 POST /admin/users/${param0}/send-reset-email */
+export async function sendResetEmail(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.SendResetEmailParams,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.Response>(`/v1/admin/users/${param0}/send-reset-email`, {
+    method: 'POST',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
+/** 更新用户状态 更新用户状态（启用/禁用） PUT /admin/users/${param0}/status */
+export async function updateStatus(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.UpdateStatusParams,
+  body: API.UpdateStatusRequest,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.Response>(`/v1/admin/users/${param0}/status`, {
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
+    params: { ...queryParams },
     data: body,
     ...(options || {}),
   });
@@ -175,10 +182,10 @@ export async function updateProfile(body: API.UserRequest, options?: { [key: str
   });
 }
 
-/** 上传头像 上传用户头像 PUT /users/profile/avatar */
+/** 上传头像 上传用户头像 POST /users/profile/avatar */
 export async function uploadAvatar(body: {}, options?: { [key: string]: any }) {
   return request<API.Response>(`/v1/users/profile/avatar`, {
-    method: 'PUT',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },

@@ -1,6 +1,6 @@
 # CI/CD Pipeline 说明
 
-Robot Shop 的 GitHub Actions 自动化工作流。
+Vibe Testing 的 GitHub Actions 自动化工作流。
 
 ## 🎯 工作流概述
 
@@ -121,9 +121,9 @@ Robot Shop 的 GitHub Actions 自动化工作流。
 
 | 镜像 | 用途 | 入口点 |
 |------|------|--------|
-| `robot-shop-server` | 主应用服务器 | `./cmd/server` |
-| `robot-shop-migration` | 数据库迁移 | `./cmd/migration` |
-| `robot-shop-task` | 后台任务 | `./cmd/task` |
+| `vibe-testing-server` | 主应用服务器 | `./cmd/server` |
+| `vibe-testing-migration` | 数据库迁移 | `./cmd/migration` |
+| `vibe-testing-task` | 后台任务 | `./cmd/task` |
 
 #### 多架构支持
 
@@ -134,16 +134,16 @@ Robot Shop 的 GitHub Actions 自动化工作流。
 
 **Docker Hub** (如果配置了密钥):
 ```
-your-username/robot-shop-server:latest
-your-username/robot-shop-migration:latest
-your-username/robot-shop-task:latest
+your-username/vibe-testing-server:latest
+your-username/vibe-testing-migration:latest
+your-username/vibe-testing-task:latest
 ```
 
 **GitHub Container Registry** (自动):
 ```
-ghcr.io/your-org/robot-shop-server:latest
-ghcr.io/your-org/robot-shop-migration:latest
-ghcr.io/your-org/robot-shop-task:latest
+ghcr.io/your-org/vibe-testing-server:latest
+ghcr.io/your-org/vibe-testing-migration:latest
+ghcr.io/your-org/vibe-testing-task:latest
 ```
 
 #### 镜像标签策略
@@ -166,13 +166,13 @@ ghcr.io/your-org/robot-shop-task:latest
 
 自动添加 OCI 标准标签：
 ```yaml
-org.opencontainers.image.title: Robot Shop server
+org.opencontainers.image.title: Vibe Testing server
 org.opencontainers.image.description: Main application server
-org.opencontainers.image.vendor: Robot Shop
+org.opencontainers.image.vendor: Vibe Testing
 org.opencontainers.image.version: 1.2.3
 org.opencontainers.image.created: 2024-11-12T10:00:00Z
 org.opencontainers.image.revision: abc1234
-org.opencontainers.image.source: https://github.com/your-org/robot-shop
+org.opencontainers.image.source: https://github.com/your-org/vibe-testing
 ```
 
 构建参数：
@@ -242,14 +242,14 @@ git push origin main
 5. ✓ test-backend (覆盖率 65%)
 6. ✓ test-frontend
 7. ✓ docker-build
-   ├─ robot-shop-server (amd64, arm64) → Docker Hub & GHCR
-   ├─ robot-shop-migration (amd64, arm64) → Docker Hub & GHCR
-   └─ robot-shop-task (amd64, arm64) → Docker Hub & GHCR
+   ├─ vibe-testing-server (amd64, arm64) → Docker Hub & GHCR
+   ├─ vibe-testing-migration (amd64, arm64) → Docker Hub & GHCR
+   └─ vibe-testing-task (amd64, arm64) → Docker Hub & GHCR
 8. ✓ update-docs
 
 # 镜像已推送:
-# - your-username/robot-shop-server:latest
-# - ghcr.io/your-org/robot-shop-server:latest
+# - your-username/vibe-testing-server:latest
+# - ghcr.io/your-org/vibe-testing-server:latest
 ```
 
 ### 发布版本
@@ -261,10 +261,10 @@ git push origin v1.2.3
 
 # GitHub Actions 自动运行
 # 镜像标签:
-# - your-username/robot-shop-server:latest
-# - your-username/robot-shop-server:1.2.3
-# - your-username/robot-shop-server:1.2
-# - your-username/robot-shop-server:1
+# - your-username/vibe-testing-server:latest
+# - your-username/vibe-testing-server:1.2.3
+# - your-username/vibe-testing-server:1.2
+# - your-username/vibe-testing-server:1
 ```
 
 ## 🚀 手动触发
@@ -282,9 +282,9 @@ git push origin v1.2.3
 ```yaml
 services:
   app:
-    image: your-username/robot-shop-server:latest
+    image: your-username/vibe-testing-server:latest
     # 或使用 GHCR
-    # image: ghcr.io/your-org/robot-shop-server:latest
+    # image: ghcr.io/your-org/vibe-testing-server:latest
     platform: linux/amd64  # 或 linux/arm64
 ```
 
@@ -294,13 +294,13 @@ services:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: robot-shop
+  name: vibe-testing
 spec:
   template:
     spec:
       containers:
       - name: app
-        image: ghcr.io/your-org/robot-shop-server:1.2.3
+        image: ghcr.io/your-org/vibe-testing-server:1.2.3
         # 自动选择架构
 ```
 
@@ -308,18 +308,18 @@ spec:
 
 ```bash
 # AMD64
-docker run -p 8000:8000 your-username/robot-shop-server:latest
+docker run -p 8000:8000 your-username/vibe-testing-server:latest
 
 # ARM64 (Apple Silicon)
 docker run -p 8000:8000 \
   --platform linux/arm64 \
-  your-username/robot-shop-server:latest
+  your-username/vibe-testing-server:latest
 
 # 数据库迁移
-docker run your-username/robot-shop-migration:latest
+docker run your-username/vibe-testing-migration:latest
 
 # 后台任务
-docker run your-username/robot-shop-task:latest
+docker run your-username/vibe-testing-task:latest
 ```
 
 ## 🔧 本地测试
@@ -373,7 +373,7 @@ docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -f deploy/build/Dockerfile \
   --build-arg APP_RELATIVE_PATH=./cmd/server \
-  -t robot-shop-server:local-test \
+  -t vibe-testing-server:local-test \
   --load \
   .
 ```
@@ -383,7 +383,7 @@ docker buildx build \
 ### 查看工作流运行
 
 ```
-https://github.com/your-org/robot-shop/actions
+https://github.com/your-org/vibe-testing/actions
 ```
 
 ### 查看构建日志
@@ -398,12 +398,12 @@ https://github.com/your-org/robot-shop/actions
 
 **Docker Hub**:
 ```
-https://hub.docker.com/r/your-username/robot-shop-server
+https://hub.docker.com/r/your-username/vibe-testing-server
 ```
 
 **GitHub Container Registry**:
 ```
-https://github.com/orgs/your-org/packages/container/robot-shop-server
+https://github.com/orgs/your-org/packages/container/vibe-testing-server
 ```
 
 ## 🐛 常见问题

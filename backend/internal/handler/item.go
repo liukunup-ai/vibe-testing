@@ -2,6 +2,7 @@ package handler
 
 import (
 	v1 "backend/api/v1"
+	"backend/internal/repository"
 	"backend/internal/service"
 	"backend/pkg/time"
 	"net/http"
@@ -13,16 +14,19 @@ import (
 
 type ItemHandler struct {
 	*Handler
-	itemService service.ItemService
+	itemService    service.ItemService
+	userRepository repository.UserRepository
 }
 
 func NewItemHandler(
 	handler *Handler,
 	itemService service.ItemService,
+	userRepository repository.UserRepository,
 ) *ItemHandler {
 	return &ItemHandler{
-		Handler:     handler,
-		itemService: itemService,
+		Handler:        handler,
+		itemService:    itemService,
+		userRepository: userRepository,
 	}
 }
 
@@ -182,12 +186,21 @@ func (h *ItemHandler) GetItem(ctx *gin.Context) {
 		return
 	}
 
+	owner := &v1.OwnerData{Username: item.Owner}
+	if item.Owner != "" {
+		user, err := h.userRepository.GetByUsername(ctx, item.Owner)
+		if err == nil {
+			owner.FullName = user.FullName
+			owner.AvatarUrl = user.AvatarURL
+		}
+	}
+
 	v1.HandleSuccess(ctx, v1.ItemDataItem{
 		Id:        item.ID,
 		CreatedAt: time.FormatTime(item.CreatedAt),
 		UpdatedAt: time.FormatTime(item.UpdatedAt),
 		Name:      item.Name,
 		Desc:      item.Desc,
-		Owner:     item.Owner,
+		Owner:     owner,
 	})
 }

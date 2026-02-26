@@ -2,6 +2,7 @@ package repository
 
 import (
 	v1 "backend/api/v1"
+	"backend/internal/constant"
 	"backend/internal/model"
 	"context"
 )
@@ -14,6 +15,9 @@ type ApiRepository interface {
 	Delete(ctx context.Context, id uint) error
 
 	ListAllGroups(ctx context.Context) ([]string, error)
+
+	GetRoleIds(ctx context.Context, apiId uint) ([]uint, error)
+	UpdateRoles(ctx context.Context, apiId uint, roleIds []uint) error
 }
 
 func NewApiRepository(
@@ -76,4 +80,92 @@ func (r *apiRepository) ListAllGroups(ctx context.Context) ([]string, error) {
 		return nil, err
 	}
 	return groups, nil
+}
+
+func (r *apiRepository) GetRoleIds(ctx context.Context, apiId uint) ([]uint, error) {
+	// 获取 API 信息
+	api, err := r.Get(ctx, apiId)
+	if err != nil {
+		return nil, err
+	}
+
+	// 获取所有角色
+	var roles []model.Role
+	if err := r.DB(ctx).Find(&roles).Error; err != nil {
+		return nil, err
+	}
+
+	// 检查每个角色是否有该 API 的权限
+	var roleIds []uint
+	for _, role := range roles {
+		hasPermission, err := r.e.Enforce(role.CasbinRole, constant.ApiResourcePrefix+api.Path, api.Method)
+		if err != nil {
+			return nil, err
+		}
+		if hasPermission {
+			roleIds = append(roleIds, role.ID)
+		}
+	}
+
+	return roleIds, nil
+}
+
+func (r *apiRepository) UpdateRoles(ctx context.Context, apiId uint, newRoleIds []uint) error {
+	// 获取 API 信息
+	api, err := r.Get(ctx, apiId)
+	if err != nil {
+		return err
+	}
+
+	// 获取当前授权的角色
+	oldRoleIds, err := r.GetRoleIds(ctx, apiId)
+	if err != nil {
+		return err
+	}
+
+	// 获取角色 ID 到 CasbinRole 的映射
+	var roles []model.Role
+	if err := r.DB(ctx).Find(&roles).Error; err != nil {
+		return err
+	}
+	roleMap := make(map[uint]string)
+	for _, role := range roles {
+		roleMap[role.ID] = role.CasbinRole
+	}
+
+	// 计算差异
+	oldSet := make(map[uint]struct{})
+	newSet := make(map[uint]struct{})
+	for _, id := range oldRoleIds {
+		oldSet[id] = struct{}{}
+	}
+	for _, id := range newRoleIds {
+		newSet[id] = struct{}{}
+	}
+
+	// 移除权限
+	for id := range oldSet {
+		if _, exists := newSet[id]; !exists {
+			if casbinRole, ok := roleMap[id]; ok {
+				_, err := r.e.DeletePermissionForUser(casbinRole, constant.ApiResourcePrefix+api.Path, api.Method)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	// 添加权限
+	for id := range newSet {
+		if _, exists := oldSet[id]; !exists {
+			if casbinRole, ok := roleMap[id]; ok {
+				_, err := r.e.AddPermissionForUser(casbinRole, constant.ApiResourcePrefix+api.Path, api.Method)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
 }

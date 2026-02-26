@@ -1,22 +1,24 @@
 package repository
 
 import (
-	"backend/pkg/log"
-	"backend/pkg/zapgorm2"
 	"context"
 	"fmt"
 	"time"
 
+	"backend/internal/model"
+	"backend/pkg/log"
+	"backend/pkg/redis"
+	"backend/pkg/storage"
+	"backend/pkg/zapgorm2"
+
+	"go.uber.org/zap"
+
 	"github.com/casbin/casbin/v2"
-	"github.com/casbin/casbin/v2/model"
+	casbinmodel "github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/dgraph-io/ristretto/v2"
 	"github.com/glebarez/sqlite"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -28,8 +30,6 @@ type Repository struct {
 	db     *gorm.DB
 	e      *casbin.SyncedEnforcer
 	cache  *ristretto.Cache[string, interface{}]
-	rdb    redis.UniversalClient
-	m      *MinIO
 	logger *log.Logger
 }
 
@@ -37,18 +37,26 @@ func NewRepository(
 	db *gorm.DB,
 	e *casbin.SyncedEnforcer,
 	cache *ristretto.Cache[string, interface{}],
-	rdb redis.UniversalClient,
-	m *MinIO,
 	logger *log.Logger,
 ) *Repository {
-	return &Repository{
+	// Initialize redis and storage packages with logger
+	redis.Init(logger.Logger)
+	storage.Init(logger.Logger)
+
+	repo := &Repository{
 		db:     db,
 		e:      e,
 		cache:  cache,
-		rdb:    rdb,
-		m:      m,
 		logger: logger,
 	}
+
+	// Load runtime config (Redis, Storage) from database on startup
+	ctx := context.Background()
+	if err := repo.UpdateRuntimeConfig(ctx); err != nil {
+		logger.Warn("failed to load runtime config on startup", zap.Error(err))
+	}
+
+	return repo
 }
 
 type Transaction interface {
@@ -85,10 +93,9 @@ func NewDB(conf *viper.Viper, l *log.Logger) *gorm.DB {
 	)
 
 	logger := zapgorm2.New(l.Logger)
-	driver := conf.GetString("data.db.user.driver")
-	dsn := conf.GetString("data.db.user.dsn")
+	driver := conf.GetString("db.driver")
+	dsn := conf.GetString("db.dsn")
 
-	// GORM doc: https://gorm.io/docs/connecting_to_the_database.html
 	switch driver {
 	case "mysql":
 		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
@@ -97,7 +104,7 @@ func NewDB(conf *viper.Viper, l *log.Logger) *gorm.DB {
 	case "postgres":
 		db, err = gorm.Open(postgres.New(postgres.Config{
 			DSN:                  dsn,
-			PreferSimpleProtocol: true, // disables implicit prepared statement usage
+			PreferSimpleProtocol: true,
 		}), &gorm.Config{})
 	case "sqlite":
 		db, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{})
@@ -109,7 +116,6 @@ func NewDB(conf *viper.Viper, l *log.Logger) *gorm.DB {
 	}
 	db = db.Debug()
 
-	// Connection Pool config
 	sqlDB, err := db.DB()
 	if err != nil {
 		panic(err)
@@ -120,9 +126,9 @@ func NewDB(conf *viper.Viper, l *log.Logger) *gorm.DB {
 	return db
 }
 
-func NewCasbinEnforcer(conf *viper.Viper, l *log.Logger, db *gorm.DB) *casbin.SyncedEnforcer {
+func NewCasbinEnforcer(db *gorm.DB) *casbin.SyncedEnforcer {
 	a, _ := gormadapter.NewAdapterByDB(db)
-	m, err := model.NewModelFromString(`
+	m, err := casbinmodel.NewModelFromString(`
 [request_definition]
 r = sub, obj, act
 
@@ -144,101 +150,48 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 	}
 	e, _ := casbin.NewSyncedEnforcer(m, a)
 	e.StartAutoLoadPolicy(10 * time.Second) // 每10秒自动加载策略，防止启动多服务进程策略不一致
-
-	// Enable Logger, decide whether to show it in terminal
-	//e.EnableLog(true)
-
-	// Save the policy back to DB.
 	e.EnableAutoSave(true)
-
 	return e
 }
 
 func NewCache() *ristretto.Cache[string, interface{}] {
 	cache, err := ristretto.NewCache(&ristretto.Config[string, interface{}]{
-		NumCounters: 1e7,     // number of keys to track frequency of (10M).
-		MaxCost:     1 << 30, // maximum cost of cache (1GB).
-		BufferItems: 64,      // number of keys per Get buffer.
+		NumCounters: 1e7,
+		MaxCost:     1 << 30,
+		BufferItems: 64,
 	})
 	if err != nil {
 		panic(fmt.Errorf("failed to create Ristretto cache: %w", err))
 	}
-
 	return cache
 }
 
-func NewRedis(conf *viper.Viper, log *log.Logger) redis.UniversalClient {
-	// Use UniversalClient to support both single and cluster mode
-	rdb := redis.NewUniversalClient(&redis.UniversalOptions{
-		Addrs:    conf.GetStringSlice("data.redis.addrs"),
-		Password: conf.GetString("data.redis.password"),
-		DB:       conf.GetInt("data.redis.db"),
-	})
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	_, err := rdb.Ping(ctx).Result()
+// UpdateRuntimeConfig updates Redis and Storage clients from database settings
+func (r *Repository) UpdateRuntimeConfig(ctx context.Context) error {
+	settings, err := r.getAllSettings(ctx)
 	if err != nil {
-		_ = rdb.Close() // close the client if ping fails
-		log.WithContext(ctx).Warn("failed to connect to Redis", zap.Error(err))
+		return err
 	}
 
-	return rdb
+	// Update Redis
+	redisCfg := redis.ParseConfig(settings)
+	redis.Configure(redisCfg)
+
+	// Update Storage
+	storageCfg := storage.ParseConfig(settings)
+	storage.Configure(storageCfg)
+
+	return nil
 }
 
-type minioConfig struct {
-	Endpoint  string
-	AccessKey string
-	SecretKey string
-	Bucket    string
-	Region    string
-	Secure    bool
-}
-
-type MinIO struct {
-	client *minio.Client
-	bucket string
-}
-
-func NewMinIO(conf *viper.Viper, log *log.Logger) *MinIO {
-	cfg := &minioConfig{
-		Endpoint:  conf.GetString("storage.minio.endpoint"),
-		AccessKey: conf.GetString("storage.minio.access_key"),
-		SecretKey: conf.GetString("storage.minio.secret_key"),
-		Bucket:    conf.GetString("storage.minio.bucket"),
-		Region:    conf.GetString("storage.minio.region"),
-		Secure:    conf.GetBool("storage.minio.secure"),
+func (r *Repository) getAllSettings(ctx context.Context) (map[string]string, error) {
+	var settings []model.Setting
+	if err := r.db.WithContext(ctx).Find(&settings).Error; err != nil {
+		return nil, err
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	client, err := minio.New(cfg.Endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(cfg.AccessKey, cfg.SecretKey, ""),
-		Region: cfg.Region,
-		Secure: cfg.Secure,
-	})
-	if err != nil {
-		log.WithContext(ctx).Warn("failed to initialize MinIO client", zap.Error(err))
-		return nil
+	settingMap := make(map[string]string)
+	for _, s := range settings {
+		settingMap[s.Key] = s.Value
 	}
-
-	// 检查桶是否存在（不存在则创建）
-	exists, err := client.BucketExists(ctx, cfg.Bucket)
-	if err != nil {
-		log.WithContext(ctx).Warn("failed to check bucket existence", zap.Error(err))
-		return nil
-	}
-	if !exists {
-		if err := client.MakeBucket(ctx, cfg.Bucket, minio.MakeBucketOptions{}); err != nil {
-			log.WithContext(ctx).Warn("failed to create bucket", zap.Error(err))
-			return nil
-		}
-	}
-
-	return &MinIO{
-		client: client,
-		bucket: cfg.Bucket,
-	}
+	return settingMap, nil
 }

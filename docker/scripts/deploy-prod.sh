@@ -2,8 +2,8 @@
 
 ###############################################################################
 # 生产环境部署脚本
-# 用途：一键部署 Robot Shop 到生产环境
-# 作者：robot-shop team
+# 用途：一键部署 Vibe Testing 到生产环境
+# 作者：vibe-testing team
 # 日期：2025-11-12
 ###############################################################################
 
@@ -45,7 +45,7 @@ show_banner() {
     echo ""
     echo -e "${BLUE}╔════════════════════════════════════════════╗${NC}"
     echo -e "${BLUE}║                                            ║${NC}"
-    echo -e "${BLUE}║     Robot Shop - 生产环境部署              ║${NC}"
+    echo -e "${BLUE}║     Vibe Testing - 生产环境部署              ║${NC}"
     echo -e "${BLUE}║                                            ║${NC}"
     echo -e "${BLUE}╚════════════════════════════════════════════╝${NC}"
     echo ""
@@ -101,7 +101,7 @@ validate_config() {
     
     # 检查数据库密码
     if [[ "${MYSQL_ROOT_PASSWORD:-}" == "root" ]] || \
-       [[ "${MYSQL_PASSWORD:-}" == "robotshop" ]] || \
+       [[ "${MYSQL_PASSWORD:-}" == "vibe-testing" ]] || \
        [[ "${MYSQL_PASSWORD:-}" == "ChangeMe123!" ]]; then
         log_warning "MySQL 密码使用默认值，建议修改为强密码"
     fi
@@ -160,7 +160,7 @@ backup_database() {
     log_info "检查是否需要备份..."
     
     # 检查是否有运行中的 MySQL 容器
-    local mysql_container="${COMPOSE_PROJECT_NAME:-robotshop}-mysql"
+    local mysql_container="${COMPOSE_PROJECT_NAME:-vibe-testing}-mysql"
     
     if docker ps --format '{{.Names}}' | grep -q "^${mysql_container}$"; then
         log_warning "发现运行中的数据库，建议先备份"

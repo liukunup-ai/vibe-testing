@@ -2,7 +2,7 @@
 set -e
 
 echo "========================================"
-echo "Robot Shop 容器启动中..."
+echo "Vibe Testing 容器启动中..."
 echo "========================================"
 
 # 配置文件路径
@@ -37,7 +37,7 @@ fi
 
 ATTEMPT=0
 MAX_ATTEMPTS=60
-until wget -qO- http://127.0.0.1:8000/healthz >/dev/null 2>&1; do
+until wget -qO- http://127.0.0.1:7001/healthz >/dev/null 2>&1; do
     ATTEMPT=$((ATTEMPT + 1))
     if [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
         echo "⚠ 后端健康检查超时，继续启动 nginx"

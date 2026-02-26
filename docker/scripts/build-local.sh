@@ -3,7 +3,7 @@
 ###############################################################################
 # Docker 本地构建测试脚本
 # 用途：在本地测试 Docker 镜像构建流程
-# 作者：robot-shop team
+# 作者：vibe-testing team
 # 日期：2025-11-12
 ###############################################################################
 
@@ -37,7 +37,7 @@ log_error() {
 # 配置变量
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-IMAGE_NAME="${IMAGE_NAME:-robot-shop}"
+IMAGE_NAME="${IMAGE_NAME:-vibe-testing}"
 IMAGE_TAG="${IMAGE_TAG:-local-test}"
 DOCKERFILE_PATH="${PROJECT_ROOT}/deploy/build/Dockerfile"
 BUILD_CONTEXT="${PROJECT_ROOT}"

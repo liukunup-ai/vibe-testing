@@ -1,9 +1,9 @@
-import { Form, Input, Modal, message } from 'antd';
+import { Form, Input, Modal, message, Select, Spin, Tag } from 'antd';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { useForm } from 'antd/es/form/Form';
 import { useState, useEffect } from 'react';
-import { updateApi } from '@/services/backend/api';
-
+import { updateApi, getAdminApisIdRoles, putAdminApisIdRoles } from '@/services/backend/api';
+import { listRoles } from '@/services/backend/role';
 interface UpdateFormProps {
   visible: boolean; // 弹窗是否可见
   onCancel: () => void; // 取消回调
@@ -14,10 +14,38 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
   const [loading, setLoading] = useState(false);
   const [form] = useForm<API.Api>();
   const intl = useIntl();
+  const [roleOptions, setRoleOptions] = useState<API.Role[]>([]);
+  const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
+  const [loadingRoles, setLoadingRoles] = useState(false);
 
+  // 加载所有角色
   useEffect(() => {
-    if (visible && initialValues) {
+    const loadRoles = async () => {
+      try {
+        const response = await listRoles({ page: 1, pageSize: 1000 });
+        if (response.data?.list) {
+          setRoleOptions(response.data.list);
+        }
+      } catch (error) {
+        // ignore
+      }
+    };
+    loadRoles();
+  }, []);
+
+  // 当 visible 变化时，加载已授权的角色
+  useEffect(() => {
+    if (visible && initialValues?.id) {
       form.setFieldsValue(initialValues);
+      setLoadingRoles(true);
+      getAdminApisIdRoles({ id: initialValues.id })
+        .then((response) => {
+          if (response) {
+            setSelectedRoles(response.roleIds || []);
+          }
+        })
+    } else if (!visible) {
+      setSelectedRoles([]);
     }
   }, [visible, initialValues, form]);
 
@@ -35,7 +63,10 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
           defaultMessage: '更新成功',
         }),
       );
+      // 更新角色授权
+      await putAdminApisIdRoles({ id: values.id }, { roleIds: selectedRoles });
       form.resetFields();
+      setSelectedRoles([]);
       onSuccess();
     } catch (error) {
       const msg = intl.formatMessage({
@@ -54,6 +85,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
 
   const handleCancel = () => {
     form.resetFields();
+    setSelectedRoles([]);
     onCancel();
   };
 
@@ -75,7 +107,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
         </Form.Item>
 
         <Form.Item
-          name="name"
+          name="group"
           label={<FormattedMessage id="pages.admin.api.key.group" defaultMessage="分组" />}
           rules={[
             {
@@ -156,6 +188,26 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
               defaultMessage: '请输入方法',
             })}
           />
+        </Form.Item>
+
+        <Form.Item
+          label={<FormattedMessage id="pages.admin.api.key.roles" defaultMessage="授权角色" />}
+        >
+          <Spin spinning={loadingRoles}>
+            <Select
+              mode="multiple"
+              style={{ width: '100%' }}
+              placeholder={intl.formatMessage({ id: 'pages.admin.api.form.roles.placeholder', defaultMessage: '请选择授权角色' })}
+              value={selectedRoles}
+              onChange={setSelectedRoles}
+              optionRender={(option) => (
+                <span>
+                  <Tag color="blue">{option.data.label}</Tag>
+                </span>
+              )}
+              options={roleOptions.map((r) => ({ label: r.name, value: r.id }))}
+            />
+          </Spin>
         </Form.Item>
       </Form>
     </Modal>

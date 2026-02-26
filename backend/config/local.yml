@@ -1,8 +1,7 @@
 env: local
 http:
-  #  host: 0.0.0.0
-  host: 127.0.0.1
-  port: 8000
+  host: 0.0.0.0
+  port: 7001
   # cert_file: "./storage/cert/server.crt"
   # key_file: "./storage/cert/server.key"
 security:
@@ -10,47 +9,90 @@ security:
     app_key: 123456
     app_security: 123456
   jwt:
-    key: QQYnRFerJTSEcrfB89fw8prOaObmrch8
-data:
-  db:
-    user:
-      driver: sqlite
-      dsn: storage/nunu-test.db?_busy_timeout=5000
-  #    user:
-  #      driver: mysql
-  #      dsn: root:123456@tcp(127.0.0.1:3380)/user?charset=utf8mb4&parseTime=True&loc=Local
-  #    user:
-  #      driver: postgres
-  #      dsn: host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai
-  redis:
-    addrs:
-      - "127.0.0.1:6379"
-    password: ""
-    db: 0
-    read_timeout: 0.2s
-    write_timeout: 0.2s
-email:
-  host: smtp.163.com
-  port: 587
-  username: xxx@163.com
-  password: 123456
-  use_ssl: false
-  use_tls: true
-  local_name: localhost
-storage:
-  minio:
-    endpoint: "http://minio.local:9000"
-    access_key: ak
-    secret_key: sk
-    bucket: robotshop
-    region: us-east-1
-    secure: false
-
+    secret_key: QQYnRFerJTSEcrfB89fw8prOaObmrch8
+    access_token_expiry: 15m
+    refresh_token_expiry: 168h
+db:
+  driver: sqlite
+  dsn: storage/vibe-testing.db?_busy_timeout=5000
+  # MySQL
+  #  driver: mysql
+  #  dsn: root:pass@tcp(127.0.0.1:3306)/vibe-testing?charset=utf8mb4&parseTime=True&loc=Local
+  # PostgreSQL
+  #  driver: postgres
+  #  dsn: host=localhost user=gorm password=gorm dbname=gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai
+# redis:
+#   addrs: []
+#   password: ""
+#   db: 0
+#   read_timeout: 0.2s
+#   write_timeout: 0.2s
+# s3:
+#   endpoint: ""
+#   access_key: ""
+#   secret_key: ""
+#   bucket_name: ""
+#   secure: false
+# site:
+#   title: ""
+#   logo: ""
+#   favicon: ""
+#   copyright: ""
+#   show_links: true
+#   question_link: ""
+#   frontend_base_url: ""
+# email:
+#   host: 127.0.0.1
+#   port: 1025
+#   username: ""
+#   password: ""
+#   from: ""
+#   local_name: localhost
+#   use_ssl: false
+#   use_tls: false
+# ldap:
+#   enabled:
+#   host: ""
+#   port: ""
+#   bind_dn: ""
+#   bind_password: ""
+#   base_dn: ""
+#   user_filter: ""
+#   attr_username: ""
+#   attr_email: ""
+#   attr_name: ""
+# oidc:
+#   enabled:
+#   name: ""
+#   logo: ""
+#   color: ""
+#   provider: ""
+#   client_id: ""
+#   client_secret: ""
+#   redirect_url: ""
+#   scopes: ""
+#   auto_login:
+#   signout_redirect_url: ""
+#   insecure_skip_verify:
+#   ca_cert: ""
+# ai:
+#   provider: ""
+#   openai:
+#     base_url: ""
+#     api_key: ""
+#     model: ""
+# sentry:
+#   dsn: ""
 log:
-  log_level: debug
-  encoding: console           # json or console
+  log_level: info
+  encoding: json # json or console
   log_file_name: "./storage/logs/server.log"
   max_backups: 30
   max_age: 7
   max_size: 1024
   compress: true
+audit:
+  log_file_name: "./storage/logs/audit.log"
+  max_backups: 30
+  max_age: 90
+  max_size: 100

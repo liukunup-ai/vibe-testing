@@ -19,16 +19,19 @@ type ItemService interface {
 func NewItemService(
 	service *Service,
 	itemRepository repository.ItemRepository,
+	userRepository repository.UserRepository,
 ) ItemService {
 	return &itemService{
 		Service:        service,
 		itemRepository: itemRepository,
+		userRepository: userRepository,
 	}
 }
 
 type itemService struct {
 	*Service
 	itemRepository repository.ItemRepository
+	userRepository repository.UserRepository
 }
 
 func (s *itemService) Get(ctx context.Context, id uint) (model.Item, error) {
@@ -45,13 +48,21 @@ func (s *itemService) List(ctx context.Context, req *v1.ItemSearchRequest) (*v1.
 		Total: total,
 	}
 	for _, item := range list {
+		owner := &v1.OwnerData{Username: item.Owner}
+		if item.Owner != "" {
+			user, err := s.userRepository.GetByUsername(ctx, item.Owner)
+			if err == nil {
+				owner.FullName = user.FullName
+				owner.AvatarUrl = user.AvatarURL
+			}
+		}
 		data.List = append(data.List, v1.ItemDataItem{
 			Id:        item.ID,
 			CreatedAt: item.CreatedAt.Format(constant.DateTimeLayout),
 			UpdatedAt: item.UpdatedAt.Format(constant.DateTimeLayout),
 			Name:      item.Name,
 			Desc:      item.Desc,
-			Owner:     item.Owner,
+			Owner:     owner,
 		})
 	}
 	return data, nil

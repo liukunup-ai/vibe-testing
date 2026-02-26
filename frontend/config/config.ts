@@ -137,8 +137,11 @@ export default defineConfig({
    * @description 配置 <head> 中额外的 script
    */
   headScripts: [
-    // 解决首次加载时白屏的问题
+    { src: join(PUBLIC_PATH, 'scripts/site-meta.js') },
     { src: join(PUBLIC_PATH, 'scripts/loading.js'), async: true },
+  ],
+  links: [
+    { rel: 'icon', href: join(PUBLIC_PATH, 'favicon.ico'), type: 'image/x-icon' },
   ],
   //================ pro 插件配置 =================
   presets: ['umi-presets-pro'],
@@ -150,7 +153,7 @@ export default defineConfig({
   openAPI: [
     {
       requestLibPath: "import { request } from '@umijs/max'",
-      schemaPath: 'http://127.0.0.1:8000/swagger/doc.json',
+      schemaPath: 'http://127.0.0.1:7001/swagger/doc.json',
       projectName: 'backend',
       apiPrefix: "'/v1'",
     },

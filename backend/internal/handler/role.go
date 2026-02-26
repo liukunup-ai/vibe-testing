@@ -208,3 +208,67 @@ func (h *RoleHandler) UpdateRolePermissions(ctx *gin.Context) {
 	}
 	v1.HandleSuccess(ctx, nil)
 }
+
+
+// GetRoleApis godoc
+// @Summary 获取角色授权的接口列表
+// @Tags Role
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "角色ID"
+// @Success 200 {object} v1.RoleApiResponse
+// @Router /admin/roles/{id}/apis [get]
+func (h *RoleHandler) GetRoleApis(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		h.logger.WithContext(ctx).Error("parse id error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+
+	apiIds, err := h.roleService.GetApis(ctx, uint(id))
+	if err != nil {
+		h.logger.WithContext(ctx).Error("get role apis error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)
+		return
+	}
+
+	v1.HandleSuccess(ctx, v1.RoleApiResponse{ApiIds: apiIds})
+}
+
+// UpdateRoleApis godoc
+// @Summary 更新角色授权的接口
+// @Tags Role
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path uint true "角色ID"
+// @Param body body v1.UpdateRoleApisRequest true "接口ID列表"
+// @Success 200 {object} v1.Response
+// @Router /admin/roles/{id}/apis [put]
+func (h *RoleHandler) UpdateRoleApis(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		h.logger.WithContext(ctx).Error("parse id error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+
+	var req v1.UpdateRoleApisRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		h.logger.WithContext(ctx).Error("bind request error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+
+	if err := h.roleService.UpdateApis(ctx, uint(id), req.ApiIds); err != nil {
+		h.logger.WithContext(ctx).Error("update role apis error", zap.Error(err))
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)
+		return
+	}
+
+	v1.HandleSuccess(ctx, nil)
+}

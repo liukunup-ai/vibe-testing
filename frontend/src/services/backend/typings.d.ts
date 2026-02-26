@@ -1,4 +1,47 @@
 declare namespace API {
+  type AdminSetting = {
+    ai?: AIConfig;
+    app?: AppConfig;
+    ldap?: LDAPConfig;
+    oidc?: OIDCConfig;
+    redis?: RedisConfig;
+    s3?: S3Config;
+    sentry?: SentryConfig;
+    site?: SiteConfig;
+    smtp?: SMTPConfig;
+  };
+
+  type AdminSettingRequest = {
+    ai?: AIConfig;
+    app?: AppConfig;
+    ldap?: LDAPConfig;
+    oidc?: OIDCConfig;
+    redis?: RedisConfig;
+    s3?: S3Config;
+    sentry?: SentryConfig;
+    site?: SiteConfig;
+    smtp?: SMTPConfig;
+  };
+
+  type AdminSettingResponse = {
+    data?: AdminSetting;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type AIConfig = {
+    apiKey?: string;
+    baseUrl?: string;
+    model?: string;
+    provider?: string;
+  };
+
   type Api = {
     /** 创建时间 */
     createdAt?: string;
@@ -46,6 +89,10 @@ declare namespace API {
     success?: boolean;
   };
 
+  type ApiRoleResponse = {
+    roleIds?: number[];
+  };
+
   type ApiSearchResponse = {
     data?: ApiList;
     /** 错误码 */
@@ -58,18 +105,23 @@ declare namespace API {
     success?: boolean;
   };
 
+  type AppConfig = {
+    frontendBaseUrl?: string;
+    gravatarEndpoint?: string;
+  };
+
   type DeleteApiParams = {
     /** 接口ID */
     id: number;
   };
 
-  type DeleteMenuParams = {
-    /** 菜单ID */
+  type DeleteItemParams = {
+    /** 项目ID */
     id: number;
   };
 
-  type DeleteRobotParams = {
-    /** 机器人ID */
+  type DeleteMenuParams = {
+    /** 菜单ID */
     id: number;
   };
 
@@ -80,7 +132,7 @@ declare namespace API {
 
   type DeleteUserParams = {
     /** 用户ID */
-    id: number;
+    id: string;
   };
 
   type DynamicMenuResponse = {
@@ -100,13 +152,28 @@ declare namespace API {
     list?: MenuNode[];
   };
 
+  type ForgotPasswordRequest = {
+    /** 邮箱 */
+    email: string;
+  };
+
+  type getAdminApisIdRolesParams = {
+    /** 接口ID */
+    id: number;
+  };
+
+  type getAdminRolesIdApisParams = {
+    /** 角色ID */
+    id: number;
+  };
+
   type GetApiParams = {
     /** 接口ID */
     id: number;
   };
 
-  type GetRobotParams = {
-    /** 机器人ID */
+  type GetItemParams = {
+    /** 项目ID */
     id: number;
   };
 
@@ -134,9 +201,82 @@ declare namespace API {
     role: string;
   };
 
+  type GetSiteSettingParams = {
+    /** 客户端缓存的版本号 */
+    version?: string;
+  };
+
   type GetUserByIDParams = {
     /** 用户ID */
-    id: number;
+    id: string;
+  };
+
+  type Item = {
+    /** 创建时间 */
+    createdAt?: string;
+    /** 描述 */
+    desc?: string;
+    /** ID */
+    id?: number;
+    /** 名称 */
+    name?: string;
+    /** 所有者 */
+    owner?: OwnerData;
+    /** 更新时间 */
+    updatedAt?: string;
+  };
+
+  type ItemList = {
+    /** 列表 */
+    list?: Item[];
+    /** 总数 */
+    total?: number;
+  };
+
+  type ItemRequest = {
+    /** 描述 */
+    desc?: string;
+    /** 名称 */
+    name?: string;
+    /** 所有者 */
+    owner?: string;
+  };
+
+  type ItemResponse = {
+    data?: Item;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type ItemSearchResponse = {
+    data?: ItemList;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type LDAPConfig = {
+    attrEmail?: string;
+    attrName?: string;
+    attrUsername?: string;
+    baseDn?: string;
+    bindDn?: string;
+    bindPassword?: string;
+    enabled?: boolean;
+    host?: string;
+    port?: number;
+    userFilter?: string;
   };
 
   type ListApisParams = {
@@ -154,6 +294,19 @@ declare namespace API {
     method?: string;
   };
 
+  type ListItemsParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 名称 */
+    name?: string;
+    /** 描述 */
+    desc?: string;
+    /** 所有者 */
+    owner?: string;
+  };
+
   type ListMenusParams = {
     /** 页码 */
     page: number;
@@ -165,19 +318,6 @@ declare namespace API {
     path?: string;
     /** 可见性 */
     access?: string;
-  };
-
-  type ListRobotsParams = {
-    /** 页码 */
-    page: number;
-    /** 分页大小 */
-    pageSize: number;
-    /** 名称 */
-    name?: string;
-    /** 描述 */
-    desc?: string;
-    /** 所有者 */
-    owner?: string;
   };
 
   type ListRolesParams = {
@@ -198,21 +338,42 @@ declare namespace API {
     pageSize: number;
     /** 邮箱 */
     email?: string;
+    /** 手机 */
+    phone?: string;
     /** 用户名 */
     username?: string;
-    /** 昵称 */
-    nickname?: string;
+    /** 展示名 */
+    fullName?: string;
   };
 
   type LoginRequest = {
+    /** 记住我 - 延长refresh token有效期 */
+    autoLogin?: boolean;
     /** 密码 */
     password: string;
-    /** 用户名 */
+    /** 用户名 或 邮箱 */
     username: string;
   };
 
   type LoginResponse = {
-    data?: TokenPair;
+    data?: TokenData;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type LogoutData = {
+    /** OIDC end session URL for SLO */
+    endSessionUrl?: string;
+  };
+
+  type LogoutResponse = {
+    data?: LogoutData;
     /** 错误码 */
     errorCode?: number;
     /** 报错信息 */
@@ -352,21 +513,81 @@ declare namespace API {
     success?: boolean;
   };
 
+  type OIDCAuthRequest = {
+    /** 记住我 - 延长refresh token有效期 */
+    autoLogin?: boolean;
+    code: string;
+    state?: string;
+  };
+
+  type OIDCConfig = {
+    authorizeUrl?: string;
+    autoLogin?: boolean;
+    caCert?: string;
+    clientId?: string;
+    clientSecret?: string;
+    enabled?: boolean;
+    insecureSkipVerify?: boolean;
+    issuer?: string;
+    logo?: string;
+    name?: string;
+    redirectUrl?: string;
+    responseType?: string;
+    scopes?: string;
+    signoutRedirectUrl?: string;
+  };
+
+  type OwnerData = {
+    /** 头像 */
+    avatarUrl?: string;
+    /** 全名 */
+    fullName?: string;
+    /** 用户名 */
+    username?: string;
+  };
+
+  type putAdminApisIdRolesParams = {
+    /** 接口ID */
+    id: number;
+  };
+
+  type putAdminRolesIdApisParams = {
+    /** 角色ID */
+    id: number;
+  };
+
+  type RedisConfig = {
+    addrs?: string[];
+    db?: number;
+    password?: string;
+    readTimeout?: number;
+    writeTimeout?: number;
+  };
+
   type RefreshTokenRequest = {
-    /** 刷新令牌 */
+    /** 刷新凭证 */
     refreshToken: string;
   };
 
   type RegisterRequest = {
     /** 邮箱 */
     email: string;
+    /** 全名 */
+    fullName?: string;
     /** 密码 */
     password: string;
   };
 
+  type ResetAvatarParams = {
+    /** 用户ID */
+    id: string;
+  };
+
   type ResetPasswordRequest = {
-    /** 邮箱 */
-    email: string;
+    /** 新密码 */
+    newPassword: string;
+    /** 重置令牌 */
+    token: string;
   };
 
   type Response = {
@@ -382,71 +603,9 @@ declare namespace API {
     success?: boolean;
   };
 
-  type Robot = {
-    /** 回调地址 */
-    callback?: string;
-    /** 创建时间 */
-    createdAt?: string;
-    /** 描述 */
-    desc?: string;
-    /** 是否启用 */
-    enabled?: boolean;
-    /** ID */
-    id?: number;
-    /** 名称 */
-    name?: string;
-    /** 所有者 */
-    owner?: string;
-    /** 更新时间 */
-    updatedAt?: string;
-    /** 通知地址 */
-    webhook?: string;
-  };
-
-  type RobotList = {
-    /** 列表 */
-    list?: Robot[];
-    /** 总数 */
-    total?: number;
-  };
-
-  type RobotRequest = {
-    /** 回调地址 */
-    callback?: string;
-    /** 描述 */
-    desc?: string;
-    /** 是否启用 */
-    enabled?: boolean;
-    /** 名称 */
-    name?: string;
-    /** 所有者 */
-    owner?: string;
-    /** 通知地址 */
-    webhook?: string;
-  };
-
-  type RobotResponse = {
-    data?: Robot;
-    /** 错误码 */
-    errorCode?: number;
-    /** 报错信息 */
-    errorMessage?: string;
-    /** 前端展示方式 */
-    errorShowType?: number;
-    /** 是否成功 */
-    success?: boolean;
-  };
-
-  type RobotSearchResponse = {
-    data?: RobotList;
-    /** 错误码 */
-    errorCode?: number;
-    /** 报错信息 */
-    errorMessage?: string;
-    /** 前端展示方式 */
-    errorShowType?: number;
-    /** 是否成功 */
-    success?: boolean;
+  type RevokeSessionsParams = {
+    /** 用户ID */
+    id: string;
   };
 
   type Role = {
@@ -460,6 +619,10 @@ declare namespace API {
     name?: string;
     /** 更新时间 */
     updatedAt?: string;
+  };
+
+  type RoleApiResponse = {
+    apiIds?: number[];
   };
 
   type RoleList = {
@@ -488,17 +651,90 @@ declare namespace API {
     success?: boolean;
   };
 
-  type TokenPair = {
-    /** 访问令牌 */
+  type S3Config = {
+    accessKey?: string;
+    bucketName?: string;
+    caCert?: string;
+    endpoint?: string;
+    secretKey?: string;
+    secure?: boolean;
+  };
+
+  type SendResetEmailParams = {
+    /** 用户ID */
+    id: string;
+  };
+
+  type SentryConfig = {
+    dsn?: string;
+  };
+
+  type SiteConfig = {
+    copyright?: string;
+    favicon?: string;
+    logo?: string;
+    questionLink?: string;
+    showLinks?: boolean;
+    title?: string;
+  };
+
+  type SiteSetting = {
+    oidc?: OIDCConfig;
+    sentry?: SentryConfig;
+    site?: SiteConfig;
+    version?: string;
+  };
+
+  type SiteSettingResponse = {
+    data?: SiteSetting;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type SMTPConfig = {
+    from?: string;
+    host?: string;
+    localName?: string;
+    password?: string;
+    port?: number;
+    useSSL?: boolean;
+    useTLS?: boolean;
+    user?: string;
+  };
+
+  type TestEmailRequest = {
+    /** 邮箱 */
+    to: string;
+  };
+
+  type TokenData = {
+    /** 访问凭证 */
     accessToken?: string;
-    /** 过期时间(单位:秒) */
+    /** 有效期（秒） */
     expiresIn?: number;
-    /** 刷新令牌 */
+    /** 刷新凭证 */
     refreshToken?: string;
+    /** 凭证类型 */
+    tokenType?: string;
   };
 
   type UpdateApiParams = {
     /** 接口ID */
+    id: number;
+  };
+
+  type UpdateApiRolesRequest = {
+    roleIds: number[];
+  };
+
+  type UpdateItemParams = {
+    /** 项目ID */
     id: number;
   };
 
@@ -514,9 +750,8 @@ declare namespace API {
     oldPassword: string;
   };
 
-  type UpdateRobotParams = {
-    /** 机器人ID */
-    id: number;
+  type UpdateRoleApisRequest = {
+    apiIds: number[];
   };
 
   type UpdateRoleParams = {
@@ -531,24 +766,38 @@ declare namespace API {
     list: string[];
   };
 
+  type UpdateStatusParams = {
+    /** 用户ID */
+    id: string;
+  };
+
+  type UpdateStatusRequest = {
+    /** 状态 0:待激活 1:正常 2:禁用 */
+    status: 0 | 1 | 2;
+  };
+
   type UpdateUserParams = {
     /** 用户ID */
-    id: number;
+    id: string;
   };
 
   type User = {
     /** 头像 */
-    avatar?: string;
-    /** 个人简介 */
+    avatarUrl?: string;
+    /** 简介 */
     bio?: string;
     /** 创建时间 */
     createdAt?: string;
+    /** 方向 */
+    direction?: string;
     /** 邮箱 */
     email?: string;
+    /** 全名 */
+    fullName?: string;
     /** 语言 */
     language?: string;
-    /** 昵称 */
-    nickname?: string;
+    /** 手机 */
+    phone?: string;
     /** 角色 */
     roles?: Role[];
     /** 状态 0:待激活 1:正常 2:禁用 */
@@ -559,8 +808,8 @@ declare namespace API {
     timezone?: string;
     /** 更新时间 */
     updatedAt?: string;
-    /** ID */
-    userid?: number;
+    /** UserID */
+    userId?: string;
     /** 用户名 */
     username?: string;
   };
@@ -573,14 +822,18 @@ declare namespace API {
   };
 
   type UserRequest = {
-    /** 个人简介 */
+    /** 简介 */
     bio?: string;
+    /** 方向 */
+    direction?: string;
     /** 邮箱 */
     email?: string;
+    /** 全名 */
+    fullName?: string;
     /** 语言 */
     language?: string;
-    /** 昵称 */
-    nickname?: string;
+    /** 手机 */
+    phone?: string;
     /** 角色 */
     roles?: string[];
     /** 状态 0:待激活 1:正常 2:禁用 */

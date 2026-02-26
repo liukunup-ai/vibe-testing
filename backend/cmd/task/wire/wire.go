@@ -17,9 +17,7 @@ import (
 
 var repositorySet = wire.NewSet(
 	repository.NewDB,
-	repository.NewRedis,
 	repository.NewCache,
-	repository.NewMinIO,
 	repository.NewRepository,
 	repository.NewTransaction,
 	repository.NewTokenStore,
@@ -29,10 +27,10 @@ var repositorySet = wire.NewSet(
 	repository.NewRoleRepository,
 	repository.NewMenuRepository,
 	repository.NewApiRepository,
+	repository.NewSettingRepository,
 	// more biz repository
 	repository.NewItemRepository,
 )
-
 var taskSet = wire.NewSet(
 	task.NewTask,
 	task.NewUserTask,

@@ -327,9 +327,27 @@ export default [
     layout: false,
   },
   {
+    name: 'oidc-callback',
+    path: '/auth/callback',
+    component: '@/pages/Auth/OIDCCallback',
+    layout: false,
+  },
+  {
     name: 'register',
     path: '/register',
     component: '@/pages/Register',
+    layout: false,
+  },
+  {
+    name: 'forgot-password',
+    path: '/forgot-password',
+    component: '@/pages/ForgotPassword',
+    layout: false,
+  },
+  {
+    name: 'reset-password',
+    path: '/reset-password',
+    component: '@/pages/ResetPassword',
     layout: false,
   },
   {

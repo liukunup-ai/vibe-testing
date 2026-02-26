@@ -5,25 +5,24 @@ import (
 	"backend/internal/model"
 	"context"
 
-	"github.com/duke-git/lancet/v2/convertor"
 	"go.uber.org/zap"
 )
 
 type UserRepository interface {
-	Get(ctx context.Context, uid uint) (model.User, error)
+	Get(ctx context.Context, uid string) (model.User, error)
 	List(ctx context.Context, req *v1.UserSearchRequest) ([]model.User, int64, error)
 	Create(ctx context.Context, user *model.User) error
-	Update(ctx context.Context, uid uint, data map[string]interface{}) error
-	Delete(ctx context.Context, uid uint) error
+	Update(ctx context.Context, uid string, data map[string]interface{}) error
+	Delete(ctx context.Context, uid string) error
 
 	GetByUsername(ctx context.Context, username string) (model.User, error)
 	GetByEmail(ctx context.Context, email string) (model.User, error)
 	GetByUsernameOrEmail(ctx context.Context, username string, email string) (model.User, error)
 
-	GetPermissions(ctx context.Context, uid uint) ([][]string, error)
-	GetRoles(ctx context.Context, uid uint) ([]string, error)
-	UpdateRoles(ctx context.Context, uid uint, roles []string) error
-	DeleteRoles(ctx context.Context, uid uint) error
+	GetPermissions(ctx context.Context, uid string) ([][]string, error)
+	GetRoles(ctx context.Context, uid string) ([]string, error)
+	UpdateRoles(ctx context.Context, uid string, roles []string) error
+	DeleteRoles(ctx context.Context, uid string) error
 }
 
 func NewUserRepository(
@@ -38,9 +37,9 @@ type userRepository struct {
 	*Repository
 }
 
-func (r *userRepository) Get(ctx context.Context, uid uint) (model.User, error) {
+func (r *userRepository) Get(ctx context.Context, uid string) (model.User, error) {
 	m := model.User{}
-	return m, r.DB(ctx).Where("id = ?", uid).First(&m).Error
+	return m, r.DB(ctx).Where("user_id = ?", uid).First(&m).Error
 }
 
 func (r *userRepository) List(ctx context.Context, req *v1.UserSearchRequest) ([]model.User, int64, error) {
@@ -50,8 +49,11 @@ func (r *userRepository) List(ctx context.Context, req *v1.UserSearchRequest) ([
 	if req.Username != "" {
 		scope = scope.Where("username LIKE ?", "%"+req.Username+"%")
 	}
-	if req.Nickname != "" {
-		scope = scope.Where("nickname LIKE ?", "%"+req.Nickname+"%")
+	if req.FullName != "" {
+		scope = scope.Where("fullname LIKE ?", "%"+req.FullName+"%")
+	}
+	if req.Phone != "" {
+		scope = scope.Where("phone LIKE ?", "%"+req.Phone+"%")
 	}
 	if req.Email != "" {
 		scope = scope.Where("email LIKE ?", "%"+req.Email+"%")
@@ -69,12 +71,12 @@ func (r *userRepository) Create(ctx context.Context, m *model.User) error {
 	return r.DB(ctx).Create(m).Error
 }
 
-func (r *userRepository) Update(ctx context.Context, uid uint, data map[string]interface{}) error {
-	return r.DB(ctx).Model(&model.User{}).Where("id = ?", uid).Updates(data).Error
+func (r *userRepository) Update(ctx context.Context, uid string, data map[string]interface{}) error {
+	return r.DB(ctx).Model(&model.User{}).Where("user_id = ?", uid).Updates(data).Error
 }
 
-func (r *userRepository) Delete(ctx context.Context, uid uint) error {
-	return r.DB(ctx).Where("id = ?", uid).Delete(&model.User{}).Error
+func (r *userRepository) Delete(ctx context.Context, uid string) error {
+	return r.DB(ctx).Where("user_id = ?", uid).Delete(&model.User{}).Error
 }
 
 func (r *userRepository) GetByUsername(ctx context.Context, username string) (model.User, error) {
@@ -92,20 +94,20 @@ func (r *userRepository) GetByUsernameOrEmail(ctx context.Context, username stri
 	return m, r.DB(ctx).Where("username = ? OR email = ?", username, email).First(&m).Error
 }
 
-func (r *userRepository) GetPermissions(ctx context.Context, uid uint) ([][]string, error) {
-	return r.e.GetImplicitPermissionsForUser(convertor.ToString(uid))
+func (r *userRepository) GetPermissions(ctx context.Context, uid string) ([][]string, error) {
+	return r.e.GetImplicitPermissionsForUser(uid)
 }
 
-func (r *userRepository) GetRoles(ctx context.Context, uid uint) ([]string, error) {
-	return r.e.GetRolesForUser(convertor.ToString(uid))
+func (r *userRepository) GetRoles(ctx context.Context, uid string) ([]string, error) {
+	return r.e.GetRolesForUser(uid)
 }
 
-func (r *userRepository) UpdateRoles(ctx context.Context, uid uint, roles []string) error {
+func (r *userRepository) UpdateRoles(ctx context.Context, uid string, roles []string) error {
 	if len(roles) == 0 {
-		_, err := r.e.DeleteRolesForUser(convertor.ToString(uid))
+		_, err := r.e.DeleteRolesForUser(uid)
 		return err
 	}
-	old, err := r.e.GetRolesForUser(convertor.ToString(uid))
+	old, err := r.e.GetRolesForUser(uid)
 	if err != nil {
 		return err
 	}
@@ -120,12 +122,12 @@ func (r *userRepository) UpdateRoles(ctx context.Context, uid uint, roles []stri
 	addRoles := make([]string, 0)
 	delRoles := make([]string, 0)
 
-	for key, _ := range oldMap {
+	for key := range oldMap {
 		if _, exists := newMap[key]; !exists {
 			delRoles = append(delRoles, key)
 		}
 	}
-	for key, _ := range newMap {
+	for key := range newMap {
 		if _, exists := oldMap[key]; !exists {
 			addRoles = append(addRoles, key)
 		}
@@ -134,17 +136,17 @@ func (r *userRepository) UpdateRoles(ctx context.Context, uid uint, roles []stri
 		return nil
 	}
 	for _, role := range delRoles {
-		if _, err := r.e.DeleteRoleForUser(convertor.ToString(uid), role); err != nil {
+		if _, err := r.e.DeleteRoleForUser(uid, role); err != nil {
 			r.logger.WithContext(ctx).Error("DeleteRoleForUser error", zap.Error(err))
 			return err
 		}
 	}
 
-	_, err = r.e.AddRolesForUser(convertor.ToString(uid), addRoles)
+	_, err = r.e.AddRolesForUser(uid, addRoles)
 	return err
 }
 
-func (r *userRepository) DeleteRoles(ctx context.Context, uid uint) error {
-	_, err := r.e.DeleteRolesForUser(convertor.ToString(uid))
+func (r *userRepository) DeleteRoles(ctx context.Context, uid string) error {
+	_, err := r.e.DeleteRolesForUser(uid)
 	return err
 }

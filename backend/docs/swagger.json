@@ -15,7 +15,7 @@
         },
         "version": "1.0.0"
     },
-    "host": "localhost:8000",
+    "host": "localhost:7001",
     "paths": {
         "/admin/apis": {
             "get": {
@@ -226,6 +226,85 @@
                         "name": "id",
                         "in": "query",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/apis/{id}/roles": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Api"
+                ],
+                "summary": "获取接口授权的角色列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "接口ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.ApiRoleResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Api"
+                ],
+                "summary": "更新接口授权的角色",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "接口ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "角色ID列表",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.UpdateApiRolesRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -674,6 +753,192 @@
                 }
             }
         },
+        "/admin/roles/{id}/apis": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Role"
+                ],
+                "summary": "获取角色授权的接口列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "角色ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.RoleApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Role"
+                ],
+                "summary": "更新角色授权的接口",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "角色ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "接口ID列表",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.UpdateRoleApisRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/settings": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取系统设置信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "获取系统设置",
+                "operationId": "GetSetting",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.AdminSettingResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新系统设置信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "更新系统设置",
+                "operationId": "UpdateSetting",
+                "parameters": [
+                    {
+                        "description": "系统设置数据",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.AdminSettingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/settings/test-email": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "使用当前SMTP配置发送测试邮件",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "测试邮件发送",
+                "operationId": "TestEmail",
+                "parameters": [
+                    {
+                        "description": "测试邮件请求",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.TestEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/users": {
             "get": {
                 "security": [
@@ -716,14 +981,20 @@
                     },
                     {
                         "type": "string",
+                        "description": "手机",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "用户名",
                         "name": "username",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "昵称",
-                        "name": "nickname",
+                        "description": "展示名",
+                        "name": "fullName",
                         "in": "query"
                     }
                 ],
@@ -796,7 +1067,7 @@
                 "operationId": "UpdateUser",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "用户ID",
                         "name": "id",
                         "in": "path",
@@ -841,11 +1112,242 @@
                 "operationId": "DeleteUser",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "用户ID",
                         "name": "id",
                         "in": "query",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{id}/reset-avatar": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "重置用户头像为默认头像",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "重置头像",
+                "operationId": "ResetAvatar",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{id}/revoke-sessions": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "撤销指定用户的所有登录会话",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "撤销登录态",
+                "operationId": "RevokeSessions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{id}/send-reset-email": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "向指定用户发送重置密码邮件",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "发送重置密码邮件",
+                "operationId": "SendResetEmail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{id}/status": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新用户状态（启用/禁用）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "更新用户状态",
+                "operationId": "UpdateStatus",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "状态信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.UpdateStatusRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/oidc": {
+            "post": {
+                "description": "通过OIDC授权码登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "OIDC登录",
+                "operationId": "OIDCAuth",
+                "parameters": [
+                    {
+                        "description": "OIDC授权码",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.OIDCAuthRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.LoginResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/forgot-password": {
+            "post": {
+                "description": "发送重置密码邮件",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "忘记密码",
+                "operationId": "ForgotPassword",
+                "parameters": [
+                    {
+                        "description": "忘记密码信息",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.ForgotPasswordRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -1080,7 +1582,7 @@
         },
         "/login": {
             "post": {
-                "description": "支持用户名或邮箱登录",
+                "description": "支持用户名或邮箱登录，LDAP启用时自动尝试LDAP认证",
                 "consumes": [
                     "application/json"
                 ],
@@ -1088,7 +1590,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "登录",
                 "operationId": "Login",
@@ -1113,6 +1615,35 @@
                 }
             }
         },
+        "/logout": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "用户登出，记录审计日志",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "登出",
+                "operationId": "Logout",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.LogoutResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/refresh-token": {
             "post": {
                 "description": "刷新访问令牌和刷新令牌",
@@ -1123,7 +1654,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "刷新令牌",
                 "operationId": "RefreshToken",
@@ -1158,7 +1689,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "注册",
                 "operationId": "Register",
@@ -1185,7 +1716,7 @@
         },
         "/reset-password": {
             "post": {
-                "description": "重置用户密码",
+                "description": "通过token重置密码",
                 "consumes": [
                     "application/json"
                 ],
@@ -1193,7 +1724,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
                 "summary": "重置密码",
                 "operationId": "ResetPassword",
@@ -1214,6 +1745,41 @@
                         "schema": {
                             "$ref": "#/definitions/backend_api_v1.Response"
                         }
+                    }
+                }
+            }
+        },
+        "/settings": {
+            "get": {
+                "description": "获取站点的基本设置信息(网站标题、Logo、图标、版权信息)。支持版本检查：如果传入version参数且版本相同，返回304。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "获取站点设置",
+                "operationId": "GetSiteSetting",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "客户端缓存的版本号",
+                        "name": "version",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.SiteSettingResponse"
+                        }
+                    },
+                    "304": {
+                        "description": "版本未变化，使用缓存"
                     }
                 }
             }
@@ -1355,7 +1921,7 @@
             }
         },
         "/users/profile/avatar": {
-            "put": {
+            "post": {
                 "security": [
                     {
                         "Bearer": []
@@ -1413,7 +1979,7 @@
                 "operationId": "GetUserByID",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "用户ID",
                         "name": "id",
                         "in": "path",
@@ -1463,7 +2029,7 @@
                 "path": {
                     "description": "路径",
                     "type": "string",
-                    "example": "/v1/admin/users"
+                    "example": "/admin/users"
                 },
                 "updatedAt": {
                     "description": "更新时间",
@@ -1492,26 +2058,35 @@
             "type": "object",
             "properties": {
                 "createdAt": {
+                    "description": "创建时间",
                     "type": "string",
                     "example": "2006-01-02 15:04:05"
                 },
                 "desc": {
+                    "description": "描述",
                     "type": "string",
-                    "example": "it's a demo item"
+                    "example": "It's a demo item"
                 },
                 "id": {
+                    "description": "ID",
                     "type": "integer",
                     "example": 1
                 },
                 "name": {
+                    "description": "名称",
                     "type": "string",
                     "example": "item"
                 },
                 "owner": {
-                    "type": "string",
-                    "example": "Zhangsan"
+                    "description": "所有者",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/backend_api_v1.OwnerData"
+                        }
+                    ]
                 },
                 "updatedAt": {
+                    "description": "更新时间",
                     "type": "string",
                     "example": "2006-01-02 15:04:05"
                 }
@@ -1521,12 +2096,14 @@
             "type": "object",
             "properties": {
                 "list": {
+                    "description": "列表",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/Item"
                     }
                 },
                 "total": {
+                    "description": "总数",
                     "type": "integer"
                 }
             }
@@ -1684,13 +2261,13 @@
         "User": {
             "type": "object",
             "properties": {
-                "avatar": {
+                "avatarUrl": {
                     "description": "头像",
                     "type": "string",
                     "example": "https://example.com/avatar.jpg"
                 },
                 "bio": {
-                    "description": "个人简介",
+                    "description": "简介",
                     "type": "string",
                     "example": "The Jackal"
                 },
@@ -1699,20 +2276,30 @@
                     "type": "string",
                     "example": "2006-01-02 15:04:05"
                 },
+                "direction": {
+                    "description": "方向",
+                    "type": "string",
+                    "example": "ltr"
+                },
                 "email": {
                     "description": "邮箱",
                     "type": "string",
                     "example": "zhangsan@example.com"
+                },
+                "fullName": {
+                    "description": "全名",
+                    "type": "string",
+                    "example": "Zhang San"
                 },
                 "language": {
                     "description": "语言",
                     "type": "string",
                     "example": "zh-CN"
                 },
-                "nickname": {
-                    "description": "昵称",
+                "phone": {
+                    "description": "手机",
                     "type": "string",
-                    "example": "Jackal"
+                    "example": "13800138000"
                 },
                 "roles": {
                     "description": "角色",
@@ -1741,10 +2328,10 @@
                     "type": "string",
                     "example": "2006-01-02 15:04:05"
                 },
-                "userid": {
-                    "description": "ID",
-                    "type": "integer",
-                    "example": 1
+                "userId": {
+                    "description": "UserID",
+                    "type": "string",
+                    "example": "IQrIkwYlyn"
                 },
                 "username": {
                     "description": "用户名",
@@ -1769,6 +2356,112 @@
                 }
             }
         },
+        "backend_api_v1.AIConfig": {
+            "type": "object",
+            "properties": {
+                "apiKey": {
+                    "type": "string"
+                },
+                "baseUrl": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.AdminSetting": {
+            "type": "object",
+            "properties": {
+                "ai": {
+                    "$ref": "#/definitions/backend_api_v1.AIConfig"
+                },
+                "app": {
+                    "$ref": "#/definitions/backend_api_v1.AppConfig"
+                },
+                "ldap": {
+                    "$ref": "#/definitions/backend_api_v1.LDAPConfig"
+                },
+                "oidc": {
+                    "$ref": "#/definitions/backend_api_v1.OIDCConfig"
+                },
+                "redis": {
+                    "$ref": "#/definitions/backend_api_v1.RedisConfig"
+                },
+                "s3": {
+                    "$ref": "#/definitions/backend_api_v1.S3Config"
+                },
+                "sentry": {
+                    "$ref": "#/definitions/backend_api_v1.SentryConfig"
+                },
+                "site": {
+                    "$ref": "#/definitions/backend_api_v1.SiteConfig"
+                },
+                "smtp": {
+                    "$ref": "#/definitions/backend_api_v1.SMTPConfig"
+                }
+            }
+        },
+        "backend_api_v1.AdminSettingRequest": {
+            "type": "object",
+            "properties": {
+                "ai": {
+                    "$ref": "#/definitions/backend_api_v1.AIConfig"
+                },
+                "app": {
+                    "$ref": "#/definitions/backend_api_v1.AppConfig"
+                },
+                "ldap": {
+                    "$ref": "#/definitions/backend_api_v1.LDAPConfig"
+                },
+                "oidc": {
+                    "$ref": "#/definitions/backend_api_v1.OIDCConfig"
+                },
+                "redis": {
+                    "$ref": "#/definitions/backend_api_v1.RedisConfig"
+                },
+                "s3": {
+                    "$ref": "#/definitions/backend_api_v1.S3Config"
+                },
+                "sentry": {
+                    "$ref": "#/definitions/backend_api_v1.SentryConfig"
+                },
+                "site": {
+                    "$ref": "#/definitions/backend_api_v1.SiteConfig"
+                },
+                "smtp": {
+                    "$ref": "#/definitions/backend_api_v1.SMTPConfig"
+                }
+            }
+        },
+        "backend_api_v1.AdminSettingResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.AdminSetting"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "backend_api_v1.ApiRequest": {
             "type": "object",
             "properties": {
@@ -1790,7 +2483,7 @@
                 "path": {
                     "description": "路径",
                     "type": "string",
-                    "example": "/v1/admin/users"
+                    "example": "/admin/users"
                 }
             }
         },
@@ -1819,6 +2512,17 @@
                 }
             }
         },
+        "backend_api_v1.ApiRoleResponse": {
+            "type": "object",
+            "properties": {
+                "roleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "backend_api_v1.ApiSearchResponse": {
             "type": "object",
             "properties": {
@@ -1841,6 +2545,17 @@
                     "description": "是否成功",
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "backend_api_v1.AppConfig": {
+            "type": "object",
+            "properties": {
+                "frontendBaseUrl": {
+                    "type": "string"
+                },
+                "gravatarEndpoint": {
+                    "type": "string"
                 }
             }
         },
@@ -1878,6 +2593,19 @@
                     "items": {
                         "$ref": "#/definitions/backend_api_v1.MenuNode"
                     }
+                }
+            }
+        },
+        "backend_api_v1.ForgotPasswordRequest": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string",
+                    "example": "zhangsan@example.com"
                 }
             }
         },
@@ -1926,14 +2654,17 @@
             "type": "object",
             "properties": {
                 "desc": {
+                    "description": "描述",
                     "type": "string",
-                    "example": "it's a demo item"
+                    "example": "It's a demo item"
                 },
                 "name": {
+                    "description": "名称",
                     "type": "string",
                     "example": "item"
                 },
                 "owner": {
+                    "description": "所有者",
                     "type": "string",
                     "example": "Zhangsan"
                 }
@@ -1989,6 +2720,41 @@
                 }
             }
         },
+        "backend_api_v1.LDAPConfig": {
+            "type": "object",
+            "properties": {
+                "attrEmail": {
+                    "type": "string"
+                },
+                "attrName": {
+                    "type": "string"
+                },
+                "attrUsername": {
+                    "type": "string"
+                },
+                "baseDn": {
+                    "type": "string"
+                },
+                "bindDn": {
+                    "type": "string"
+                },
+                "bindPassword": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "userFilter": {
+                    "type": "string"
+                }
+            }
+        },
         "backend_api_v1.LoginRequest": {
             "type": "object",
             "required": [
@@ -1996,11 +2762,17 @@
                 "username"
             ],
             "properties": {
+                "autoLogin": {
+                    "description": "记住我 - 延长refresh token有效期",
+                    "type": "boolean"
+                },
                 "password": {
+                    "description": "密码",
                     "type": "string",
                     "example": "123456"
                 },
                 "username": {
+                    "description": "用户名 或 邮箱",
                     "type": "string",
                     "example": "zhangsan"
                 }
@@ -2010,7 +2782,41 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/backend_api_v1.TokenPair"
+                    "$ref": "#/definitions/backend_api_v1.TokenData"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.LogoutData": {
+            "type": "object",
+            "properties": {
+                "endSessionUrl": {
+                    "description": "OIDC end session URL for SLO",
+                    "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.LogoutResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.LogoutData"
                 },
                 "errorCode": {
                     "description": "错误码",
@@ -2226,6 +3032,114 @@
                 }
             }
         },
+        "backend_api_v1.OIDCAuthRequest": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "autoLogin": {
+                    "description": "记住我 - 延长refresh token有效期",
+                    "type": "boolean"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.OIDCConfig": {
+            "type": "object",
+            "properties": {
+                "authorizeUrl": {
+                    "type": "string"
+                },
+                "autoLogin": {
+                    "type": "boolean"
+                },
+                "caCert": {
+                    "type": "string"
+                },
+                "clientId": {
+                    "type": "string"
+                },
+                "clientSecret": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "insecureSkipVerify": {
+                    "type": "boolean"
+                },
+                "issuer": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "redirectUrl": {
+                    "type": "string"
+                },
+                "responseType": {
+                    "type": "string"
+                },
+                "scopes": {
+                    "type": "string"
+                },
+                "signoutRedirectUrl": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.OwnerData": {
+            "type": "object",
+            "properties": {
+                "avatarUrl": {
+                    "description": "头像",
+                    "type": "string",
+                    "example": "https://example.com/1.jpg"
+                },
+                "fullName": {
+                    "description": "全名",
+                    "type": "string",
+                    "example": "Zhang San"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string",
+                    "example": "zhangsan"
+                }
+            }
+        },
+        "backend_api_v1.RedisConfig": {
+            "type": "object",
+            "properties": {
+                "addrs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "db": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "readTimeout": {
+                    "type": "integer"
+                },
+                "writeTimeout": {
+                    "type": "integer"
+                }
+            }
+        },
         "backend_api_v1.RefreshTokenRequest": {
             "type": "object",
             "required": [
@@ -2233,8 +3147,8 @@
             ],
             "properties": {
                 "refreshToken": {
-                    "type": "string",
-                    "example": "123456"
+                    "description": "刷新凭证",
+                    "type": "string"
                 }
             }
         },
@@ -2246,11 +3160,19 @@
             ],
             "properties": {
                 "email": {
+                    "description": "邮箱",
                     "type": "string",
                     "example": "zhangsan@example.com"
                 },
-                "password": {
+                "fullName": {
+                    "description": "全名",
                     "type": "string",
+                    "example": "Zhang San"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string",
+                    "minLength": 6,
                     "example": "123456"
                 }
             }
@@ -2258,12 +3180,19 @@
         "backend_api_v1.ResetPasswordRequest": {
             "type": "object",
             "required": [
-                "email"
+                "newPassword",
+                "token"
             ],
             "properties": {
-                "email": {
+                "newPassword": {
+                    "description": "新密码",
                     "type": "string",
-                    "example": "zhangsan@example.com"
+                    "minLength": 6,
+                    "example": "newpass123"
+                },
+                "token": {
+                    "description": "重置令牌",
+                    "type": "string"
                 }
             }
         },
@@ -2289,6 +3218,17 @@
                     "description": "是否成功",
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "backend_api_v1.RoleApiResponse": {
+            "type": "object",
+            "properties": {
+                "apiIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -2336,20 +3276,176 @@
                 }
             }
         },
-        "backend_api_v1.TokenPair": {
+        "backend_api_v1.S3Config": {
+            "type": "object",
+            "properties": {
+                "accessKey": {
+                    "type": "string"
+                },
+                "bucketName": {
+                    "type": "string"
+                },
+                "caCert": {
+                    "type": "string"
+                },
+                "endpoint": {
+                    "type": "string"
+                },
+                "secretKey": {
+                    "type": "string"
+                },
+                "secure": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "backend_api_v1.SMTPConfig": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "localName": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "useSSL": {
+                    "type": "boolean"
+                },
+                "useTLS": {
+                    "type": "boolean"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.SentryConfig": {
+            "type": "object",
+            "properties": {
+                "dsn": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.SiteConfig": {
+            "type": "object",
+            "properties": {
+                "copyright": {
+                    "type": "string"
+                },
+                "favicon": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "questionLink": {
+                    "type": "string"
+                },
+                "showLinks": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.SiteSetting": {
+            "type": "object",
+            "properties": {
+                "oidc": {
+                    "$ref": "#/definitions/backend_api_v1.OIDCConfig"
+                },
+                "sentry": {
+                    "$ref": "#/definitions/backend_api_v1.SentryConfig"
+                },
+                "site": {
+                    "$ref": "#/definitions/backend_api_v1.SiteConfig"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.SiteSettingResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.SiteSetting"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "backend_api_v1.TestEmailRequest": {
+            "type": "object",
+            "required": [
+                "to"
+            ],
+            "properties": {
+                "to": {
+                    "description": "邮箱",
+                    "type": "string",
+                    "example": "zhangsan@example.com"
+                }
+            }
+        },
+        "backend_api_v1.TokenData": {
             "type": "object",
             "properties": {
                 "accessToken": {
+                    "description": "访问凭证",
                     "type": "string"
                 },
                 "expiresIn": {
+                    "description": "有效期（秒）",
                     "type": "integer"
                 },
                 "refreshToken": {
+                    "description": "刷新凭证",
                     "type": "string"
                 },
                 "tokenType": {
+                    "description": "凭证类型",
                     "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.UpdateApiRolesRequest": {
+            "type": "object",
+            "required": [
+                "roleIds"
+            ],
+            "properties": {
+                "roleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -2361,12 +3457,28 @@
             ],
             "properties": {
                 "newPassword": {
+                    "description": "新密码",
                     "type": "string",
                     "example": "123456"
                 },
                 "oldPassword": {
+                    "description": "旧密码",
                     "type": "string",
                     "example": "123456"
+                }
+            }
+        },
+        "backend_api_v1.UpdateRoleApisRequest": {
+            "type": "object",
+            "required": [
+                "apiIds"
+            ],
+            "properties": {
+                "apiIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -2391,28 +3503,56 @@
                 }
             }
         },
+        "backend_api_v1.UpdateStatusRequest": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "description": "状态 0:待激活 1:正常 2:禁用",
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "example": 1
+                }
+            }
+        },
         "backend_api_v1.UserRequest": {
             "type": "object",
             "properties": {
                 "bio": {
-                    "description": "个人简介",
+                    "description": "简介",
                     "type": "string",
                     "example": "The Jackal"
+                },
+                "direction": {
+                    "description": "方向",
+                    "type": "string",
+                    "example": "ltr"
                 },
                 "email": {
                     "description": "邮箱",
                     "type": "string",
                     "example": "zhangsan@example.com"
                 },
+                "fullName": {
+                    "description": "全名",
+                    "type": "string",
+                    "example": "Zhang San"
+                },
                 "language": {
                     "description": "语言",
                     "type": "string",
                     "example": "zh-CN"
                 },
-                "nickname": {
-                    "description": "昵称",
+                "phone": {
+                    "description": "手机",
                     "type": "string",
-                    "example": "Jackal"
+                    "example": "13800138000"
                 },
                 "roles": {
                     "description": "角色",

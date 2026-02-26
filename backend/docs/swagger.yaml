@@ -23,7 +23,7 @@ definitions:
         type: string
       path:
         description: 路径
-        example: /v1/admin/users
+        example: /admin/users
         type: string
       updatedAt:
         description: 更新时间
@@ -44,31 +44,39 @@ definitions:
   Item:
     properties:
       createdAt:
+        description: 创建时间
         example: "2006-01-02 15:04:05"
         type: string
       desc:
-        example: it's a demo item
+        description: 描述
+        example: It's a demo item
         type: string
       id:
+        description: ID
         example: 1
         type: integer
       name:
+        description: 名称
         example: item
         type: string
       owner:
-        example: Zhangsan
-        type: string
+        allOf:
+        - $ref: '#/definitions/backend_api_v1.OwnerData'
+        description: 所有者
       updatedAt:
+        description: 更新时间
         example: "2006-01-02 15:04:05"
         type: string
     type: object
   ItemList:
     properties:
       list:
+        description: 列表
         items:
           $ref: '#/definitions/Item'
         type: array
       total:
+        description: 总数
         type: integer
     type: object
   Menu:
@@ -184,29 +192,37 @@ definitions:
     type: object
   User:
     properties:
-      avatar:
+      avatarUrl:
         description: 头像
         example: https://example.com/avatar.jpg
         type: string
       bio:
-        description: 个人简介
+        description: 简介
         example: The Jackal
         type: string
       createdAt:
         description: 创建时间
         example: "2006-01-02 15:04:05"
         type: string
+      direction:
+        description: 方向
+        example: ltr
+        type: string
       email:
         description: 邮箱
         example: zhangsan@example.com
+        type: string
+      fullName:
+        description: 全名
+        example: Zhang San
         type: string
       language:
         description: 语言
         example: zh-CN
         type: string
-      nickname:
-        description: 昵称
-        example: Jackal
+      phone:
+        description: 手机
+        example: "13800138000"
         type: string
       roles:
         description: 角色
@@ -229,10 +245,10 @@ definitions:
         description: 更新时间
         example: "2006-01-02 15:04:05"
         type: string
-      userid:
-        description: ID
-        example: 1
-        type: integer
+      userId:
+        description: UserID
+        example: IQrIkwYlyn
+        type: string
       username:
         description: 用户名
         example: zhangsan
@@ -248,6 +264,77 @@ definitions:
       total:
         description: 总数
         type: integer
+    type: object
+  backend_api_v1.AIConfig:
+    properties:
+      apiKey:
+        type: string
+      baseUrl:
+        type: string
+      model:
+        type: string
+      provider:
+        type: string
+    type: object
+  backend_api_v1.AdminSetting:
+    properties:
+      ai:
+        $ref: '#/definitions/backend_api_v1.AIConfig'
+      app:
+        $ref: '#/definitions/backend_api_v1.AppConfig'
+      ldap:
+        $ref: '#/definitions/backend_api_v1.LDAPConfig'
+      oidc:
+        $ref: '#/definitions/backend_api_v1.OIDCConfig'
+      redis:
+        $ref: '#/definitions/backend_api_v1.RedisConfig'
+      s3:
+        $ref: '#/definitions/backend_api_v1.S3Config'
+      sentry:
+        $ref: '#/definitions/backend_api_v1.SentryConfig'
+      site:
+        $ref: '#/definitions/backend_api_v1.SiteConfig'
+      smtp:
+        $ref: '#/definitions/backend_api_v1.SMTPConfig'
+    type: object
+  backend_api_v1.AdminSettingRequest:
+    properties:
+      ai:
+        $ref: '#/definitions/backend_api_v1.AIConfig'
+      app:
+        $ref: '#/definitions/backend_api_v1.AppConfig'
+      ldap:
+        $ref: '#/definitions/backend_api_v1.LDAPConfig'
+      oidc:
+        $ref: '#/definitions/backend_api_v1.OIDCConfig'
+      redis:
+        $ref: '#/definitions/backend_api_v1.RedisConfig'
+      s3:
+        $ref: '#/definitions/backend_api_v1.S3Config'
+      sentry:
+        $ref: '#/definitions/backend_api_v1.SentryConfig'
+      site:
+        $ref: '#/definitions/backend_api_v1.SiteConfig'
+      smtp:
+        $ref: '#/definitions/backend_api_v1.SMTPConfig'
+    type: object
+  backend_api_v1.AdminSettingResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.AdminSetting'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
     type: object
   backend_api_v1.ApiRequest:
     properties:
@@ -265,7 +352,7 @@ definitions:
         type: string
       path:
         description: 路径
-        example: /v1/admin/users
+        example: /admin/users
         type: string
     type: object
   backend_api_v1.ApiResponse:
@@ -286,6 +373,13 @@ definitions:
         example: true
         type: boolean
     type: object
+  backend_api_v1.ApiRoleResponse:
+    properties:
+      roleIds:
+        items:
+          type: integer
+        type: array
+    type: object
   backend_api_v1.ApiSearchResponse:
     properties:
       data:
@@ -303,6 +397,13 @@ definitions:
         description: 是否成功
         example: true
         type: boolean
+    type: object
+  backend_api_v1.AppConfig:
+    properties:
+      frontendBaseUrl:
+        type: string
+      gravatarEndpoint:
+        type: string
     type: object
   backend_api_v1.DynamicMenuResponse:
     properties:
@@ -329,6 +430,15 @@ definitions:
         items:
           $ref: '#/definitions/backend_api_v1.MenuNode'
         type: array
+    type: object
+  backend_api_v1.ForgotPasswordRequest:
+    properties:
+      email:
+        description: 邮箱
+        example: zhangsan@example.com
+        type: string
+    required:
+    - email
     type: object
   backend_api_v1.GetRolePermissionResponse:
     properties:
@@ -362,12 +472,15 @@ definitions:
   backend_api_v1.ItemRequest:
     properties:
       desc:
-        example: it's a demo item
+        description: 描述
+        example: It's a demo item
         type: string
       name:
+        description: 名称
         example: item
         type: string
       owner:
+        description: 所有者
         example: Zhangsan
         type: string
     type: object
@@ -407,12 +520,40 @@ definitions:
         example: true
         type: boolean
     type: object
+  backend_api_v1.LDAPConfig:
+    properties:
+      attrEmail:
+        type: string
+      attrName:
+        type: string
+      attrUsername:
+        type: string
+      baseDn:
+        type: string
+      bindDn:
+        type: string
+      bindPassword:
+        type: string
+      enabled:
+        type: boolean
+      host:
+        type: string
+      port:
+        type: integer
+      userFilter:
+        type: string
+    type: object
   backend_api_v1.LoginRequest:
     properties:
+      autoLogin:
+        description: 记住我 - 延长refresh token有效期
+        type: boolean
       password:
+        description: 密码
         example: "123456"
         type: string
       username:
+        description: 用户名 或 邮箱
         example: zhangsan
         type: string
     required:
@@ -422,7 +563,31 @@ definitions:
   backend_api_v1.LoginResponse:
     properties:
       data:
-        $ref: '#/definitions/backend_api_v1.TokenPair'
+        $ref: '#/definitions/backend_api_v1.TokenData'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.LogoutData:
+    properties:
+      endSessionUrl:
+        description: OIDC end session URL for SLO
+        type: string
+    type: object
+  backend_api_v1.LogoutResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.LogoutData'
       errorCode:
         description: 错误码
         type: integer
@@ -582,10 +747,83 @@ definitions:
         example: true
         type: boolean
     type: object
+  backend_api_v1.OIDCAuthRequest:
+    properties:
+      autoLogin:
+        description: 记住我 - 延长refresh token有效期
+        type: boolean
+      code:
+        type: string
+      state:
+        type: string
+    required:
+    - code
+    type: object
+  backend_api_v1.OIDCConfig:
+    properties:
+      authorizeUrl:
+        type: string
+      autoLogin:
+        type: boolean
+      caCert:
+        type: string
+      clientId:
+        type: string
+      clientSecret:
+        type: string
+      enabled:
+        type: boolean
+      insecureSkipVerify:
+        type: boolean
+      issuer:
+        type: string
+      logo:
+        type: string
+      name:
+        type: string
+      redirectUrl:
+        type: string
+      responseType:
+        type: string
+      scopes:
+        type: string
+      signoutRedirectUrl:
+        type: string
+    type: object
+  backend_api_v1.OwnerData:
+    properties:
+      avatarUrl:
+        description: 头像
+        example: https://example.com/1.jpg
+        type: string
+      fullName:
+        description: 全名
+        example: Zhang San
+        type: string
+      username:
+        description: 用户名
+        example: zhangsan
+        type: string
+    type: object
+  backend_api_v1.RedisConfig:
+    properties:
+      addrs:
+        items:
+          type: string
+        type: array
+      db:
+        type: integer
+      password:
+        type: string
+      readTimeout:
+        type: integer
+      writeTimeout:
+        type: integer
+    type: object
   backend_api_v1.RefreshTokenRequest:
     properties:
       refreshToken:
-        example: "123456"
+        description: 刷新凭证
         type: string
     required:
     - refreshToken
@@ -593,10 +831,17 @@ definitions:
   backend_api_v1.RegisterRequest:
     properties:
       email:
+        description: 邮箱
         example: zhangsan@example.com
         type: string
+      fullName:
+        description: 全名
+        example: Zhang San
+        type: string
       password:
+        description: 密码
         example: "123456"
+        minLength: 6
         type: string
     required:
     - email
@@ -604,11 +849,17 @@ definitions:
     type: object
   backend_api_v1.ResetPasswordRequest:
     properties:
-      email:
-        example: zhangsan@example.com
+      newPassword:
+        description: 新密码
+        example: newpass123
+        minLength: 6
+        type: string
+      token:
+        description: 重置令牌
         type: string
     required:
-    - email
+    - newPassword
+    - token
     type: object
   backend_api_v1.Response:
     properties:
@@ -627,6 +878,13 @@ definitions:
         description: 是否成功
         example: true
         type: boolean
+    type: object
+  backend_api_v1.RoleApiResponse:
+    properties:
+      apiIds:
+        items:
+          type: integer
+        type: array
     type: object
   backend_api_v1.RoleRequest:
     properties:
@@ -660,28 +918,144 @@ definitions:
         example: true
         type: boolean
     type: object
-  backend_api_v1.TokenPair:
+  backend_api_v1.S3Config:
+    properties:
+      accessKey:
+        type: string
+      bucketName:
+        type: string
+      caCert:
+        type: string
+      endpoint:
+        type: string
+      secretKey:
+        type: string
+      secure:
+        type: boolean
+    type: object
+  backend_api_v1.SMTPConfig:
+    properties:
+      from:
+        type: string
+      host:
+        type: string
+      localName:
+        type: string
+      password:
+        type: string
+      port:
+        type: integer
+      useSSL:
+        type: boolean
+      useTLS:
+        type: boolean
+      user:
+        type: string
+    type: object
+  backend_api_v1.SentryConfig:
+    properties:
+      dsn:
+        type: string
+    type: object
+  backend_api_v1.SiteConfig:
+    properties:
+      copyright:
+        type: string
+      favicon:
+        type: string
+      logo:
+        type: string
+      questionLink:
+        type: string
+      showLinks:
+        type: boolean
+      title:
+        type: string
+    type: object
+  backend_api_v1.SiteSetting:
+    properties:
+      oidc:
+        $ref: '#/definitions/backend_api_v1.OIDCConfig'
+      sentry:
+        $ref: '#/definitions/backend_api_v1.SentryConfig'
+      site:
+        $ref: '#/definitions/backend_api_v1.SiteConfig'
+      version:
+        type: string
+    type: object
+  backend_api_v1.SiteSettingResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.SiteSetting'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.TestEmailRequest:
+    properties:
+      to:
+        description: 邮箱
+        example: zhangsan@example.com
+        type: string
+    required:
+    - to
+    type: object
+  backend_api_v1.TokenData:
     properties:
       accessToken:
+        description: 访问凭证
         type: string
       expiresIn:
+        description: 有效期（秒）
         type: integer
       refreshToken:
+        description: 刷新凭证
         type: string
       tokenType:
+        description: 凭证类型
         type: string
+    type: object
+  backend_api_v1.UpdateApiRolesRequest:
+    properties:
+      roleIds:
+        items:
+          type: integer
+        type: array
+    required:
+    - roleIds
     type: object
   backend_api_v1.UpdatePasswordRequest:
     properties:
       newPassword:
+        description: 新密码
         example: "123456"
         type: string
       oldPassword:
+        description: 旧密码
         example: "123456"
         type: string
     required:
     - newPassword
     - oldPassword
+    type: object
+  backend_api_v1.UpdateRoleApisRequest:
+    properties:
+      apiIds:
+        items:
+          type: integer
+        type: array
+    required:
+    - apiIds
     type: object
   backend_api_v1.UpdateRolePermissionRequest:
     properties:
@@ -698,23 +1072,44 @@ definitions:
     - casbinRole
     - list
     type: object
+  backend_api_v1.UpdateStatusRequest:
+    properties:
+      status:
+        description: 状态 0:待激活 1:正常 2:禁用
+        enum:
+        - 0
+        - 1
+        - 2
+        example: 1
+        type: integer
+    required:
+    - status
+    type: object
   backend_api_v1.UserRequest:
     properties:
       bio:
-        description: 个人简介
+        description: 简介
         example: The Jackal
+        type: string
+      direction:
+        description: 方向
+        example: ltr
         type: string
       email:
         description: 邮箱
         example: zhangsan@example.com
         type: string
+      fullName:
+        description: 全名
+        example: Zhang San
+        type: string
       language:
         description: 语言
         example: zh-CN
         type: string
-      nickname:
-        description: 昵称
-        example: Jackal
+      phone:
+        description: 手机
+        example: "13800138000"
         type: string
       roles:
         description: 角色
@@ -774,7 +1169,7 @@ definitions:
         example: true
         type: boolean
     type: object
-host: localhost:8000
+host: localhost:7001
 info:
   contact:
     email: support@swagger.io
@@ -932,6 +1327,55 @@ paths:
       summary: 更新接口
       tags:
       - API
+  /admin/apis/{id}/roles:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 接口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.ApiRoleResponse'
+      security:
+      - Bearer: []
+      summary: 获取接口授权的角色列表
+      tags:
+      - Api
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 接口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 角色ID列表
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.UpdateApiRolesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新接口授权的角色
+      tags:
+      - Api
   /admin/menus:
     get:
       consumes:
@@ -1162,6 +1606,55 @@ paths:
       summary: 更新角色
       tags:
       - Role
+  /admin/roles/{id}/apis:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.RoleApiResponse'
+      security:
+      - Bearer: []
+      summary: 获取角色授权的接口列表
+      tags:
+      - Role
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 接口ID列表
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.UpdateRoleApisRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新角色授权的接口
+      tags:
+      - Role
   /admin/roles/permissions:
     get:
       consumes:
@@ -1210,6 +1703,73 @@ paths:
       summary: 更新角色权限
       tags:
       - Role
+  /admin/settings:
+    get:
+      consumes:
+      - application/json
+      description: 获取系统设置信息
+      operationId: GetSetting
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.AdminSettingResponse'
+      security:
+      - Bearer: []
+      summary: 获取系统设置
+      tags:
+      - Setting
+    put:
+      consumes:
+      - application/json
+      description: 更新系统设置信息
+      operationId: UpdateSetting
+      parameters:
+      - description: 系统设置数据
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.AdminSettingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新系统设置
+      tags:
+      - Setting
+  /admin/settings/test-email:
+    post:
+      consumes:
+      - application/json
+      description: 使用当前SMTP配置发送测试邮件
+      operationId: TestEmail
+      parameters:
+      - description: 测试邮件请求
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.TestEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 测试邮件发送
+      tags:
+      - Setting
   /admin/users:
     get:
       consumes:
@@ -1231,13 +1791,17 @@ paths:
         in: query
         name: email
         type: string
+      - description: 手机
+        in: query
+        name: phone
+        type: string
       - description: 用户名
         in: query
         name: username
         type: string
-      - description: 昵称
+      - description: 展示名
         in: query
-        name: nickname
+        name: fullName
         type: string
       produces:
       - application/json
@@ -1286,7 +1850,7 @@ paths:
         in: query
         name: id
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -1309,7 +1873,7 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       - description: 参数
         in: body
         name: request
@@ -1328,6 +1892,154 @@ paths:
       summary: 更新用户
       tags:
       - User
+  /admin/users/{id}/reset-avatar:
+    put:
+      consumes:
+      - application/json
+      description: 重置用户头像为默认头像
+      operationId: ResetAvatar
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 重置头像
+      tags:
+      - User
+  /admin/users/{id}/revoke-sessions:
+    post:
+      consumes:
+      - application/json
+      description: 撤销指定用户的所有登录会话
+      operationId: RevokeSessions
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 撤销登录态
+      tags:
+      - User
+  /admin/users/{id}/send-reset-email:
+    post:
+      consumes:
+      - application/json
+      description: 向指定用户发送重置密码邮件
+      operationId: SendResetEmail
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 发送重置密码邮件
+      tags:
+      - User
+  /admin/users/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: 更新用户状态（启用/禁用）
+      operationId: UpdateStatus
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 状态信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.UpdateStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新用户状态
+      tags:
+      - User
+  /auth/oidc:
+    post:
+      consumes:
+      - application/json
+      description: 通过OIDC授权码登录
+      operationId: OIDCAuth
+      parameters:
+      - description: OIDC授权码
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.OIDCAuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.LoginResponse'
+      summary: OIDC登录
+      tags:
+      - Auth
+  /forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: 发送重置密码邮件
+      operationId: ForgotPassword
+      parameters:
+      - description: 忘记密码信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.ForgotPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      summary: 忘记密码
+      tags:
+      - Auth
   /items:
     get:
       consumes:
@@ -1473,7 +2185,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 支持用户名或邮箱登录
+      description: 支持用户名或邮箱登录，LDAP启用时自动尝试LDAP认证
       operationId: Login
       parameters:
       - description: 登录凭证
@@ -1491,7 +2203,25 @@ paths:
             $ref: '#/definitions/backend_api_v1.LoginResponse'
       summary: 登录
       tags:
-      - User
+      - Auth
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: 用户登出，记录审计日志
+      operationId: Logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.LogoutResponse'
+      security:
+      - Bearer: []
+      summary: 登出
+      tags:
+      - Auth
   /refresh-token:
     post:
       consumes:
@@ -1514,7 +2244,7 @@ paths:
             $ref: '#/definitions/backend_api_v1.LoginResponse'
       summary: 刷新令牌
       tags:
-      - User
+      - Auth
   /register:
     post:
       consumes:
@@ -1537,12 +2267,12 @@ paths:
             $ref: '#/definitions/backend_api_v1.Response'
       summary: 注册
       tags:
-      - User
+      - Auth
   /reset-password:
     post:
       consumes:
       - application/json
-      description: 重置用户密码
+      description: 通过token重置密码
       operationId: ResetPassword
       parameters:
       - description: 重置密码信息
@@ -1560,7 +2290,30 @@ paths:
             $ref: '#/definitions/backend_api_v1.Response'
       summary: 重置密码
       tags:
-      - User
+      - Auth
+  /settings:
+    get:
+      consumes:
+      - application/json
+      description: 获取站点的基本设置信息(网站标题、Logo、图标、版权信息)。支持版本检查：如果传入version参数且版本相同，返回304。
+      operationId: GetSiteSetting
+      parameters:
+      - description: 客户端缓存的版本号
+        in: query
+        name: version
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.SiteSettingResponse'
+        "304":
+          description: 版本未变化，使用缓存
+      summary: 获取站点设置
+      tags:
+      - Setting
   /users/{id}:
     get:
       consumes:
@@ -1572,7 +2325,7 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -1671,7 +2424,7 @@ paths:
       tags:
       - User
   /users/profile/avatar:
-    put:
+    post:
       consumes:
       - application/json
       description: 上传用户头像

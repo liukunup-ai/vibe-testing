@@ -1,22 +1,16 @@
-// auth.ts
-
-const ACCESS_TOKEN_KEY = 'accessToken';
 const REFRESH_TOKEN_KEY = 'refreshToken';
 
-export const getToken = () => {
-  return localStorage.getItem(ACCESS_TOKEN_KEY);
-};
-
-export const getRefreshToken = () => {
+export const getRefreshToken = (): string | null => {
+  if (typeof window === 'undefined') return null;
   return localStorage.getItem(REFRESH_TOKEN_KEY);
 };
 
-export const setToken = (accessToken: string, refreshToken: string) => {
-  localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+export const setRefreshToken = (refreshToken: string) => {
+  if (typeof window === 'undefined') return;
   localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
 };
 
-export const removeToken = () => {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
+export const removeRefreshToken = () => {
+  if (typeof window === 'undefined') return;
   localStorage.removeItem(REFRESH_TOKEN_KEY);
 };

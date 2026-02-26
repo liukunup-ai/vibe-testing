@@ -2,10 +2,10 @@ package v1
 
 // CRUD
 type RoleSearchRequest struct {
-	Page       int    `form:"page" binding:"omitempty,min=1" example:"1"`              // 页码
-	PageSize   int    `form:"pageSize" binding:"omitempty,min=1,max=100" example:"10"` // 分页大小
-	Name       string `form:"name" example:"Admin"`                                    // 筛选项: 角色名 模糊匹配
-	CasbinRole string `form:"casbinRole" example:"admin"`                              // 筛选项: Casbin-Role 精确匹配
+	Page       int    `form:"page" binding:"omitempty,min=1" example:"1"`               // 页码
+	PageSize   int    `form:"pageSize" binding:"omitempty,min=1,max=1000" example:"10"` // 分页大小
+	Name       string `form:"name" example:"Admin"`                                     // 筛选项: 角色名 模糊匹配
+	CasbinRole string `form:"casbinRole" example:"admin"`                               // 筛选项: Casbin-Role 精确匹配
 }
 type RoleDataItem struct {
 	ID         uint   `json:"id,omitempty"`                                       // ID
@@ -48,4 +48,14 @@ type GetRolePermissionResponse struct {
 type UpdateRolePermissionRequest struct {
 	CasbinRole string   `json:"casbinRole" binding:"required" example:"admin"` // Casbin-Role
 	List       []string `form:"list" binding:"required"`                       // 权限列表
+}
+
+// RoleApiResponse 角色接口权限响应
+type RoleApiResponse struct {
+	ApiIds []uint `json:"apiIds"`
+}
+
+// UpdateRoleApisRequest 更新角色接口权限请求
+type UpdateRoleApisRequest struct {
+	ApiIds []uint `json:"apiIds" binding:"required"`
 }

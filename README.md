@@ -47,7 +47,7 @@ docker-compose up -d
 
 # 3. 访问应用
 # 前端: http://localhost:8000
-# 后端: http://localhost:8080
+# 后端: http://localhost:7001
 ```
 
 ## 📖 文档

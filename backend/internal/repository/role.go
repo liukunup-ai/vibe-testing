@@ -23,6 +23,9 @@ type RoleRepository interface {
 
 	GetPermissions(ctx context.Context, casbinRole string) ([][]string, error)
 	UpdatePermissions(ctx context.Context, casbinRole string, permissions map[string]struct{}) error
+
+	GetApiIds(ctx context.Context, roleId uint) ([]uint, error)
+	UpdateApis(ctx context.Context, roleId uint, apiIds []uint) error
 }
 
 func NewRoleRepository(
@@ -151,6 +154,107 @@ func (r *roleRepository) UpdatePermissions(ctx context.Context, casbinRole strin
 		_, err = r.e.AddPermissionsForUser(casbinRole, shouldAddPermList...)
 		if err != nil {
 			return fmt.Errorf("添加新权限失败: %v", err)
+		}
+	}
+	return nil
+}
+
+func (r *roleRepository) GetApiIds(ctx context.Context, roleId uint) ([]uint, error) {
+	// 获取角色信息
+	role, err := r.Get(ctx, roleId)
+	if err != nil {
+		return nil, err
+	}
+
+	// 获取角色的所有权限
+	permissions, err := r.e.GetPermissionsForUser(role.CasbinRole)
+	if err != nil {
+		return nil, err
+	}
+
+	// 提取 API 路径和方法
+	type pathMethod struct {
+		path   string
+		method string
+	}
+	var pathMethods []pathMethod
+	for _, perm := range permissions {
+		if len(perm) >= 3 && strings.HasPrefix(perm[1], constant.ApiResourcePrefix) {
+			path := strings.TrimPrefix(perm[1], constant.ApiResourcePrefix)
+			method := perm[2]
+			pathMethods = append(pathMethods, pathMethod{path: path, method: method})
+		}
+	}
+
+	// 根据 path 和 method 查找 API ID
+	var apiIds []uint
+	if len(pathMethods) > 0 {
+		for _, pm := range pathMethods {
+			var api model.Api
+			if err := r.DB(ctx).Where("path = ? AND method = ?", pm.path, pm.method).First(&api).Error; err == nil {
+				apiIds = append(apiIds, api.ID)
+			}
+		}
+	}
+
+	return apiIds, nil
+}
+
+func (r *roleRepository) UpdateApis(ctx context.Context, roleId uint, newApiIds []uint) error {
+	// 获取角色信息
+	role, err := r.Get(ctx, roleId)
+	if err != nil {
+		return err
+	}
+
+	// 获取当前授权的 API
+	oldApiIds, err := r.GetApiIds(ctx, roleId)
+	if err != nil {
+		return err
+	}
+
+	// 获取所有相关 API 信息
+	allIds := append(oldApiIds, newApiIds...)
+	var apis []model.Api
+	if err := r.DB(ctx).Where("id IN ?", allIds).Find(&apis).Error; err != nil {
+		return err
+	}
+	apiMap := make(map[uint]model.Api)
+	for _, api := range apis {
+		apiMap[api.ID] = api
+	}
+
+	// 计算差异
+	oldSet := make(map[uint]struct{})
+	newSet := make(map[uint]struct{})
+	for _, id := range oldApiIds {
+		oldSet[id] = struct{}{}
+	}
+	for _, id := range newApiIds {
+		newSet[id] = struct{}{}
+	}
+
+	// 移除权限
+	for id := range oldSet {
+		if _, exists := newSet[id]; !exists {
+			if api, ok := apiMap[id]; ok {
+				_, err := r.e.DeletePermissionForUser(role.CasbinRole, constant.ApiResourcePrefix+api.Path, api.Method)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	// 添加权限
+	for id := range newSet {
+		if _, exists := oldSet[id]; !exists {
+			if api, ok := apiMap[id]; ok {
+				_, err := r.e.AddPermissionForUser(role.CasbinRole, constant.ApiResourcePrefix+api.Path, api.Method)
+				if err != nil {
+					return err
+				}
+			}
 		}
 	}
 

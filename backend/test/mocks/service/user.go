@@ -110,10 +110,10 @@ func (mr *MockUserServiceMockRecorder) List(ctx, req interface{}) *gomock.Call {
 }
 
 // Login mocks base method.
-func (m *MockUserService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.TokenPair, error) {
+func (m *MockUserService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.TokenData, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Login", ctx, req)
-	ret0, _ := ret[0].(*v1.TokenPair)
+	ret0, _ := ret[0].(*v1.TokenData)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -139,10 +139,10 @@ func (mr *MockUserServiceMockRecorder) Logout(ctx, uid interface{}) *gomock.Call
 }
 
 // RefreshToken mocks base method.
-func (m *MockUserService) RefreshToken(ctx context.Context, req *v1.RefreshTokenRequest) (*v1.TokenPair, error) {
+func (m *MockUserService) RefreshToken(ctx context.Context, req *v1.RefreshTokenRequest) (*v1.TokenData, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RefreshToken", ctx, req)
-	ret0, _ := ret[0].(*v1.TokenPair)
+	ret0, _ := ret[0].(*v1.TokenData)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

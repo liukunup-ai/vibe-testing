@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
 #############################################################################
-# Robot Shop 数据库备份脚本
+# Vibe Testing 数据库备份脚本
 # 用途: 自动备份 MySQL 数据库
 # 
 # 使用方法:
 #   ./backup.sh                  # 执行完整备份
-#   ./backup.sh --db robotshop   # 备份指定数据库
+#   ./backup.sh --db vibe-testing   # 备份指定数据库
 #   ./backup.sh --clean          # 清理旧备份
 #
 # Crontab 示例 (每天凌晨 2 点备份):
-#   0 2 * * * /path/to/backup.sh >> /var/log/robot-shop-backup.log 2>&1
+#   0 2 * * * /path/to/backup.sh >> /var/log/vibe-testing-backup.log 2>&1
 #############################################################################
 
 set -e
@@ -52,9 +52,9 @@ show_banner() {
     cat << "EOF"
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║         🤖 Robot Shop 数据库备份工具 v1.0.0              ║
+║         🤖 Vibe Testing 数据库备份工具 v1.0.0                ║
 ║                                                           ║
-║         自动备份 MySQL 数据库并管理备份文件               ║
+║         自动备份 MySQL 数据库并管理备份文件                    ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
 EOF
@@ -260,7 +260,7 @@ restore_database() {
 # 显示帮助
 show_help() {
     cat << EOF
-Robot Shop 数据库备份工具
+Vibe Testing 数据库备份工具
 
 用法:
     $0 [选项]
@@ -278,7 +278,7 @@ Robot Shop 数据库备份工具
     $0
     
     # 备份指定数据库
-    $0 --db robotshop
+    $0 --db vibe-testing
     
     # 清理旧备份
     $0 --clean
@@ -294,10 +294,10 @@ Robot Shop 数据库备份工具
 
 Crontab 示例:
     # 每天凌晨 2 点备份
-    0 2 * * * /path/to/backup.sh >> /var/log/robot-shop-backup.log 2>&1
+    0 2 * * * /path/to/backup.sh >> /var/log/vibe-testing-backup.log 2>&1
     
     # 每周日凌晨 3 点清理旧备份
-    0 3 * * 0 /path/to/backup.sh --clean >> /var/log/robot-shop-backup.log 2>&1
+    0 3 * * 0 /path/to/backup.sh --clean >> /var/log/vibe-testing-backup.log 2>&1
 
 EOF
 }

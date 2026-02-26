@@ -1,10 +1,11 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, MoreOutlined, MailOutlined, LogoutOutlined, StopOutlined, UserOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button, Space, Tag, message } from 'antd';
+import { Button, Space, Tag, message, Dropdown, Avatar, Modal } from 'antd';
+import type { MenuProps } from 'antd';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { useRef, useEffect, useState } from 'react';
-import { listUsers, deleteUser } from '@/services/backend/user';
+import { listUsers, deleteUser, sendResetEmail, revokeSessions, updateStatus, resetAvatar } from '@/services/backend/user';
 import { listRoles } from '@/services/backend/role';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
@@ -39,11 +40,102 @@ const User: React.FC = () => {
     fetchRoles();
   }, []);
 
+  const getAvatarContent = (record: API.User) => {
+    if (record.avatarUrl) {
+      return <Avatar src={record.avatarUrl} />;
+    }
+    const name = record.fullName || record.username || '';
+    const initial = name.charAt(0).toUpperCase();
+    return <Avatar style={{ backgroundColor: '#1677ff' }}>{initial}</Avatar>;
+  };
+
+  const handleMoreAction = async (key: string, record: API.User) => {
+    if (!record.userId) return;
+
+    try {
+      switch (key) {
+        case 'sendResetEmail':
+          await sendResetEmail({ id: record.userId });
+          message.success(intl.formatMessage({ id: 'pages.admin.user.sendResetEmail.success', defaultMessage: '重置密码邮件已发送' }));
+          break;
+        case 'revokeSessions':
+          await revokeSessions({ id: record.userId });
+          message.success(intl.formatMessage({ id: 'pages.admin.user.revokeSessions.success', defaultMessage: '已撤销所有登录态' }));
+          break;
+        case 'disableAccount':
+          Modal.confirm({
+            title: intl.formatMessage({ id: 'pages.admin.user.disableAccount.confirmTitle', defaultMessage: '确认禁用账号' }),
+            content: intl.formatMessage({ id: 'pages.admin.user.disableAccount.confirmContent', defaultMessage: '确定要禁用该账号吗？禁用后用户将无法登录' }),
+            onOk: async () => {
+              await updateStatus({ id: record.userId! }, { status: 2 });
+              message.success(intl.formatMessage({ id: 'pages.admin.user.disableAccount.success', defaultMessage: '账号已禁用' }));
+              actionRef.current?.reload();
+            },
+          });
+          break;
+        case 'enableAccount':
+          await updateStatus({ id: record.userId }, { status: 1 });
+          message.success(intl.formatMessage({ id: 'pages.admin.user.enableAccount.success', defaultMessage: '账号已启用' }));
+          actionRef.current?.reload();
+          break;
+        case 'resetAvatar':
+          Modal.confirm({
+            title: intl.formatMessage({ id: 'pages.admin.user.resetAvatar.confirmTitle', defaultMessage: '确认重置头像' }),
+            content: intl.formatMessage({ id: 'pages.admin.user.resetAvatar.confirmContent', defaultMessage: '确定要重置该用户的头像吗？' }),
+            onOk: async () => {
+              await resetAvatar({ id: record.userId! });
+              message.success(intl.formatMessage({ id: 'pages.admin.user.resetAvatar.success', defaultMessage: '头像已重置' }));
+              actionRef.current?.reload();
+            },
+          });
+          break;
+      }
+    } catch (error: any) {
+      message.error(error.message || intl.formatMessage({ id: 'pages.common.operation.failure', defaultMessage: '操作失败' }));
+    }
+  };
+
+  const getMoreMenuItems = (record: API.User): MenuProps['items'] => [
+    {
+      key: 'sendResetEmail',
+      icon: <MailOutlined />,
+      label: intl.formatMessage({ id: 'pages.admin.user.sendResetEmail', defaultMessage: '发送重置密码邮件' }),
+    },
+    {
+      key: 'revokeSessions',
+      icon: <LogoutOutlined />,
+      label: intl.formatMessage({ id: 'pages.admin.user.revokeSessions', defaultMessage: '撤销登录态' }),
+    },
+    { type: 'divider' },
+    {
+      key: record.status === 2 ? 'enableAccount' : 'disableAccount',
+      icon: <StopOutlined />,
+      label: record.status === 2 
+        ? intl.formatMessage({ id: 'pages.admin.user.enableAccount', defaultMessage: '启用账号' })
+        : intl.formatMessage({ id: 'pages.admin.user.disableAccount', defaultMessage: '禁用账号' }),
+    },
+    {
+      key: 'resetAvatar',
+      icon: <UserOutlined />,
+      label: intl.formatMessage({ id: 'pages.admin.user.resetAvatar', defaultMessage: '重置头像' }),
+    },
+  ];
+
   const columns: ProColumns<API.User>[] = [
     {
       dataIndex: 'index',
       valueType: 'indexBorder',
       width: 48,
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.admin.user.key.avatar',
+        defaultMessage: '头像'
+      }),
+      dataIndex: 'avatarUrl',
+      width: 60,
+      search: false,
+      render: (_, record) => getAvatarContent(record),
     },
     {
       title: intl.formatMessage({
@@ -66,10 +158,10 @@ const User: React.FC = () => {
     },
     {
       title: intl.formatMessage({
-        id: 'pages.admin.user.key.nickname',
-        defaultMessage: '昵称',
+        id: 'pages.admin.user.key.fullName',
+        defaultMessage: '全名',
       }),
-      dataIndex: 'nickname',
+      dataIndex: 'fullName',
       ellipsis: true,
     },
     {
@@ -200,6 +292,7 @@ const User: React.FC = () => {
       }),
       valueType: 'option',
       key: 'option',
+      width: 150,
       render: (text, record, _, action) => [
         <a
           key="edit"
@@ -210,23 +303,21 @@ const User: React.FC = () => {
         >
           <FormattedMessage id="pages.common.edit" defaultMessage="编辑" />
         </a>,
-        <a
-          key="remove"
-          onClick={async () => {
-            if (record.id) {
-              await deleteUser({ id: record.id });
-              message.success(
-                intl.formatMessage({
-                  id: 'pages.common.remove.success',
-                  defaultMessage: '删除成功',
-                }),
-              );
-              action?.reload();
-            }
+        <Dropdown
+          key="more"
+          menu={{
+            items: getMoreMenuItems(record),
+            onClick: ({ key }) => handleMoreAction(key, record),
           }}
+          trigger={['click']}
         >
-          <FormattedMessage id="pages.common.remove" defaultMessage="删除" />
-        </a>,
+          <a onClick={(e) => e.preventDefault()}>
+            <Space>
+              <FormattedMessage id="pages.common.more" defaultMessage="更多" />
+              <MoreOutlined />
+            </Space>
+          </a>
+        </Dropdown>,
       ],
     },
   ];
@@ -259,6 +350,7 @@ const User: React.FC = () => {
         columns={columns}
         actionRef={actionRef}
         cardBordered
+
         request={async (params, sort, filter) => {
           console.log(params, sort, filter);
           const { current = 1, pageSize = 20, username, nickname, email, phone } = params;

@@ -16,12 +16,12 @@ import (
 // @version         1.0.0
 // @description     A modern full-stack testing platform with test case management, test execution, and AI-powered analysis.
 // @termsOfService  http://swagger.io/terms/
-// @contact.name   API Support
-// @contact.url    http://www.swagger.io/support
-// @contact.email  support@swagger.io
-// @license.name  Apache 2.0
-// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
-// @host      localhost:8000
+// @contact.name    API Support
+// @contact.url     http://www.swagger.io/support
+// @contact.email   support@swagger.io
+// @license.name    Apache 2.0
+// @license.url     http://www.apache.org/licenses/LICENSE-2.0.html
+// @host            localhost:7001
 // @securityDefinitions.apiKey Bearer
 // @in header
 // @name Authorization

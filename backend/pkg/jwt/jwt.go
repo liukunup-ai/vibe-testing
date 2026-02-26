@@ -6,7 +6,6 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -16,11 +15,12 @@ import (
 )
 
 const (
-	bearerPrefix       = "Bearer " // 请勿删除空格
-	accessTokenExpiry  = 15 * time.Minute
-	refreshTokenExpiry = 7 * 24 * time.Hour
-	defaultTokenExpiry = 1 * time.Hour
-	randomBytes        = 32
+	bearerPrefix                    = "Bearer " // 请勿删除空格
+	randomBytes                     = 32
+	defaultAccessTokenExpiry        = 15 * time.Minute
+	defaultRefreshTokenExpiry       = 7 * 24 * time.Hour
+	rememberMeRefreshTokenExpiry    = 30 * 24 * time.Hour // 30 days for "Remember Me"
+	defaultTokenExpiry              = 1 * time.Hour
 )
 
 type JWT struct {
@@ -33,15 +33,15 @@ type JWT struct {
 }
 
 type AccessClaims struct {
-	UserID  uint   `json:"userid"`
+	UserID  string `json:"uid"`
 	TokenID string `json:"jti,omitempty"`
 	jwt.RegisteredClaims
 }
 
 type RefreshClaims struct {
-	UserID   uint   `json:"userid"`
+	UserID   string `json:"uid"`
 	TokenID  string `json:"jti,omitempty"`
-	FamilyID string `json:"family,omitempty"` // Token的组ID
+	FamilyID string `json:"family,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -52,13 +52,22 @@ type ResetPasswordClaims struct {
 }
 
 func NewJwt(conf *viper.Viper, tokenStore repository.TokenStore) *JWT {
-	key := conf.GetString("security.jwt.key")
-	if len(key) < 32 {
-		panic("jwt key length must be at least 32")
+	secretKey := conf.GetString("security.jwt.secret_key")
+	if len(secretKey) < 32 {
+		panic("jwt secret key length must be at least 32")
+	}
+
+	accessTokenExpiry := conf.GetDuration("security.jwt.access_token_expiry")
+	if accessTokenExpiry == 0 {
+		accessTokenExpiry = defaultAccessTokenExpiry
+	}
+	refreshTokenExpiry := conf.GetDuration("security.jwt.refresh_token_expiry")
+	if refreshTokenExpiry == 0 {
+		refreshTokenExpiry = defaultRefreshTokenExpiry
 	}
 
 	return &JWT{
-		secretKey:          []byte(key),
+		secretKey:          []byte(secretKey),
 		signingMethod:      jwt.SigningMethodHS256,
 		accessTokenExpiry:  accessTokenExpiry,
 		refreshTokenExpiry: refreshTokenExpiry,
@@ -67,15 +76,19 @@ func NewJwt(conf *viper.Viper, tokenStore repository.TokenStore) *JWT {
 	}
 }
 
-// 生成 AccessToken & RefreshToken
-func (j *JWT) GenerateTokenPair(ctx context.Context, uid uint, familyID string) (*v1.TokenPair, error) {
-	// 生成 AccessToken
+func (j *JWT) GenerateTokenPair(ctx context.Context, userID string, familyID string) (*v1.TokenData, error) {
+	return j.GenerateTokenPairWithExpiry(ctx, userID, familyID, false)
+}
+
+// GenerateTokenPairWithExpiry generates token pair with optional extended refresh token expiry
+// When rememberMe is true, refresh token expires in 30 days instead of 7 days
+func (j *JWT) GenerateTokenPairWithExpiry(ctx context.Context, userID string, familyID string, rememberMe bool) (*v1.TokenData, error) {
 	accessTokenID, err := generateTokenID()
 	if err != nil {
 		return nil, err
 	}
 	accessClaims := AccessClaims{
-		UserID:  uid,
+		UserID:  userID,
 		TokenID: accessTokenID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.accessTokenExpiry)),
@@ -90,7 +103,6 @@ func (j *JWT) GenerateTokenPair(ctx context.Context, uid uint, familyID string) 
 		return nil, err
 	}
 
-	// 生成 RefreshToken
 	refreshTokenID, err := generateTokenID()
 	if err != nil {
 		return nil, err
@@ -101,12 +113,19 @@ func (j *JWT) GenerateTokenPair(ctx context.Context, uid uint, familyID string) 
 			return nil, err
 		}
 	}
+
+	// Use extended expiry if rememberMe is true
+	refreshExpiry := j.refreshTokenExpiry
+	if rememberMe {
+		refreshExpiry = rememberMeRefreshTokenExpiry
+	}
+
 	refreshClaims := RefreshClaims{
-		UserID:   uid,
+		UserID:   userID,
 		TokenID:  refreshTokenID,
 		FamilyID: familyID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.refreshTokenExpiry)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(refreshExpiry)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			ID:        refreshTokenID,
@@ -118,15 +137,14 @@ func (j *JWT) GenerateTokenPair(ctx context.Context, uid uint, familyID string) 
 		return nil, err
 	}
 
-	// 存储 RefreshToken
 	if j.tokenStore != nil {
-		err = j.tokenStore.StoreRefreshToken(ctx, refreshTokenID, familyID, uid, j.refreshTokenExpiry)
+		err = j.tokenStore.StoreRefreshToken(ctx, refreshTokenID, familyID, userID, refreshExpiry)
 		if err != nil {
 			return nil, fmt.Errorf("failed to store refresh token: %w", err)
 		}
 	}
 
-	return &v1.TokenPair{
+	return &v1.TokenData{
 		TokenType:    "Bearer",
 		AccessToken:  accessTokenStr,
 		RefreshToken: refreshTokenStr,
@@ -134,18 +152,15 @@ func (j *JWT) GenerateTokenPair(ctx context.Context, uid uint, familyID string) 
 	}, nil
 }
 
-// 刷新 AccessToken
-func (j *JWT) RefreshAccessToken(ctx context.Context, refreshToken string) (*v1.TokenPair, error) {
-	// 移除 Bearer 前缀（理论上不会有）
+
+func (j *JWT) RefreshAccessToken(ctx context.Context, refreshToken string) (*v1.TokenData, error) {
 	refreshToken = strings.TrimPrefix(refreshToken, bearerPrefix)
 
-	// 验证 RefreshToken
 	refreshClaims, err := j.parseRefreshToken(refreshToken)
 	if err != nil {
 		return nil, err
 	}
 
-	// 检查 RefreshToken 是否有效
 	if j.tokenStore != nil {
 		valid, _ := j.tokenStore.IsRefreshTokenValid(ctx, refreshClaims.TokenID, refreshClaims.FamilyID)
 		if !valid {
@@ -153,21 +168,34 @@ func (j *JWT) RefreshAccessToken(ctx context.Context, refreshToken string) (*v1.
 		}
 	}
 
-	// 使旧 RefreshToken 失效
-	if j.tokenStore != nil {
-		err = j.tokenStore.InvalidateRefreshToken(ctx, refreshClaims.TokenID)
-		if err != nil && !errors.Is(err, v1.ErrRedisUnavailable) {
-			return nil, fmt.Errorf("failed to invalidate refresh token: %w", err)
-		}
+	accessTokenID, err := generateTokenID()
+	if err != nil {
+		return nil, err
+	}
+	accessClaims := AccessClaims{
+		UserID:  refreshClaims.UserID,
+		TokenID: accessTokenID,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.accessTokenExpiry)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			ID:        accessTokenID,
+		},
+	}
+	accessToken := jwt.NewWithClaims(j.signingMethod, accessClaims)
+	accessTokenStr, err := accessToken.SignedString(j.secretKey)
+	if err != nil {
+		return nil, err
 	}
 
-	// 生成新的 TokenPair
-	return j.GenerateTokenPair(ctx, refreshClaims.UserID, refreshClaims.FamilyID)
+	return &v1.TokenData{
+		TokenType:   "Bearer",
+		AccessToken: accessTokenStr,
+		ExpiresIn:   int64(j.accessTokenExpiry.Seconds()),
+	}, nil
 }
 
-// 验证 AccessToken
 func (j *JWT) ValidateAccessToken(ctx context.Context, accessToken string) (*AccessClaims, error) {
-	// 移除 Bearer 前缀
 	accessToken = strings.TrimPrefix(accessToken, bearerPrefix)
 
 	token, err := jwt.ParseWithClaims(accessToken, &AccessClaims{}, func(token *jwt.Token) (interface{}, error) {
@@ -195,14 +223,13 @@ func (j *JWT) ValidateAccessToken(ctx context.Context, accessToken string) (*Acc
 	return claims, nil
 }
 
-func (j *JWT) InvalidateRefreshTokenByUserID(ctx context.Context, uid uint) error {
+func (j *JWT) InvalidateRefreshTokenByUserID(ctx context.Context, userID string) error {
 	if j.tokenStore != nil {
-		return j.tokenStore.InvalidateRefreshTokenByUserID(ctx, uid)
+		return j.tokenStore.InvalidateRefreshTokenByUserID(ctx, userID)
 	}
 	return fmt.Errorf("token store is not initialized")
 }
 
-// 解析 RefreshToken
 func (j *JWT) parseRefreshToken(tokenStr string) (*RefreshClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenStr, &RefreshClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -221,7 +248,6 @@ func (j *JWT) parseRefreshToken(tokenStr string) (*RefreshClaims, error) {
 	return nil, v1.ErrInvalidRefreshToken
 }
 
-// 生成 ResetPasswordToken
 func (j *JWT) GenerateResetPasswordToken(email string) (string, error) {
 	tokenID, err := generateTokenID()
 	if err != nil {
@@ -243,7 +269,24 @@ func (j *JWT) GenerateResetPasswordToken(email string) (string, error) {
 	return token.SignedString(j.secretKey)
 }
 
-// 生成 Token ID
+func (j *JWT) ValidateResetPasswordToken(tokenStr string) (string, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &ResetPasswordClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, v1.ErrUnexpectedSigningMethod
+		}
+		return j.secretKey, nil
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if claims, ok := token.Claims.(*ResetPasswordClaims); ok && token.Valid {
+		return claims.Email, nil
+	}
+
+	return "", v1.ErrInvalidAccessToken
+}
+
 func generateTokenID() (string, error) {
 	b := make([]byte, randomBytes/2)
 	if _, err := rand.Read(b); err != nil {

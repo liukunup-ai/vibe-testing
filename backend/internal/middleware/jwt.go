@@ -67,7 +67,7 @@ func NoStrictAuth(j *jwt.JWT, logger *log.Logger) gin.HandlerFunc {
 }
 
 func recoveryLoggerFunc(ctx *gin.Context, logger *log.Logger) {
-	if userInfo, ok := ctx.MustGet("claims").(*jwt.AccessClaims); ok {
-		logger.WithValue(ctx, zap.Uint("UserId", userInfo.UserID))
+	if claims, ok := ctx.MustGet("claims").(*jwt.AccessClaims); ok {
+		logger.WithValue(ctx, zap.String("UserID", claims.UserID))
 	}
 }

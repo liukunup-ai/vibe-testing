@@ -77,3 +77,36 @@ export async function deleteApi(
     ...(options || {}),
   });
 }
+
+/** 获取接口授权的角色列表 GET /admin/apis/${param0}/roles */
+export async function getAdminApisIdRoles(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getAdminApisIdRolesParams,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.ApiRoleResponse>(`/v1/admin/apis/${param0}/roles`, {
+    method: 'GET',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
+/** 更新接口授权的角色 PUT /admin/apis/${param0}/roles */
+export async function putAdminApisIdRoles(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.putAdminApisIdRolesParams,
+  body: API.UpdateApiRolesRequest,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.Response>(`/v1/admin/apis/${param0}/roles`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
+}
