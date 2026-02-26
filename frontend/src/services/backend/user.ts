@@ -182,10 +182,10 @@ export async function updateProfile(body: API.UserRequest, options?: { [key: str
   });
 }
 
-/** 上传头像 上传用户头像 PUT /users/profile/avatar */
+/** 上传头像 上传用户头像 POST /users/profile/avatar */
 export async function uploadAvatar(body: {}, options?: { [key: string]: any }) {
   return request<API.Response>(`/v1/users/profile/avatar`, {
-    method: 'PUT',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },

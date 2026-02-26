@@ -91,3 +91,36 @@ export async function updateRolePermissions(
     ...(options || {}),
   });
 }
+
+/** 获取角色授权的接口列表 GET /roles/${param0}/apis */
+export async function getRoleApis(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.GetRoleApisParams,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.RoleApiResponse>(`/v1/roles/${param0}/apis`, {
+    method: 'GET',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
+/** 更新角色授权的接口 PUT /roles/${param0}/apis */
+export async function updateRoleApis(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.UpdateRoleApisParams,
+  body: API.UpdateRoleApisRequest,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.Response>(`/v1/roles/${param0}/apis`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
+}

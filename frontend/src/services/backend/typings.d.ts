@@ -89,6 +89,10 @@ declare namespace API {
     success?: boolean;
   };
 
+  type ApiRoleResponse = {
+    roleIds?: number[];
+  };
+
   type ApiSearchResponse = {
     data?: ApiList;
     /** 错误码 */
@@ -103,6 +107,7 @@ declare namespace API {
 
   type AppConfig = {
     frontendBaseUrl?: string;
+    gravatarEndpoint?: string;
   };
 
   type DeleteApiParams = {
@@ -157,8 +162,18 @@ declare namespace API {
     id: number;
   };
 
+  type GetApiRolesParams = {
+    /** 接口ID */
+    id: number;
+  };
+
   type GetItemParams = {
     /** 项目ID */
+    id: number;
+  };
+
+  type GetRoleApisParams = {
+    /** 角色ID */
     id: number;
   };
 
@@ -596,6 +611,10 @@ declare namespace API {
     updatedAt?: string;
   };
 
+  type RoleApiResponse = {
+    apiIds?: number[];
+  };
+
   type RoleList = {
     /** 列表 */
     list?: Role[];
@@ -700,6 +719,15 @@ declare namespace API {
     id: number;
   };
 
+  type UpdateApiRolesParams = {
+    /** 接口ID */
+    id: number;
+  };
+
+  type UpdateApiRolesRequest = {
+    roleIds: number[];
+  };
+
   type UpdateItemParams = {
     /** 项目ID */
     id: number;
@@ -715,6 +743,15 @@ declare namespace API {
     newPassword: string;
     /** 旧密码 */
     oldPassword: string;
+  };
+
+  type UpdateRoleApisParams = {
+    /** 角色ID */
+    id: number;
+  };
+
+  type UpdateRoleApisRequest = {
+    apiIds: number[];
   };
 
   type UpdateRoleParams = {
