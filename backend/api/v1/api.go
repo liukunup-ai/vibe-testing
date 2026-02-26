@@ -2,11 +2,12 @@ package v1
 
 // CRUD
 type ApiSearchRequest struct {
-	Page     int    `form:"page" binding:"required,min=1" example:"1" `             // 页码
+	Page     int    `form:"page" binding:"required,min=1" example:"1" `              // 页码
 	PageSize int    `form:"pageSize" binding:"required,min=1,max=1000" example:"10"` // 分页大小
-	Name     string `form:"name" example:"ListUsers"`                               // 筛选项: 名称 模糊匹配
-	Path     string `form:"path" example:"/admin/users"`                            // 筛选项: 路径 模糊匹配
-	Method   string `form:"method" example:"GET"`                                   // 筛选项: 方法 精确匹配
+	Group    string `form:"group" example:"User"`                                    // 筛选项: 分组 精确匹配
+	Name     string `form:"name" example:"ListUsers"`                                // 筛选项: 名称 模糊匹配
+	Path     string `form:"path" example:"/admin/users"`                             // 筛选项: 路径 模糊匹配
+	Method   string `form:"method" example:"GET"`                                    // 筛选项: 方法 精确匹配
 }
 type ApiDataItem struct {
 	ID        uint   `json:"id,omitempty" example:"1"`                          // ID
