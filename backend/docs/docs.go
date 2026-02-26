@@ -245,6 +245,85 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/apis/{id}/roles": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Api"
+                ],
+                "summary": "获取接口授权的角色列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "接口ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.ApiRoleResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Api"
+                ],
+                "summary": "更新接口授权的角色",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "接口ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "角色ID列表",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.UpdateApiRolesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/menus": {
             "get": {
                 "security": [
@@ -669,6 +748,85 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/roles/{id}/apis": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Role"
+                ],
+                "summary": "获取角色授权的接口列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "角色ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.RoleApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Role"
+                ],
+                "summary": "更新角色授权的接口",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "角色ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "接口ID列表",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_v1.UpdateRoleApisRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -1139,87 +1297,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/apis/{id}/roles": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api"
-                ],
-                "summary": "获取接口授权的角色列表",
-                "operationId": "GetApiRoles",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "接口ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_v1.ApiRoleResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api"
-                ],
-                "summary": "更新接口授权的角色",
-                "operationId": "UpdateApiRoles",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "接口ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "角色ID列表",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_v1.UpdateApiRolesRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_v1.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/auth/oidc": {
             "post": {
                 "description": "通过OIDC授权码登录",
@@ -1666,87 +1743,6 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/backend_api_v1.ResetPasswordRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_v1.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/roles/{id}/apis": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "获取角色授权的接口列表",
-                "operationId": "GetRoleApis",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "角色ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_v1.RoleApiResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "更新角色授权的接口",
-                "operationId": "UpdateRoleApis",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "角色ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "接口ID列表",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_v1.UpdateRoleApisRequest"
                         }
                     }
                 ],

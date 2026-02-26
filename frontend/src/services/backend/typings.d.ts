@@ -157,23 +157,23 @@ declare namespace API {
     email: string;
   };
 
-  type GetApiParams = {
+  type getAdminApisIdRolesParams = {
     /** 接口ID */
     id: number;
   };
 
-  type GetApiRolesParams = {
+  type getAdminRolesIdApisParams = {
+    /** 角色ID */
+    id: number;
+  };
+
+  type GetApiParams = {
     /** 接口ID */
     id: number;
   };
 
   type GetItemParams = {
     /** 项目ID */
-    id: number;
-  };
-
-  type GetRoleApisParams = {
-    /** 角色ID */
     id: number;
   };
 
@@ -546,6 +546,16 @@ declare namespace API {
     username?: string;
   };
 
+  type putAdminApisIdRolesParams = {
+    /** 接口ID */
+    id: number;
+  };
+
+  type putAdminRolesIdApisParams = {
+    /** 角色ID */
+    id: number;
+  };
+
   type RedisConfig = {
     addrs?: string[];
     db?: number;
@@ -719,11 +729,6 @@ declare namespace API {
     id: number;
   };
 
-  type UpdateApiRolesParams = {
-    /** 接口ID */
-    id: number;
-  };
-
   type UpdateApiRolesRequest = {
     roleIds: number[];
   };
@@ -743,11 +748,6 @@ declare namespace API {
     newPassword: string;
     /** 旧密码 */
     oldPassword: string;
-  };
-
-  type UpdateRoleApisParams = {
-    /** 角色ID */
-    id: number;
   };
 
   type UpdateRoleApisRequest = {

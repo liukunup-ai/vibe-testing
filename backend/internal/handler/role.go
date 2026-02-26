@@ -218,8 +218,7 @@ func (h *RoleHandler) UpdateRolePermissions(ctx *gin.Context) {
 // @Security Bearer
 // @Param id path uint true "角色ID"
 // @Success 200 {object} v1.RoleApiResponse
-// @Router /roles/{id}/apis [get]
-// @ID GetRoleApis
+// @Router /admin/roles/{id}/apis [get]
 func (h *RoleHandler) GetRoleApis(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
@@ -248,8 +247,7 @@ func (h *RoleHandler) GetRoleApis(ctx *gin.Context) {
 // @Param id path uint true "角色ID"
 // @Param body body v1.UpdateRoleApisRequest true "接口ID列表"
 // @Success 200 {object} v1.Response
-// @Router /roles/{id}/apis [put]
-// @ID UpdateRoleApis
+// @Router /admin/roles/{id}/apis [put]
 func (h *RoleHandler) UpdateRoleApis(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)

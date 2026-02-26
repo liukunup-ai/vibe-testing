@@ -29,8 +29,7 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
   useEffect(() => {
     const loadApis = async () => {
       try {
-        const response = await listApis({ page: 1, pageSize: 10000 });
-        if (response.data?.list) {
+        const response = await listApis({ page: 1, pageSize: 100 });
           setApiList(response.data.list);
         }
       } catch (error) {
