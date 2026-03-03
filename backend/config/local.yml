@@ -17,10 +17,10 @@ db:
   dsn: storage/vibe-testing.db?_busy_timeout=5000
   # MySQL
   #  driver: mysql
-  #  dsn: root:pass@tcp(127.0.0.1:3306)/vibe-testing?charset=utf8mb4&parseTime=True&loc=Local
+  #  dsn: root:pass@tcp(127.0.0.1:3306)/vibe-testing?charset=utf8mb4&parseTime=True&loc=UTC
   # PostgreSQL
   #  driver: postgres
-  #  dsn: host=localhost user=gorm password=gorm dbname=gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai
+  #  dsn: host=localhost user=gorm password=gorm dbname=gorm port=5432 sslmode=disable TimeZone=UTC
 # redis:
 #   addrs: []
 #   password: ""

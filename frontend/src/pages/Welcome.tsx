@@ -2,7 +2,6 @@ import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Card, theme } from 'antd';
 import React from 'react';
-import { useTheme } from '@/hooks/useTheme';
 
 /**
  * 每个单独的卡片，为了复用样式抽成了组件
@@ -87,8 +86,8 @@ const InfoCard: React.FC<{
 const Welcome: React.FC = () => {
   const { token } = theme.useToken();
   const { initialState } = useModel('@@initialState');
-  const { effectiveTheme } = useTheme();
-  
+  const effectiveTheme = initialState?.effectiveTheme || 'light';
+
   return (
     <PageContainer>
       <Card

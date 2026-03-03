@@ -2,10 +2,11 @@ package service
 
 import (
 	v1 "backend/api/v1"
-	"backend/internal/constant"
 	"backend/internal/model"
 	"backend/internal/repository"
+	"backend/pkg/audit"
 	"context"
+	"fmt"
 
 	"go.uber.org/zap"
 )
@@ -45,8 +46,8 @@ func (s *menuService) List(ctx context.Context, req *v1.MenuSearchRequest) (*v1.
 	for _, menu := range list {
 		data.List = append(data.List, v1.MenuDataItem{
 			ID:                 menu.ID,
-			CreatedAt:          menu.CreatedAt.Format(constant.DateTimeLayout),
-			UpdatedAt:          menu.UpdatedAt.Format(constant.DateTimeLayout),
+			CreatedAt:          menu.CreatedAt,
+			UpdatedAt:          menu.UpdatedAt,
 			ParentID:           menu.ParentID,
 			Icon:               menu.Icon,
 			Name:               menu.Name,
@@ -70,7 +71,7 @@ func (s *menuService) List(ctx context.Context, req *v1.MenuSearchRequest) (*v1.
 }
 
 func (s *menuService) Create(ctx context.Context, req *v1.MenuRequest) error {
-	return s.menuRepository.Create(ctx, &model.Menu{
+	if err := s.menuRepository.Create(ctx, &model.Menu{
 		ParentID:           req.ParentID,
 		Icon:               req.Icon,
 		Name:               req.Name,
@@ -87,7 +88,18 @@ func (s *menuService) Create(ctx context.Context, req *v1.MenuRequest) error {
 		DisabledTooltip:    req.DisabledTooltip,
 		Key:                req.Key,
 		ParentKeys:         req.ParentKeys,
+	}); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionMenuCreate, "", "", "menu", "", err, map[string]interface{}{
+			"name": req.Name,
+			"path": req.Path,
+		})
+		return err
+	}
+	s.audit.LogSuccess(ctx, audit.ActionMenuCreate, "", "", "menu", "", map[string]interface{}{
+		"name": req.Name,
+		"path": req.Path,
 	})
+	return nil
 }
 
 func (s *menuService) Update(ctx context.Context, id uint, req *v1.MenuRequest) error {
@@ -109,9 +121,25 @@ func (s *menuService) Update(ctx context.Context, id uint, req *v1.MenuRequest) 
 		"key":                   req.Key,
 		"parent_keys":           req.ParentKeys,
 	}
-	return s.menuRepository.Update(ctx, id, data)
+	if err := s.menuRepository.Update(ctx, id, data); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionMenuUpdate, "", "", "menu", fmt.Sprintf("%d", id), err, map[string]interface{}{
+			"name": req.Name,
+			"path": req.Path,
+		})
+		return err
+	}
+	s.audit.LogSuccess(ctx, audit.ActionMenuUpdate, "", "", "menu", fmt.Sprintf("%d", id), map[string]interface{}{
+		"name": req.Name,
+		"path": req.Path,
+	})
+	return nil
 }
 
 func (s *menuService) Delete(ctx context.Context, id uint) error {
-	return s.menuRepository.Delete(ctx, id)
+	if err := s.menuRepository.Delete(ctx, id); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionMenuDelete, "", "", "menu", fmt.Sprintf("%d", id), err, nil)
+		return err
+	}
+	s.audit.LogSuccess(ctx, audit.ActionMenuDelete, "", "", "menu", fmt.Sprintf("%d", id), nil)
+	return nil
 }

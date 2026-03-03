@@ -3,7 +3,7 @@ package handler
 import (
 	v1 "backend/api/v1"
 	"backend/internal/service"
-	"backend/pkg/time"
+	
 	"net/http"
 	"strconv"
 
@@ -182,8 +182,8 @@ func (h *ApiHandler) GetApi(ctx *gin.Context) {
 	}
 	v1.HandleSuccess(ctx, v1.ApiDataItem{
 		ID:        api.ID,
-		CreatedAt: time.FormatTime(api.CreatedAt),
-		UpdatedAt: time.FormatTime(api.UpdatedAt),
+		CreatedAt: api.CreatedAt,
+		UpdatedAt: api.UpdatedAt,
 		Group:     api.Group,
 		Name:      api.Name,
 		Path:      api.Path,
@@ -217,7 +217,7 @@ func (h *ApiHandler) GetApiRoles(ctx *gin.Context) {
 		return
 	}
 
-	v1.HandleSuccess(ctx, v1.ApiRoleResponse{RoleIds: roleIds})
+	v1.HandleSuccess(ctx, v1.ApiRoleResponseData{RoleIds: roleIds})
 }
 
 // UpdateApiRoles godoc

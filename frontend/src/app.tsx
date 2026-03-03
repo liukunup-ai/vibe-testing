@@ -1,12 +1,12 @@
 import { AvatarDropdown, AvatarName, Footer, Question, SelectLang, SelectDirection, SelectTimezone, SelectTheme } from '@/components';
 import { fetchCurrentUser } from '@/services/backend/user';
-import { getSiteSettingWithCache } from '@/utils/settingCache';
+import { getSiteConfigWithCache } from '@/utils/settingCache';
 import { initToken } from '@/models/useTokenModel';
 import { LinkOutlined, SmileOutlined, CrownOutlined, AppstoreOutlined, ProfileOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
-import { history, Link, Helmet, setLocale } from '@umijs/max';
+import { history, Link, Helmet } from '@umijs/max';
 import React, { useEffect } from 'react';
 import { ConfigProvider, theme, App } from 'antd';
 import { HappyProvider } from '@ant-design/happy-work-theme';
@@ -14,8 +14,9 @@ import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './utils/request';
 import '@ant-design/v5-patch-for-react-19';
 import { fetchDynamicMenu } from '@/services/backend/user';
-import { ThemeProvider, useTheme } from '@/hooks/useTheme';
+
 import { initSentry } from '@/utils/sentry';
+import { ThemeProvider, useThemeContext } from './contexts/ThemeContext';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/login';
@@ -75,8 +76,11 @@ export async function getInitialState(): Promise<{
   fetchUserInfo?: () => Promise<API.User | undefined>;
   fetchMenuData?: () => Promise<MenuDataItem[]>;
   menuData?: MenuDataItem[];
-  siteSettings?: API.SiteSetting;
+  siteConfig?: API.PublicSiteConfig;
   themeMode?: 'light' | 'dark' | 'auto';
+  effectiveTheme?: 'light' | 'dark';
+  compactMode?: boolean;
+  happyWorkMode?: boolean;
 }> {
   const getStoredThemeMode = (): 'light' | 'dark' | 'auto' => {
     if (typeof window === 'undefined') return 'auto';
@@ -87,6 +91,26 @@ export async function getInitialState(): Promise<{
     }
     return 'auto';
   };
+
+  const getEffectiveTheme = (mode: 'light' | 'dark' | 'auto'): 'light' | 'dark' => {
+    if (mode === 'auto') {
+      if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+      return 'light';
+    }
+    return mode;
+  };
+
+  const getStoredBoolean = (key: string): boolean => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(key) === 'true';
+  };
+
+  const themeMode = getStoredThemeMode();
+  const effectiveTheme = getEffectiveTheme(themeMode);
+  const compactMode = getStoredBoolean('app-compact-mode');
+  const happyWorkMode = getStoredBoolean('app-happy-work');
 
   const fetchUserInfo = async () => {
     try {
@@ -99,6 +123,7 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
+
   const fetchMenuData = async () => {
     try {
       const response = await fetchDynamicMenu({
@@ -113,38 +138,38 @@ export async function getInitialState(): Promise<{
     return [];
   };
 
-  const fetchSiteSettings = async () => {
+  const fetchSiteConfig = async () => {
     try {
-      const response = await getSiteSettingWithCache({
+      const response = await getSiteConfigWithCache({
         skipErrorHandler: true,
       });
       if (response.success && response.data) {
         return response.data;
       }
     } catch (error) {
-      console.error('failed to fetch site settings:', error);
+      console.error('failed to fetch site config:', error);
     }
     return undefined;
   };
 
-  const siteSettings = await fetchSiteSettings();
-  const siteTitle = siteSettings?.site?.title || defaultSettings.title;
+  const siteConfig = await fetchSiteConfig();
+  const siteTitle = siteConfig?.site?.title || defaultSettings.title;
   const mergedSettings = {
     ...defaultSettings,
     title: siteTitle,
-    logo: siteSettings?.site?.logo || defaultSettings.logo,
+    logo: siteConfig?.site?.logo || defaultSettings.logo,
   } as Partial<LayoutSettings>;
 
   if (siteTitle) {
     document.title = siteTitle;
   }
 
-  if (siteSettings?.site?.favicon) {
-    updateFavicon(siteSettings.site.favicon);
+  if (siteConfig?.site?.favicon) {
+    updateFavicon(siteConfig.site.favicon);
   }
 
-  if (siteSettings?.sentry?.dsn) {
-    initSentry(siteSettings.sentry.dsn);
+  if (siteConfig?.sentry?.dsn) {
+    initSentry(siteConfig.sentry.dsn);
   }
 
   if (location.pathname !== loginPath) {
@@ -155,8 +180,11 @@ export async function getInitialState(): Promise<{
         fetchMenuData,
         menuData: [],
         settings: mergedSettings,
-        siteSettings,
-        themeMode: getStoredThemeMode(),
+        siteConfig,
+        themeMode,
+        effectiveTheme,
+        compactMode,
+        happyWorkMode,
       };
     }
     const currentUser = await fetchUserInfo();
@@ -167,8 +195,11 @@ export async function getInitialState(): Promise<{
       currentUser,
       menuData,
       settings: mergedSettings,
-      siteSettings,
-      themeMode: getStoredThemeMode(),
+      siteConfig,
+      themeMode,
+      effectiveTheme,
+      compactMode,
+      happyWorkMode,
     };
   }
   return {
@@ -176,25 +207,21 @@ export async function getInitialState(): Promise<{
     fetchMenuData,
     menuData: [],
     settings: mergedSettings,
-    siteSettings,
-    themeMode: getStoredThemeMode(),
+    siteConfig,
+    themeMode,
+    effectiveTheme,
+    compactMode,
+    happyWorkMode,
   };
 }
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
-  const getNavTheme = (): 'light' | 'realDark' => {
-    const mode = initialState?.themeMode;
-    if (mode === 'dark') return 'realDark';
-    if (mode === 'light') return 'light';
-    if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
-      return 'realDark';
-    }
-    return 'light';
-  };
+  const effectiveTheme = initialState?.effectiveTheme || 'light';
+  const navTheme = effectiveTheme === 'dark' ? 'realDark' : 'light';
 
   return {
-    navTheme: getNavTheme(),
+    navTheme,
     actionsRender: () => [
       <Question key="doc" />,
       <SelectLang key="lang" />,
@@ -217,6 +244,20 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       const { location } = history;
       // 如果没有登录，重定向到 login
       if (!initialState?.currentUser && location.pathname !== loginPath && !location.pathname.startsWith('/auth/')) {
+        // 如果 OIDC 启用且配置了自动登录，直接跳转到 OIDC 提供商
+        if (initialState?.siteConfig?.oidc?.enabled && initialState?.siteConfig?.oidc?.autoLogin) {
+          const cfg = initialState.siteConfig.oidc;
+          if (cfg.authorizeUrl && cfg.clientId && cfg.redirectUrl) {
+            const redirectUri = encodeURIComponent(cfg.redirectUrl);
+            const state = Math.random().toString(36).substring(7);
+            sessionStorage.setItem('oidc_state', state);
+            const redirectPath = location.pathname;
+            sessionStorage.setItem('oidc_redirect', redirectPath);
+            const authUrl = `${cfg.authorizeUrl}?client_id=${cfg.clientId}&redirect_uri=${redirectUri}&response_type=${cfg.responseType || 'code'}&scope=${encodeURIComponent(cfg.scopes || 'openid profile email')}&state=${state}`;
+            window.location.href = authUrl;
+            return;
+          }
+        }
         history.push(`${loginPath}?redirect=${encodeURIComponent(location.pathname)}`);
       }
     },
@@ -256,8 +297,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       return (
         <>
           <SiteMeta
-            title={initialState?.siteSettings?.site?.title}
-            icon={initialState?.siteSettings?.site?.favicon}
+            title={initialState?.siteConfig?.site?.title}
+            icon={initialState?.siteConfig?.site?.favicon}
           />
           {children}
           {isDev && (
@@ -277,8 +318,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       );
     },
     menuDataRender: () => initialState?.menuData || [],
-    title: initialState?.siteSettings?.site?.title || initialState?.settings?.title,
-    logo: initialState?.siteSettings?.site?.logo,
+    title: initialState?.siteConfig?.site?.title || initialState?.settings?.title,
+    logo: initialState?.siteConfig?.site?.logo,
     ...initialState?.settings,
   };
 };
@@ -293,30 +334,26 @@ export const request = {
 };
 
 const ThemeWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { effectiveTheme, compactMode, happyMode } = useTheme();
+  const { effectiveTheme, compactMode, happyWorkMode } = useThemeContext();
 
   const algorithms = [];
-  if (effectiveTheme === 'dark') {
-    algorithms.push(darkAlgorithm);
-  } else {
-    algorithms.push(defaultAlgorithm);
-  }
+  algorithms.push(effectiveTheme === 'dark' ? darkAlgorithm : defaultAlgorithm);
   if (compactMode) {
     algorithms.push(compactAlgorithm);
   }
 
   return (
-    <HappyProvider disabled={!happyMode}>
-      <ConfigProvider
-        theme={{
-          algorithm: algorithms,
-        }}
-      >
+    <ConfigProvider
+      theme={{
+        algorithm: algorithms,
+      }}
+    >
+      <HappyProvider disabled={!happyWorkMode}>
         <App>
           {children}
         </App>
-      </ConfigProvider>
-    </HappyProvider>
+      </HappyProvider>
+    </ConfigProvider>
   );
 };
 

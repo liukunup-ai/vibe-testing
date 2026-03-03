@@ -26,6 +26,7 @@ type RoleRepository interface {
 
 	GetApiIds(ctx context.Context, roleId uint) ([]uint, error)
 	UpdateApis(ctx context.Context, roleId uint, apiIds []uint) error
+	CountApiPermissions(ctx context.Context, casbinRole string) (int64, error)
 }
 
 func NewRoleRepository(
@@ -186,15 +187,31 @@ func (r *roleRepository) GetApiIds(ctx context.Context, roleId uint) ([]uint, er
 		}
 	}
 
+	// 使用 map 去重
+	apiIdSet := make(map[uint]struct{})
+
 	// 根据 path 和 method 查找 API ID
-	var apiIds []uint
 	if len(pathMethods) > 0 {
 		for _, pm := range pathMethods {
 			var api model.Api
 			if err := r.DB(ctx).Where("path = ? AND method = ?", pm.path, pm.method).First(&api).Error; err == nil {
-				apiIds = append(apiIds, api.ID)
+				apiIdSet[api.ID] = struct{}{}
 			}
 		}
+	}
+
+	// 添加公开接口 ID（所有角色都拥有公开接口权限）
+	var publicApis []model.Api
+	if err := r.DB(ctx).Where("is_public = ?", true).Find(&publicApis).Error; err == nil {
+		for _, api := range publicApis {
+			apiIdSet[api.ID] = struct{}{}
+		}
+	}
+
+	// 转换为切片
+	apiIds := make([]uint, 0, len(apiIdSet))
+	for id := range apiIdSet {
+		apiIds = append(apiIds, id)
 	}
 
 	return apiIds, nil
@@ -259,4 +276,38 @@ func (r *roleRepository) UpdateApis(ctx context.Context, roleId uint, newApiIds 
 	}
 
 	return nil
+}
+func (r *roleRepository) CountApiPermissions(ctx context.Context, casbinRole string) (int64, error) {
+	// 获取角色的所有权限
+	permissions, err := r.e.GetPermissionsForUser(casbinRole)
+	if err != nil {
+		return 0, err
+	}
+
+	// 记录 Casbin 中已授权的 path+method
+	authSet := make(map[string]struct{})
+	for _, perm := range permissions {
+		if len(perm) >= 3 && strings.HasPrefix(perm[1], constant.ApiResourcePrefix) {
+			path := strings.TrimPrefix(perm[1], constant.ApiResourcePrefix)
+			key := path + ":" + perm[2]
+			authSet[key] = struct{}{}
+		}
+	}
+
+	// 获取公开接口，统计不在 Casbin 中的数量
+	var publicApis []model.Api
+	if err := r.DB(ctx).Where("is_public = ?", true).Find(&publicApis).Error; err != nil {
+		return 0, err
+	}
+
+	publicNotInCasbin := 0
+	for _, api := range publicApis {
+		key := api.Path + ":" + api.Method
+		if _, exists := authSet[key]; !exists {
+			publicNotInCasbin++
+		}
+	}
+
+	// 最终权限数 = Casbin 权限数 + 不在 Casbin 中的公开接口数
+	return int64(len(authSet)) + int64(publicNotInCasbin), nil
 }

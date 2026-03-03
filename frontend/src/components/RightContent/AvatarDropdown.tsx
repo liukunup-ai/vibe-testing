@@ -44,7 +44,7 @@ const useStyles = createStyles(({ token }) => {
 export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, children }) => {
   const { clearTokens } = useTokenModel();
   const { initialState, setInitialState } = useModel('@@initialState');
-  const siteSettings = (initialState as any)?.siteSettings;
+  const siteConfig = initialState?.siteConfig;
 
   const loginOut = async () => {
     // 先清除本地 tokens
@@ -56,14 +56,14 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
       const endSessionUrl = (resp as any)?.data?.endSessionUrl;
       
       // 优先使用后端返回的 endSessionUrl，否则使用配置的 signoutRedirectUrl
-      const signoutUrl = endSessionUrl || siteSettings?.oidc?.signoutRedirectUrl;
+      const signoutUrl = endSessionUrl || siteConfig?.oidc?.signoutRedirectUrl;
       if (signoutUrl) {
         window.location.href = signoutUrl;
         return;
       }
     } catch (error) {
       // 即使 API 调用失败，也继续使用配置的 signoutRedirectUrl
-      const signoutUrl = siteSettings?.oidc?.signoutRedirectUrl;
+      const signoutUrl = siteConfig?.oidc?.signoutRedirectUrl;
       if (signoutUrl) {
         window.location.href = signoutUrl;
         return;

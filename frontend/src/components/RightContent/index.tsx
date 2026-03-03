@@ -11,19 +11,19 @@ import { SelectLang as UmiSelectLang, useModel } from '@umijs/max';
 import { Dropdown, Tooltip } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useState } from 'react';
-import { useTheme } from '@/hooks/useTheme';
+
 import { TIMEZONE_OPTIONS } from '@/constants/options';
-import { updateProfile } from '@/services/backend/user';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const TIMEZONE_STORAGE_KEY = 'app-timezone';
 
 const DirectionIcon: React.FC<{ direction: 'ltr' | 'rtl' }> = ({ direction }) => (
-  <svg 
-    viewBox="2 2 16 16" 
-    width="1em" 
-    height="1em" 
-    fill="currentColor" 
-    aria-hidden="true" 
+  <svg
+    viewBox="2 2 16 16"
+    width="1em"
+    height="1em"
+    fill="currentColor"
+    aria-hidden="true"
     focusable="false"
     style={{ transform: direction === 'rtl' ? 'scaleX(-1)' : 'scaleX(1)' }}
   >
@@ -48,34 +48,18 @@ const getBrowserTimezone = () => {
   return 'Asia/Shanghai';
 };
 
-export const SelectLang = () => {
-  return (
-    <UmiSelectLang
-      style={{
-        padding: 4,
-      }}
-    />
-  );
-};
+export const SelectLang = () => <UmiSelectLang style={{ padding: 4 }} />;
 
 export const Question = () => {
   const { initialState } = useModel('@@initialState');
-  const questionLink = (initialState as any)?.siteSettings?.site?.questionLink || 'https://pro.ant.design/docs/getting-started';
+  const questionLink = initialState?.siteConfig?.site?.questionLink || 'https://pro.ant.design/docs/getting-started';
 
-  if (!questionLink) {
-    return null;
-  }
+  if (!questionLink) return null;
 
   return (
     <div
-      style={{
-        display: 'flex',
-        height: 26,
-        cursor: 'pointer',
-      }}
-      onClick={() => {
-        window.open(questionLink);
-      }}
+      style={{ display: 'flex', height: 26, cursor: 'pointer' }}
+      onClick={() => window.open(questionLink)}
     >
       <QuestionCircleOutlined />
     </div>
@@ -83,31 +67,21 @@ export const Question = () => {
 };
 
 export const SelectDirection = () => {
-  const { initialState } = useModel('@@initialState');
-  const isLoggedIn = !!(initialState as any)?.currentUser;
   const [direction, setDirection] = useState<'ltr' | 'rtl'>(() => {
     if (typeof window === 'undefined') return 'ltr';
-    const userDirection = (initialState as any)?.currentUser?.direction;
-    if (userDirection) return userDirection as 'ltr' | 'rtl';
     return (localStorage.getItem('app-direction') as 'ltr' | 'rtl') || 'ltr';
   });
 
-  const toggleDirection = async () => {
+  const toggleDirection = () => {
     const newDirection = direction === 'ltr' ? 'rtl' : 'ltr';
     setDirection(newDirection);
     localStorage.setItem('app-direction', newDirection);
     document.documentElement.dir = newDirection;
-    
-    if (isLoggedIn) {
-      try {
-        await updateProfile({ direction: newDirection });
-      } catch { }
-    }
   };
 
   return (
     <Tooltip title={direction === 'ltr' ? 'LTR' : 'RTL'} arrow={false}>
-      <div 
+      <div
         style={{ display: 'flex', height: 26, cursor: 'pointer', alignItems: 'center' }}
         onClick={toggleDirection}
       >
@@ -118,25 +92,15 @@ export const SelectDirection = () => {
 };
 
 export const SelectTimezone = () => {
-  const { initialState } = useModel('@@initialState');
-  const isLoggedIn = !!(initialState as any)?.currentUser;
   const browserTimezone = getBrowserTimezone();
   const [currentTimezone, setCurrentTimezone] = useState(() => {
     if (typeof window === 'undefined') return browserTimezone;
-    const userTimezone = (initialState as any)?.currentUser?.timezone;
-    if (userTimezone) return userTimezone;
     return localStorage.getItem(TIMEZONE_STORAGE_KEY) || browserTimezone;
   });
 
-  const handleTimezoneChange = async (tz: string) => {
+  const handleTimezoneChange = (tz: string) => {
     localStorage.setItem(TIMEZONE_STORAGE_KEY, tz);
     setCurrentTimezone(tz);
-    
-    if (isLoggedIn) {
-      try {
-        await updateProfile({ timezone: tz });
-      } catch { }
-    }
   };
 
   const items: MenuProps['items'] = TIMEZONE_OPTIONS.map((item) => ({
@@ -146,13 +110,9 @@ export const SelectTimezone = () => {
   }));
 
   return (
-    <Dropdown 
-      menu={{ 
-        items, 
-        selectedKeys: [currentTimezone],
-        style: { maxHeight: 300, overflow: 'auto' },
-      }} 
-      trigger={['hover']} 
+    <Dropdown
+      menu={{ items, selectedKeys: [currentTimezone], style: { maxHeight: 300, overflow: 'auto' } }}
+      trigger={['hover']}
       arrow={false}
     >
       <div style={{ display: 'flex', height: 26, cursor: 'pointer', alignItems: 'center' }}>
@@ -163,79 +123,54 @@ export const SelectTimezone = () => {
 };
 
 export const SelectTheme = () => {
-  const { themeMode, compactMode, happyMode, setThemeMode, setCompactMode, setHappyMode } = useTheme();
   const { initialState, setInitialState } = useModel('@@initialState');
-  const isLoggedIn = !!(initialState as any)?.currentUser;
+  const { setEffectiveTheme, setCompactMode, setHappyWorkMode } = useTheme();
 
-  const handleThemeChange = async (mode: 'light' | 'dark' | 'auto') => {
-    setThemeMode(mode);
-    setInitialState((s: any) => ({ ...s, themeMode: mode }));
-    
-    if (isLoggedIn) {
-      try {
-        await updateProfile({ theme: mode });
-      } catch { }
-    }
+  const themeMode = initialState?.themeMode || 'auto';
+  const compactMode = initialState?.compactMode || false;
+  const happyWorkMode = initialState?.happyWorkMode || false;
+
+  const handleThemeChange = (mode: 'light' | 'dark' | 'auto') => {
+    localStorage.setItem('app-theme-mode', mode);
+    const effectiveTheme = mode === 'auto'
+      ? (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : mode;
+    // Update both initialState and ThemeContext for immediate effect
+    setInitialState((s) => ({ ...s, themeMode: mode, effectiveTheme }));
+    setEffectiveTheme(effectiveTheme);
   };
 
   const handleCompactChange = () => {
-    setCompactMode(!compactMode);
+    const newCompactMode = !compactMode;
+    localStorage.setItem('app-compact-mode', String(newCompactMode));
+    setInitialState((s) => ({ ...s, compactMode: newCompactMode }));
+    setCompactMode(newCompactMode);
   };
 
-  const handleHappyChange = () => {
-    setHappyMode(!happyMode);
+  const handleHappyWorkChange = () => {
+    const newHappyWorkMode = !happyWorkMode;
+    localStorage.setItem('app-happy-work', String(newHappyWorkMode));
+    setInitialState((s) => ({ ...s, happyWorkMode: newHappyWorkMode }));
+    setHappyWorkMode(newHappyWorkMode);
   };
 
   const ThemeLabel: React.FC<{ label: string; selected: boolean }> = ({ label, selected }) => (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
       <span>{label}</span>
       {selected && (
-        <span 
-          style={{ 
-            width: 6, 
-            height: 6, 
-            borderRadius: '50%', 
-            backgroundColor: '#1677ff',
-            flexShrink: 0,
-          }} 
-        />
+        <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#1677ff', flexShrink: 0 }} />
       )}
     </div>
   );
 
   const items: MenuProps['items'] = [
-    {
-      key: 'auto',
-      icon: <SyncOutlined />,
-      label: <ThemeLabel label="跟随系统" selected={themeMode === 'auto'} />,
-      onClick: () => handleThemeChange('auto'),
-    },
-    {
-      key: 'light',
-      icon: <SunOutlined />,
-      label: <ThemeLabel label="浅色模式" selected={themeMode === 'light'} />,
-      onClick: () => handleThemeChange('light'),
-    },
-    {
-      key: 'dark',
-      icon: <MoonOutlined />,
-      label: <ThemeLabel label="暗黑模式" selected={themeMode === 'dark'} />,
-      onClick: () => handleThemeChange('dark'),
-    },
+    { key: 'auto', icon: <SyncOutlined />, label: <ThemeLabel label="跟随系统" selected={themeMode === 'auto'} />, onClick: () => handleThemeChange('auto') },
+    { key: 'light', icon: <SunOutlined />, label: <ThemeLabel label="浅色模式" selected={themeMode === 'light'} />, onClick: () => handleThemeChange('light') },
+    { key: 'dark', icon: <MoonOutlined />, label: <ThemeLabel label="暗黑模式" selected={themeMode === 'dark'} />, onClick: () => handleThemeChange('dark') },
     { type: 'divider' },
-    {
-      key: 'compact',
-      icon: <CompressOutlined />,
-      label: <ThemeLabel label="紧凑模式" selected={compactMode} />,
-      onClick: handleCompactChange,
-    },
+    { key: 'compact', icon: <CompressOutlined />, label: <ThemeLabel label="紧凑模式" selected={compactMode} />, onClick: handleCompactChange },
     { type: 'divider' },
-    {
-      key: 'happy',
-      icon: <SmileOutlined />,
-      label: <ThemeLabel label="快乐工作" selected={happyMode} />,
-      onClick: handleHappyChange,
-    },
+    { key: 'happyWork', icon: <SmileOutlined />, label: <ThemeLabel label="快乐工作" selected={happyWorkMode} />, onClick: handleHappyWorkChange },
   ];
 
   return (

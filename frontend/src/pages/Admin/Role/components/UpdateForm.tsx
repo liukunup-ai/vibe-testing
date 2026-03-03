@@ -47,10 +47,13 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
       setLoadingApis(true);
       getAdminRolesIdApis({ id: initialValues.id })
         .then((response) => {
-          if (response) {
-            setCheckedKeys(response.apiIds || []);
+          if (response?.data) {
+            setCheckedKeys(response.data.apiIds || []);
           }
         })
+        .finally(() => {
+          setLoadingApis(false);
+        });
     } else if (!visible) {
       setCheckedKeys([]);
       setActiveTab('basic');

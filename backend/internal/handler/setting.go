@@ -24,7 +24,7 @@ func NewSettingHandler(
 	}
 }
 
-// GetSiteSetting godoc
+// GetPublicSiteConfig godoc
 // @Summary 获取站点设置
 // @Schemes
 // @Description 获取站点的基本设置信息(网站标题、Logo、图标、版权信息)。支持版本检查：如果传入version参数且版本相同，返回304。
@@ -32,19 +32,19 @@ func NewSettingHandler(
 // @Accept json
 // @Produce json
 // @Param version query string false "客户端缓存的版本号"
-// @Success 200 {object} v1.SiteSettingResponse
+// @Success 200 {object} v1.PublicSiteConfigResponse
 // @Success 304 "版本未变化，使用缓存"
-// @Router /settings [get]
-// @ID GetSiteSetting
-func (h *SettingHandler) GetSiteSetting(ctx *gin.Context) {
-	var req v1.SiteSettingRequest
+// @Router /site/config [get]
+// @ID GetPublicSiteConfig
+func (h *SettingHandler) GetPublicSiteConfig(ctx *gin.Context) {
+	var req v1.PublicSiteConfigRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		h.logger.WithContext(ctx).Error("GetSiteSetting bind error", zap.Error(err))
+		h.logger.WithContext(ctx).Error("GetPublicSiteConfig bind error", zap.Error(err))
 		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
 
-	data, err := h.settingService.GetSite(ctx, req.Version)
+	data, err := h.settingService.GetPublicSiteConfig(ctx, req.Version)
 	if err != nil {
 		h.logger.WithContext(ctx).Error("settingService.GetSite error", zap.Error(err))
 		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)

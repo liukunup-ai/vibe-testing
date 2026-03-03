@@ -103,14 +103,6 @@ const User: React.FC = () => {
       icon: <LogoutOutlined />,
       label: intl.formatMessage({ id: 'pages.admin.user.revokeSessions', defaultMessage: '撤销登录态' }),
     },
-    { type: 'divider' },
-    {
-      key: record.status === 2 ? 'enableAccount' : 'disableAccount',
-      icon: <StopOutlined />,
-      label: record.status === 2 
-        ? intl.formatMessage({ id: 'pages.admin.user.enableAccount', defaultMessage: '启用账号' })
-        : intl.formatMessage({ id: 'pages.admin.user.disableAccount', defaultMessage: '禁用账号' }),
-    },
     {
       key: 'resetAvatar',
       icon: <UserOutlined />,
@@ -245,12 +237,11 @@ const User: React.FC = () => {
         defaultMessage: '角色',
       }),
       dataIndex: 'roles',
-      ellipsis: true,
       hideInSearch: true,
       filters: roleOptions?.map(({ id, name }) => ({ text: name as string, value: id as number })) || [],
       onFilter: (value, record) => record.roles?.some(({ id }) => id === value) ?? false,
       render: (_, record) => (
-        <Space>
+        <Space size={[4, 4]} wrap>
           {record.roles?.map((r) => (
             <Tag key={r.id} color="blue">{r.name}</Tag>
           ))}
@@ -297,6 +288,20 @@ const User: React.FC = () => {
         >
           <FormattedMessage id="pages.common.edit" defaultMessage="编辑" />
         </a>,
+        <a
+          key="toggleStatus"
+          onClick={() => {
+            if (record.status === 2) {
+              handleMoreAction('enableAccount', record);
+            } else {
+              handleMoreAction('disableAccount', record);
+            }
+          }}
+        >
+          {record.status === 2 
+            ? <FormattedMessage id="pages.admin.user.enableAccount" defaultMessage="启用" />
+            : <FormattedMessage id="pages.admin.user.disableAccount" defaultMessage="禁用" />}
+        </a>,
         <Dropdown
           key="more"
           menu={{
@@ -306,10 +311,7 @@ const User: React.FC = () => {
           trigger={['click']}
         >
           <a onClick={(e) => e.preventDefault()}>
-            <Space>
-              <FormattedMessage id="pages.common.more" defaultMessage="更多" />
-              <MoreOutlined />
-            </Space>
+            <MoreOutlined />
           </a>
         </Dropdown>,
       ],

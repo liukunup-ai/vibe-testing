@@ -5,8 +5,10 @@ import (
 	"backend/internal/constant"
 	"backend/internal/model"
 	"backend/internal/repository"
+	"backend/pkg/audit"
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"gorm.io/gorm"
@@ -52,12 +54,16 @@ func (s *roleService) List(ctx context.Context, req *v1.RoleSearchRequest) (*v1.
 		Total: total,
 	}
 	for _, role := range list {
+		// 获取角色的 API 权限数量
+		apiCount, _ := s.roleRepository.CountApiPermissions(ctx, role.CasbinRole)
+
 		data.List = append(data.List, v1.RoleDataItem{
 			ID:         role.ID,
-			CreatedAt:  role.CreatedAt.Format(constant.DateTimeLayout),
-			UpdatedAt:  role.UpdatedAt.Format(constant.DateTimeLayout),
+			CreatedAt:  role.CreatedAt,
+			UpdatedAt:  role.UpdatedAt,
 			Name:       role.Name,
 			CasbinRole: role.CasbinRole,
+			ApiCount:   apiCount,
 		})
 
 	}
@@ -68,11 +74,27 @@ func (s *roleService) Create(ctx context.Context, req *v1.RoleRequest) error {
 	_, err := s.roleRepository.GetByCasbinRole(ctx, req.CasbinRole)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return s.roleRepository.Create(ctx, &model.Role{
+			err = s.roleRepository.Create(ctx, &model.Role{
 				Name:       req.Name,
 				CasbinRole: req.CasbinRole,
 			})
+			if err != nil {
+				s.audit.LogFailure(ctx, audit.ActionRoleCreate, "", "", "role", "", err, map[string]interface{}{
+					"name":       req.Name,
+					"casbinRole": req.CasbinRole,
+				})
+				return err
+			}
+			s.audit.LogSuccess(ctx, audit.ActionRoleCreate, "", "", "role", "", map[string]interface{}{
+				"name":       req.Name,
+				"casbinRole": req.CasbinRole,
+			})
+			return nil
 		} else {
+			s.audit.LogFailure(ctx, audit.ActionRoleCreate, "", "", "role", "", err, map[string]interface{}{
+				"name":       req.Name,
+				"casbinRole": req.CasbinRole,
+			})
 			return err
 		}
 	}
@@ -80,12 +102,21 @@ func (s *roleService) Create(ctx context.Context, req *v1.RoleRequest) error {
 }
 
 func (s *roleService) Update(ctx context.Context, id uint, req *v1.RoleRequest) error {
-	return s.roleRepository.Update(ctx, &model.Role{
+	if err := s.roleRepository.Update(ctx, &model.Role{
 		Model: gorm.Model{
 			ID: id,
 		},
 		Name: req.Name,
+	}); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionRoleUpdate, "", "", "role", fmt.Sprintf("%d", id), err, map[string]interface{}{
+			"name": req.Name,
+		})
+		return err
+	}
+	s.audit.LogSuccess(ctx, audit.ActionRoleUpdate, "", "", "role", fmt.Sprintf("%d", id), map[string]interface{}{
+		"name": req.Name,
 	})
+	return nil
 }
 
 func (s *roleService) Delete(ctx context.Context, id uint) error {
@@ -94,9 +125,21 @@ func (s *roleService) Delete(ctx context.Context, id uint) error {
 		return err
 	}
 	if _, err := s.roleRepository.DeleteCasbinRole(ctx, old.CasbinRole); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionRoleDelete, "", "", "role", fmt.Sprintf("%d", id), err, map[string]interface{}{
+			"name":       old.Name,
+			"casbinRole": old.CasbinRole,
+		})
 		return err
 	}
-	return s.roleRepository.Delete(ctx, id)
+	if err := s.roleRepository.Delete(ctx, id); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionRoleDelete, "", "", "role", fmt.Sprintf("%d", id), err, nil)
+		return err
+	}
+	s.audit.LogSuccess(ctx, audit.ActionRoleDelete, "", "", "role", fmt.Sprintf("%d", id), map[string]interface{}{
+		"name":       old.Name,
+		"casbinRole": old.CasbinRole,
+	})
+	return nil
 }
 
 func (s *roleService) ListAll(ctx context.Context) (*v1.RoleSearchResponseData, error) {
@@ -146,13 +189,31 @@ func (s *roleService) UpdatePermissions(ctx context.Context, req *v1.UpdateRoleP
 			permissions[v] = struct{}{}
 		}
 	}
-	return s.roleRepository.UpdatePermissions(ctx, req.CasbinRole, permissions)
+	if err := s.roleRepository.UpdatePermissions(ctx, req.CasbinRole, permissions); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionRolePermissionUpdate, "", "", "role", req.CasbinRole, err, map[string]interface{}{
+			"permissionCount": len(permissions),
+		})
+		return err
 	}
+	s.audit.LogSuccess(ctx, audit.ActionRolePermissionUpdate, "", "", "role", req.CasbinRole, map[string]interface{}{
+		"permissionCount": len(permissions),
+	})
+	return nil
+}
 
-		func (s *roleService) GetApis(ctx context.Context, roleId uint) ([]uint, error) {
+func (s *roleService) GetApis(ctx context.Context, roleId uint) ([]uint, error) {
 	return s.roleRepository.GetApiIds(ctx, roleId)
 }
 
-	func (s *roleService) UpdateApis(ctx context.Context, roleId uint, apiIds []uint) error {
-	return s.roleRepository.UpdateApis(ctx, roleId, apiIds)
+func (s *roleService) UpdateApis(ctx context.Context, roleId uint, apiIds []uint) error {
+	if err := s.roleRepository.UpdateApis(ctx, roleId, apiIds); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionRoleApiUpdate, "", "", "role", fmt.Sprintf("%d", roleId), err, map[string]interface{}{
+			"apiCount": len(apiIds),
+		})
+		return err
+	}
+	s.audit.LogSuccess(ctx, audit.ActionRoleApiUpdate, "", "", "role", fmt.Sprintf("%d", roleId), map[string]interface{}{
+		"apiCount": len(apiIds),
+	})
+	return nil
 }

@@ -265,6 +265,6 @@ err := s.db.Transaction(func(tx *gorm.DB) error {
 ```
 
 **系统设置缓存 (前端)**
-- 站点设置 (`SiteSetting`) 使用 localStorage 缓存，有效期 5 分钟
+- 站点配置 (`SiteConfig`) 使用 localStorage 缓存，有效期 5 分钟
 - 登录/登出时自动清理缓存
-- 相关函数: `getSiteSetting`, `clearSiteSettingCache` (位于 `services/backend/setting.ts`)
+- 相关函数: `getSiteConfig`, `clearSiteConfigCache` (位于 `utils/settingCache.ts`)

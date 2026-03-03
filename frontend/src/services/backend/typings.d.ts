@@ -49,12 +49,16 @@ declare namespace API {
     group?: string;
     /** ID */
     id?: number;
+    /** 是否为公开接口 */
+    isPublic?: boolean;
     /** 方法 */
     method?: string;
     /** 名称 */
     name?: string;
     /** 路径 */
     path?: string;
+    /** 授权角色的数量 */
+    roleCount?: number;
     /** 更新时间 */
     updatedAt?: string;
   };
@@ -69,6 +73,8 @@ declare namespace API {
   type ApiRequest = {
     /** 分组 */
     group?: string;
+    /** 是否为公开接口 */
+    isPublic?: boolean;
     /** 方法 */
     method?: string;
     /** 名称 */
@@ -89,8 +95,20 @@ declare namespace API {
     success?: boolean;
   };
 
-  type ApiRoleResponse = {
+  type ApiRoleList = {
     roleIds?: number[];
+  };
+
+  type ApiRoleResponse = {
+    data?: ApiRoleList;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
   };
 
   type ApiSearchResponse = {
@@ -177,6 +195,11 @@ declare namespace API {
     id: number;
   };
 
+  type GetPublicSiteConfigParams = {
+    /** 客户端缓存的版本号 */
+    version?: string;
+  };
+
   type GetRolePermissionResponse = {
     data?: GetRolePermissionResponseData;
     /** 错误码 */
@@ -199,11 +222,6 @@ declare namespace API {
   type GetRolePermissionsParams = {
     /** 角色名 */
     role: string;
-  };
-
-  type GetSiteSettingParams = {
-    /** 客户端缓存的版本号 */
-    version?: string;
   };
 
   type GetUserByIDParams = {
@@ -546,6 +564,25 @@ declare namespace API {
     username?: string;
   };
 
+  type PublicSiteConfig = {
+    oidc?: OIDCConfig;
+    sentry?: SentryConfig;
+    site?: SiteConfig;
+    version?: string;
+  };
+
+  type PublicSiteConfigResponse = {
+    data?: PublicSiteConfig;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
   type putAdminApisIdRolesParams = {
     /** 接口ID */
     id: number;
@@ -609,6 +646,8 @@ declare namespace API {
   };
 
   type Role = {
+    /** 接口权限的数量 */
+    apiCount?: number;
     /** Casbin-Role */
     casbinRole?: string;
     /** 创建时间 */
@@ -621,8 +660,20 @@ declare namespace API {
     updatedAt?: string;
   };
 
-  type RoleApiResponse = {
+  type RoleApiList = {
     apiIds?: number[];
+  };
+
+  type RoleApiResponse = {
+    data?: RoleApiList;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
   };
 
   type RoleList = {
@@ -676,25 +727,6 @@ declare namespace API {
     questionLink?: string;
     showLinks?: boolean;
     title?: string;
-  };
-
-  type SiteSetting = {
-    oidc?: OIDCConfig;
-    sentry?: SentryConfig;
-    site?: SiteConfig;
-    version?: string;
-  };
-
-  type SiteSettingResponse = {
-    data?: SiteSetting;
-    /** 错误码 */
-    errorCode?: number;
-    /** 报错信息 */
-    errorMessage?: string;
-    /** 前端展示方式 */
-    errorShowType?: number;
-    /** 是否成功 */
-    success?: boolean;
   };
 
   type SMTPConfig = {
@@ -788,24 +820,16 @@ declare namespace API {
     bio?: string;
     /** 创建时间 */
     createdAt?: string;
-    /** 方向 */
-    direction?: string;
     /** 邮箱 */
     email?: string;
     /** 全名 */
     fullName?: string;
-    /** 语言 */
-    language?: string;
     /** 手机 */
     phone?: string;
     /** 角色 */
     roles?: Role[];
     /** 状态 0:待激活 1:正常 2:禁用 */
     status?: number;
-    /** 主题 */
-    theme?: string;
-    /** 时区 */
-    timezone?: string;
     /** 更新时间 */
     updatedAt?: string;
     /** UserID */
@@ -824,24 +848,16 @@ declare namespace API {
   type UserRequest = {
     /** 简介 */
     bio?: string;
-    /** 方向 */
-    direction?: string;
     /** 邮箱 */
     email?: string;
     /** 全名 */
     fullName?: string;
-    /** 语言 */
-    language?: string;
     /** 手机 */
     phone?: string;
     /** 角色 */
     roles?: string[];
     /** 状态 0:待激活 1:正常 2:禁用 */
     status?: number;
-    /** 主题 */
-    theme?: string;
-    /** 时区 */
-    timezone?: string;
     /** 用户名 */
     username?: string;
   };

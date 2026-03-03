@@ -1,5 +1,7 @@
 package v1
 
+import "time"
+
 // CRUD
 type ApiSearchRequest struct {
 	Page     int    `form:"page" binding:"required,min=1" example:"1" `              // 页码
@@ -10,13 +12,15 @@ type ApiSearchRequest struct {
 	Method   string `form:"method" example:"GET"`                                    // 筛选项: 方法 精确匹配
 }
 type ApiDataItem struct {
-	ID        uint   `json:"id,omitempty" example:"1"`                          // ID
-	CreatedAt string `json:"createdAt,omitempty" example:"2006-01-02 15:04:05"` // 创建时间
-	UpdatedAt string `json:"updatedAt,omitempty" example:"2006-01-02 15:04:05"` // 更新时间
-	Group     string `json:"group" example:"User"`                              // 分组
-	Name      string `json:"name" example:"ListUsers"`                          // 名称
-	Path      string `json:"path" example:"/admin/users"`                       // 路径
-	Method    string `json:"method" example:"GET"`                              // 方法
+	ID        uint      `json:"id,omitempty" example:"1"`    // ID
+	CreatedAt time.Time `json:"createdAt,omitempty"`         // 创建时间
+	UpdatedAt time.Time `json:"updatedAt,omitempty"`         // 更新时间
+	Group     string    `json:"group" example:"User"`        // 分组
+	Name      string    `json:"name" example:"ListUsers"`    // 名称
+	Path      string    `json:"path" example:"/admin/users"` // 路径
+	Method    string    `json:"method" example:"GET"`        // 方法
+	IsPublic  bool      `json:"isPublic" example:"false"`    // 是否为公开接口
+	RoleCount int64     `json:"roleCount" example:"5"`       // 授权角色的数量
 } // @name Api
 type ApiSearchResponseData struct {
 	List  []ApiDataItem `json:"list"`  // 列表
@@ -33,18 +37,21 @@ type ApiResponse struct {
 }
 
 type ApiRequest struct {
-	Group  string `json:"group" example:"User"`        // 分组
-	Name   string `json:"name" example:"ListUsers"`    // 名称
-	Path   string `json:"path" example:"/admin/users"` // 路径
-	Method string `json:"method" example:"GET"`        // 方法
+	Group    string `json:"group" example:"User"`        // 分组
+	Name     string `json:"name" example:"ListUsers"`    // 名称
+	Path     string `json:"path" example:"/admin/users"` // 路径
+	Method   string `json:"method" example:"GET"`        // 方法
+	IsPublic bool   `json:"isPublic" example:"false"`    // 是否为公开接口
 }
 
-// ApiRoleResponse 接口授权角色响应
-type ApiRoleResponse struct {
+type ApiRoleResponseData struct {
 	RoleIds []uint `json:"roleIds"`
+} // @name ApiRoleList
+type ApiRoleResponse struct {
+	Response
+	Data ApiRoleResponseData
 }
 
-// UpdateApiRolesRequest 更新接口角色请求
 type UpdateApiRolesRequest struct {
 	RoleIds []uint `json:"roleIds" binding:"required"`
 }

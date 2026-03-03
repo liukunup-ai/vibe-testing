@@ -40,10 +40,13 @@ const UpdateForm = ({ visible, onCancel, onSuccess, initialValues }: UpdateFormP
       setLoadingRoles(true);
       getAdminApisIdRoles({ id: initialValues.id })
         .then((response) => {
-          if (response) {
-            setSelectedRoles(response.roleIds || []);
+          if (response?.data) {
+            setSelectedRoles(response.data.roleIds || []);
           }
         })
+        .finally(() => {
+          setLoadingRoles(false);
+        });
     } else if (!visible) {
       setSelectedRoles([]);
     }

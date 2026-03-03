@@ -3,7 +3,6 @@ definitions:
     properties:
       createdAt:
         description: 创建时间
-        example: "2006-01-02 15:04:05"
         type: string
       group:
         description: 分组
@@ -13,6 +12,10 @@ definitions:
         description: ID
         example: 1
         type: integer
+      isPublic:
+        description: 是否为公开接口
+        example: false
+        type: boolean
       method:
         description: 方法
         example: GET
@@ -25,9 +28,12 @@ definitions:
         description: 路径
         example: /admin/users
         type: string
+      roleCount:
+        description: 授权角色的数量
+        example: 5
+        type: integer
       updatedAt:
         description: 更新时间
-        example: "2006-01-02 15:04:05"
         type: string
     type: object
   ApiList:
@@ -41,11 +47,17 @@ definitions:
         description: 总数
         type: integer
     type: object
+  ApiRoleList:
+    properties:
+      roleIds:
+        items:
+          type: integer
+        type: array
+    type: object
   Item:
     properties:
       createdAt:
         description: 创建时间
-        example: "2006-01-02 15:04:05"
         type: string
       desc:
         description: 描述
@@ -65,7 +77,6 @@ definitions:
         description: 所有者
       updatedAt:
         description: 更新时间
-        example: "2006-01-02 15:04:05"
         type: string
     type: object
   ItemList:
@@ -83,15 +94,12 @@ definitions:
     properties:
       access:
         description: 可见性
-        example: canAdmin
         type: string
       component:
         description: 组件
-        example: '@/pages/Admin/User'
         type: string
       createdAt:
         description: 创建时间
-        example: "2006-01-02 15:04:05"
         type: string
       disabled:
         type: boolean
@@ -108,11 +116,9 @@ definitions:
         type: boolean
       icon:
         description: 图标
-        example: crown
         type: string
       id:
         description: ID
-        example: 1
         type: integer
       key:
         type: string
@@ -121,17 +127,14 @@ definitions:
         type: string
       name:
         description: 名称
-        example: User
         type: string
       parentId:
         description: 父级菜单
-        example: 0
         type: integer
       parentKeys:
         type: string
       path:
         description: 路径
-        example: /admin/user
         type: string
       redirect:
         description: 重定向
@@ -143,7 +146,6 @@ definitions:
         type: string
       updatedAt:
         description: 更新时间
-        example: "2006-01-02 15:04:05"
         type: string
     type: object
   MenuList:
@@ -159,13 +161,16 @@ definitions:
     type: object
   Role:
     properties:
+      apiCount:
+        description: 接口权限的数量
+        example: 10
+        type: integer
       casbinRole:
         description: Casbin-Role
         example: admin
         type: string
       createdAt:
         description: 创建时间
-        example: "2006-01-02 15:04:05"
         type: string
       id:
         description: ID
@@ -176,8 +181,14 @@ definitions:
         type: string
       updatedAt:
         description: 更新时间
-        example: "2006-01-02 15:04:05"
         type: string
+    type: object
+  RoleApiList:
+    properties:
+      apiIds:
+        items:
+          type: integer
+        type: array
     type: object
   RoleList:
     properties:
@@ -194,35 +205,21 @@ definitions:
     properties:
       avatarUrl:
         description: 头像
-        example: https://example.com/avatar.jpg
         type: string
       bio:
         description: 简介
-        example: The Jackal
         type: string
       createdAt:
         description: 创建时间
-        example: "2006-01-02 15:04:05"
-        type: string
-      direction:
-        description: 方向
-        example: ltr
         type: string
       email:
         description: 邮箱
-        example: zhangsan@example.com
         type: string
       fullName:
         description: 全名
-        example: Zhang San
-        type: string
-      language:
-        description: 语言
-        example: zh-CN
         type: string
       phone:
         description: 手机
-        example: "13800138000"
         type: string
       roles:
         description: 角色
@@ -231,27 +228,15 @@ definitions:
         type: array
       status:
         description: 状态 0:待激活 1:正常 2:禁用
-        example: 1
         type: integer
-      theme:
-        description: 主题
-        example: light
-        type: string
-      timezone:
-        description: 时区
-        example: Asia/Shanghai
-        type: string
       updatedAt:
         description: 更新时间
-        example: "2006-01-02 15:04:05"
         type: string
       userId:
         description: UserID
-        example: IQrIkwYlyn
         type: string
       username:
         description: 用户名
-        example: zhangsan
         type: string
     type: object
   UserList:
@@ -342,6 +327,10 @@ definitions:
         description: 分组
         example: User
         type: string
+      isPublic:
+        description: 是否为公开接口
+        example: false
+        type: boolean
       method:
         description: 方法
         example: GET
@@ -375,10 +364,21 @@ definitions:
     type: object
   backend_api_v1.ApiRoleResponse:
     properties:
-      roleIds:
-        items:
-          type: integer
-        type: array
+      data:
+        $ref: '#/definitions/ApiRoleList'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
     type: object
   backend_api_v1.ApiSearchResponse:
     properties:
@@ -606,7 +606,6 @@ definitions:
     properties:
       access:
         description: 可见性
-        example: canAdmin
         type: string
       children:
         description: 子菜单
@@ -615,11 +614,9 @@ definitions:
         type: array
       component:
         description: 组件
-        example: '@/pages/Admin/User'
         type: string
       createdAt:
         description: 创建时间
-        example: "2006-01-02 15:04:05"
         type: string
       disabled:
         type: boolean
@@ -636,11 +633,9 @@ definitions:
         type: boolean
       icon:
         description: 图标
-        example: crown
         type: string
       id:
         description: ID
-        example: 1
         type: integer
       key:
         type: string
@@ -649,17 +644,14 @@ definitions:
         type: string
       name:
         description: 名称
-        example: User
         type: string
       parentId:
         description: 父级菜单
-        example: 0
         type: integer
       parentKeys:
         type: string
       path:
         description: 路径
-        example: /admin/user
         type: string
       redirect:
         description: 重定向
@@ -671,7 +663,6 @@ definitions:
         type: string
       updatedAt:
         description: 更新时间
-        example: "2006-01-02 15:04:05"
         type: string
     type: object
   backend_api_v1.MenuRequest:
@@ -805,6 +796,35 @@ definitions:
         example: zhangsan
         type: string
     type: object
+  backend_api_v1.PublicSiteConfig:
+    properties:
+      oidc:
+        $ref: '#/definitions/backend_api_v1.OIDCConfig'
+      sentry:
+        $ref: '#/definitions/backend_api_v1.SentryConfig'
+      site:
+        $ref: '#/definitions/backend_api_v1.SiteConfig'
+      version:
+        type: string
+    type: object
+  backend_api_v1.PublicSiteConfigResponse:
+    properties:
+      data:
+        $ref: '#/definitions/backend_api_v1.PublicSiteConfig'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
   backend_api_v1.RedisConfig:
     properties:
       addrs:
@@ -881,10 +901,21 @@ definitions:
     type: object
   backend_api_v1.RoleApiResponse:
     properties:
-      apiIds:
-        items:
-          type: integer
-        type: array
+      data:
+        $ref: '#/definitions/RoleApiList'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
     type: object
   backend_api_v1.RoleRequest:
     properties:
@@ -971,35 +1002,6 @@ definitions:
         type: boolean
       title:
         type: string
-    type: object
-  backend_api_v1.SiteSetting:
-    properties:
-      oidc:
-        $ref: '#/definitions/backend_api_v1.OIDCConfig'
-      sentry:
-        $ref: '#/definitions/backend_api_v1.SentryConfig'
-      site:
-        $ref: '#/definitions/backend_api_v1.SiteConfig'
-      version:
-        type: string
-    type: object
-  backend_api_v1.SiteSettingResponse:
-    properties:
-      data:
-        $ref: '#/definitions/backend_api_v1.SiteSetting'
-      errorCode:
-        description: 错误码
-        type: integer
-      errorMessage:
-        description: 报错信息
-        type: string
-      errorShowType:
-        description: 前端展示方式
-        type: integer
-      success:
-        description: 是否成功
-        example: true
-        type: boolean
     type: object
   backend_api_v1.TestEmailRequest:
     properties:
@@ -1091,10 +1093,6 @@ definitions:
         description: 简介
         example: The Jackal
         type: string
-      direction:
-        description: 方向
-        example: ltr
-        type: string
       email:
         description: 邮箱
         example: zhangsan@example.com
@@ -1102,10 +1100,6 @@ definitions:
       fullName:
         description: 全名
         example: Zhang San
-        type: string
-      language:
-        description: 语言
-        example: zh-CN
         type: string
       phone:
         description: 手机
@@ -1120,14 +1114,6 @@ definitions:
         description: 状态 0:待激活 1:正常 2:禁用
         example: 1
         type: integer
-      theme:
-        description: 主题
-        example: light
-        type: string
-      timezone:
-        description: 时区
-        example: Asia/Shanghai
-        type: string
       username:
         description: 用户名
         example: zhangsan
@@ -2290,12 +2276,12 @@ paths:
       summary: 重置密码
       tags:
       - Auth
-  /settings:
+  /site/config:
     get:
       consumes:
       - application/json
       description: 获取站点的基本设置信息(网站标题、Logo、图标、版权信息)。支持版本检查：如果传入version参数且版本相同，返回304。
-      operationId: GetSiteSetting
+      operationId: GetPublicSiteConfig
       parameters:
       - description: 客户端缓存的版本号
         in: query
@@ -2307,7 +2293,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/backend_api_v1.SiteSettingResponse'
+            $ref: '#/definitions/backend_api_v1.PublicSiteConfigResponse'
         "304":
           description: 版本未变化，使用缓存
       summary: 获取站点设置

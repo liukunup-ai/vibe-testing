@@ -1756,7 +1756,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/settings": {
+        "/site/config": {
             "get": {
                 "description": "获取站点的基本设置信息(网站标题、Logo、图标、版权信息)。支持版本检查：如果传入version参数且版本相同，返回304。",
                 "consumes": [
@@ -1769,7 +1769,7 @@ const docTemplate = `{
                     "Setting"
                 ],
                 "summary": "获取站点设置",
-                "operationId": "GetSiteSetting",
+                "operationId": "GetPublicSiteConfig",
                 "parameters": [
                     {
                         "type": "string",
@@ -1782,7 +1782,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/backend_api_v1.SiteSettingResponse"
+                            "$ref": "#/definitions/backend_api_v1.PublicSiteConfigResponse"
                         }
                     },
                     "304": {
@@ -2010,8 +2010,7 @@ const docTemplate = `{
             "properties": {
                 "createdAt": {
                     "description": "创建时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
                 },
                 "group": {
                     "description": "分组",
@@ -2022,6 +2021,11 @@ const docTemplate = `{
                     "description": "ID",
                     "type": "integer",
                     "example": 1
+                },
+                "isPublic": {
+                    "description": "是否为公开接口",
+                    "type": "boolean",
+                    "example": false
                 },
                 "method": {
                     "description": "方法",
@@ -2038,10 +2042,14 @@ const docTemplate = `{
                     "type": "string",
                     "example": "/admin/users"
                 },
+                "roleCount": {
+                    "description": "授权角色的数量",
+                    "type": "integer",
+                    "example": 5
+                },
                 "updatedAt": {
                     "description": "更新时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
                 }
             }
         },
@@ -2061,13 +2069,23 @@ const docTemplate = `{
                 }
             }
         },
+        "ApiRoleList": {
+            "type": "object",
+            "properties": {
+                "roleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "Item": {
             "type": "object",
             "properties": {
                 "createdAt": {
                     "description": "创建时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
                 },
                 "desc": {
                     "description": "描述",
@@ -2094,8 +2112,7 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "description": "更新时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
                 }
             }
         },
@@ -2120,18 +2137,15 @@ const docTemplate = `{
             "properties": {
                 "access": {
                     "description": "可见性",
-                    "type": "string",
-                    "example": "canAdmin"
+                    "type": "string"
                 },
                 "component": {
                     "description": "组件",
-                    "type": "string",
-                    "example": "@/pages/Admin/User"
+                    "type": "string"
                 },
                 "createdAt": {
                     "description": "创建时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
                 },
                 "disabled": {
                     "type": "boolean"
@@ -2153,13 +2167,11 @@ const docTemplate = `{
                 },
                 "icon": {
                     "description": "图标",
-                    "type": "string",
-                    "example": "crown"
+                    "type": "string"
                 },
                 "id": {
                     "description": "ID",
-                    "type": "integer",
-                    "example": 1
+                    "type": "integer"
                 },
                 "key": {
                     "type": "string"
@@ -2170,21 +2182,18 @@ const docTemplate = `{
                 },
                 "name": {
                     "description": "名称",
-                    "type": "string",
-                    "example": "User"
+                    "type": "string"
                 },
                 "parentId": {
                     "description": "父级菜单",
-                    "type": "integer",
-                    "example": 0
+                    "type": "integer"
                 },
                 "parentKeys": {
                     "type": "string"
                 },
                 "path": {
                     "description": "路径",
-                    "type": "string",
-                    "example": "/admin/user"
+                    "type": "string"
                 },
                 "redirect": {
                     "description": "重定向",
@@ -2199,8 +2208,7 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "description": "更新时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
                 }
             }
         },
@@ -2223,6 +2231,11 @@ const docTemplate = `{
         "Role": {
             "type": "object",
             "properties": {
+                "apiCount": {
+                    "description": "接口权限的数量",
+                    "type": "integer",
+                    "example": 10
+                },
                 "casbinRole": {
                     "description": "Casbin-Role",
                     "type": "string",
@@ -2230,8 +2243,7 @@ const docTemplate = `{
                 },
                 "createdAt": {
                     "description": "创建时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
                 },
                 "id": {
                     "description": "ID",
@@ -2244,8 +2256,18 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "description": "更新时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
+                }
+            }
+        },
+        "RoleApiList": {
+            "type": "object",
+            "properties": {
+                "apiIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -2270,43 +2292,27 @@ const docTemplate = `{
             "properties": {
                 "avatarUrl": {
                     "description": "头像",
-                    "type": "string",
-                    "example": "https://example.com/avatar.jpg"
+                    "type": "string"
                 },
                 "bio": {
                     "description": "简介",
-                    "type": "string",
-                    "example": "The Jackal"
+                    "type": "string"
                 },
                 "createdAt": {
                     "description": "创建时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
-                },
-                "direction": {
-                    "description": "方向",
-                    "type": "string",
-                    "example": "ltr"
+                    "type": "string"
                 },
                 "email": {
                     "description": "邮箱",
-                    "type": "string",
-                    "example": "zhangsan@example.com"
+                    "type": "string"
                 },
                 "fullName": {
                     "description": "全名",
-                    "type": "string",
-                    "example": "Zhang San"
-                },
-                "language": {
-                    "description": "语言",
-                    "type": "string",
-                    "example": "zh-CN"
+                    "type": "string"
                 },
                 "phone": {
                     "description": "手机",
-                    "type": "string",
-                    "example": "13800138000"
+                    "type": "string"
                 },
                 "roles": {
                     "description": "角色",
@@ -2317,33 +2323,19 @@ const docTemplate = `{
                 },
                 "status": {
                     "description": "状态 0:待激活 1:正常 2:禁用",
-                    "type": "integer",
-                    "example": 1
-                },
-                "theme": {
-                    "description": "主题",
-                    "type": "string",
-                    "example": "light"
-                },
-                "timezone": {
-                    "description": "时区",
-                    "type": "string",
-                    "example": "Asia/Shanghai"
+                    "type": "integer"
                 },
                 "updatedAt": {
                     "description": "更新时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
                 },
                 "userId": {
                     "description": "UserID",
-                    "type": "string",
-                    "example": "IQrIkwYlyn"
+                    "type": "string"
                 },
                 "username": {
                     "description": "用户名",
-                    "type": "string",
-                    "example": "zhangsan"
+                    "type": "string"
                 }
             }
         },
@@ -2477,6 +2469,11 @@ const docTemplate = `{
                     "type": "string",
                     "example": "User"
                 },
+                "isPublic": {
+                    "description": "是否为公开接口",
+                    "type": "boolean",
+                    "example": false
+                },
                 "method": {
                     "description": "方法",
                     "type": "string",
@@ -2522,11 +2519,25 @@ const docTemplate = `{
         "backend_api_v1.ApiRoleResponse": {
             "type": "object",
             "properties": {
-                "roleIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
+                "data": {
+                    "$ref": "#/definitions/ApiRoleList"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },
@@ -2849,8 +2860,7 @@ const docTemplate = `{
             "properties": {
                 "access": {
                     "description": "可见性",
-                    "type": "string",
-                    "example": "canAdmin"
+                    "type": "string"
                 },
                 "children": {
                     "description": "子菜单",
@@ -2861,13 +2871,11 @@ const docTemplate = `{
                 },
                 "component": {
                     "description": "组件",
-                    "type": "string",
-                    "example": "@/pages/Admin/User"
+                    "type": "string"
                 },
                 "createdAt": {
                     "description": "创建时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
                 },
                 "disabled": {
                     "type": "boolean"
@@ -2889,13 +2897,11 @@ const docTemplate = `{
                 },
                 "icon": {
                     "description": "图标",
-                    "type": "string",
-                    "example": "crown"
+                    "type": "string"
                 },
                 "id": {
                     "description": "ID",
-                    "type": "integer",
-                    "example": 1
+                    "type": "integer"
                 },
                 "key": {
                     "type": "string"
@@ -2906,21 +2912,18 @@ const docTemplate = `{
                 },
                 "name": {
                     "description": "名称",
-                    "type": "string",
-                    "example": "User"
+                    "type": "string"
                 },
                 "parentId": {
                     "description": "父级菜单",
-                    "type": "integer",
-                    "example": 0
+                    "type": "integer"
                 },
                 "parentKeys": {
                     "type": "string"
                 },
                 "path": {
                     "description": "路径",
-                    "type": "string",
-                    "example": "/admin/user"
+                    "type": "string"
                 },
                 "redirect": {
                     "description": "重定向",
@@ -2935,8 +2938,7 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "description": "更新时间",
-                    "type": "string",
-                    "example": "2006-01-02 15:04:05"
+                    "type": "string"
                 }
             }
         },
@@ -3124,6 +3126,48 @@ const docTemplate = `{
                 }
             }
         },
+        "backend_api_v1.PublicSiteConfig": {
+            "type": "object",
+            "properties": {
+                "oidc": {
+                    "$ref": "#/definitions/backend_api_v1.OIDCConfig"
+                },
+                "sentry": {
+                    "$ref": "#/definitions/backend_api_v1.SentryConfig"
+                },
+                "site": {
+                    "$ref": "#/definitions/backend_api_v1.SiteConfig"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_api_v1.PublicSiteConfigResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/backend_api_v1.PublicSiteConfig"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "backend_api_v1.RedisConfig": {
             "type": "object",
             "properties": {
@@ -3231,11 +3275,25 @@ const docTemplate = `{
         "backend_api_v1.RoleApiResponse": {
             "type": "object",
             "properties": {
-                "apiIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
+                "data": {
+                    "$ref": "#/definitions/RoleApiList"
+                },
+                "errorCode": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "description": "报错信息",
+                    "type": "string"
+                },
+                "errorShowType": {
+                    "description": "前端展示方式",
+                    "type": "integer"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },
@@ -3363,48 +3421,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "backend_api_v1.SiteSetting": {
-            "type": "object",
-            "properties": {
-                "oidc": {
-                    "$ref": "#/definitions/backend_api_v1.OIDCConfig"
-                },
-                "sentry": {
-                    "$ref": "#/definitions/backend_api_v1.SentryConfig"
-                },
-                "site": {
-                    "$ref": "#/definitions/backend_api_v1.SiteConfig"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "backend_api_v1.SiteSettingResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/backend_api_v1.SiteSetting"
-                },
-                "errorCode": {
-                    "description": "错误码",
-                    "type": "integer"
-                },
-                "errorMessage": {
-                    "description": "报错信息",
-                    "type": "string"
-                },
-                "errorShowType": {
-                    "description": "前端展示方式",
-                    "type": "integer"
-                },
-                "success": {
-                    "description": "是否成功",
-                    "type": "boolean",
-                    "example": true
                 }
             }
         },
@@ -3536,11 +3552,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "The Jackal"
                 },
-                "direction": {
-                    "description": "方向",
-                    "type": "string",
-                    "example": "ltr"
-                },
                 "email": {
                     "description": "邮箱",
                     "type": "string",
@@ -3550,11 +3561,6 @@ const docTemplate = `{
                     "description": "全名",
                     "type": "string",
                     "example": "Zhang San"
-                },
-                "language": {
-                    "description": "语言",
-                    "type": "string",
-                    "example": "zh-CN"
                 },
                 "phone": {
                     "description": "手机",
@@ -3572,16 +3578,6 @@ const docTemplate = `{
                     "description": "状态 0:待激活 1:正常 2:禁用",
                     "type": "integer",
                     "example": 1
-                },
-                "theme": {
-                    "description": "主题",
-                    "type": "string",
-                    "example": "light"
-                },
-                "timezone": {
-                    "description": "时区",
-                    "type": "string",
-                    "example": "Asia/Shanghai"
                 },
                 "username": {
                     "description": "用户名",

@@ -13,10 +13,6 @@ type User struct {
 	Phone          string `gorm:"column:phone;type:varchar(15);comment:'手机'"`
 	AvatarURL      string `gorm:"column:avatarUrl;type:varchar(255);comment:'头像'"`
 	Bio            string `gorm:"column:bio;type:text;comment:'简介'"`
-	Language       string `gorm:"column:language;type:varchar(255);comment:'语言'"`
-	Timezone       string `gorm:"column:timezone;type:varchar(255);comment:'时区'"`
-	Theme          string `gorm:"column:theme;type:varchar(255);comment:'主题'"`
-	Direction      string `gorm:"column:direction;type:varchar(3);default:'ltr';comment:'方向 ltr/rtl'"`
 	Status         int    `gorm:"column:status;type:int;comment:'状态 0:待激活 1:正常 2:禁用'"`
 	AuthType       string `gorm:"column:auth_type;type:varchar(10);default:'local';comment:'认证类型 local/ldap/oidc'"`
 	OIDCSUB        string `gorm:"column:oidc_sub;type:varchar(255);index;comment:'OIDC Subject'"`

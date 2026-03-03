@@ -37,13 +37,13 @@ export async function testEmail(body: API.TestEmailRequest, options?: { [key: st
   });
 }
 
-/** 获取站点设置 获取站点的基本设置信息(网站标题、Logo、图标、版权信息)。支持版本检查：如果传入version参数且版本相同，返回304。 GET /settings */
-export async function getSiteSetting(
+/** 获取站点设置 获取站点的基本设置信息(网站标题、Logo、图标、版权信息)。支持版本检查：如果传入version参数且版本相同，返回304。 GET /site/config */
+export async function getPublicSiteConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.GetSiteSettingParams,
+  params: API.GetPublicSiteConfigParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.SiteSettingResponse>(`/v1/settings`, {
+  return request<API.PublicSiteConfigResponse>(`/v1/site/config`, {
     method: 'GET',
     params: {
       ...params,
