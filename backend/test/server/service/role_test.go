@@ -20,7 +20,8 @@ func TestRoleService_List(t *testing.T) {
 
 	mockRoleRepo := mock_repository.NewMockRoleRepository(ctrl)
 	mockTm := mock_repository.NewMockTransaction(ctrl)
-	srv := service.NewService(logger, sf, j, em, mockTm)
+	mockSettingRepo := mock_repository.NewMockSettingRepository(ctrl)
+	srv := service.NewService(logger, sf, j, em, cfg, mockTm, aud, mockSettingRepo)
 	roleService := service.NewRoleService(srv, mockRoleRepo)
 
 	ctx := context.Background()
@@ -43,7 +44,9 @@ func TestRoleService_List(t *testing.T) {
 	}
 
 	mockRoleRepo.EXPECT().List(ctx, req).Return(mockRoles, int64(2), nil)
-
+	mockRoleRepo.EXPECT().CountApiPermissions(ctx, "admin").Return(int64(10), nil)
+	mockRoleRepo.EXPECT().CountApiPermissions(ctx, "user").Return(int64(5), nil)
+	
 	result, err := roleService.List(ctx, req)
 
 	assert.NoError(t, err)
@@ -59,7 +62,8 @@ func TestRoleService_Create(t *testing.T) {
 
 	mockRoleRepo := mock_repository.NewMockRoleRepository(ctrl)
 	mockTm := mock_repository.NewMockTransaction(ctrl)
-	srv := service.NewService(logger, sf, j, em, mockTm)
+	mockSettingRepo := mock_repository.NewMockSettingRepository(ctrl)
+	srv := service.NewService(logger, sf, j, em, cfg, mockTm, aud, mockSettingRepo)
 	roleService := service.NewRoleService(srv, mockRoleRepo)
 
 	ctx := context.Background()
@@ -82,7 +86,8 @@ func TestRoleService_Update(t *testing.T) {
 
 	mockRoleRepo := mock_repository.NewMockRoleRepository(ctrl)
 	mockTm := mock_repository.NewMockTransaction(ctrl)
-	srv := service.NewService(logger, sf, j, em, mockTm)
+	mockSettingRepo := mock_repository.NewMockSettingRepository(ctrl)
+	srv := service.NewService(logger, sf, j, em, cfg, mockTm, aud, mockSettingRepo)
 	roleService := service.NewRoleService(srv, mockRoleRepo)
 
 	ctx := context.Background()
@@ -105,7 +110,8 @@ func TestRoleService_Delete(t *testing.T) {
 
 	mockRoleRepo := mock_repository.NewMockRoleRepository(ctrl)
 	mockTm := mock_repository.NewMockTransaction(ctrl)
-	srv := service.NewService(logger, sf, j, em, mockTm)
+	mockSettingRepo := mock_repository.NewMockSettingRepository(ctrl)
+	srv := service.NewService(logger, sf, j, em, cfg, mockTm, aud, mockSettingRepo)
 	roleService := service.NewRoleService(srv, mockRoleRepo)
 
 	ctx := context.Background()
@@ -129,7 +135,8 @@ func TestRoleService_ListAll(t *testing.T) {
 
 	mockRoleRepo := mock_repository.NewMockRoleRepository(ctrl)
 	mockTm := mock_repository.NewMockTransaction(ctrl)
-	srv := service.NewService(logger, sf, j, em, mockTm)
+	mockSettingRepo := mock_repository.NewMockSettingRepository(ctrl)
+	srv := service.NewService(logger, sf, j, em, cfg, mockTm, aud, mockSettingRepo)
 	roleService := service.NewRoleService(srv, mockRoleRepo)
 
 	ctx := context.Background()

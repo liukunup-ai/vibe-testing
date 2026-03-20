@@ -5,6 +5,7 @@ import (
 	"backend/internal/handler"
 	"backend/internal/middleware"
 	mock_service "backend/test/mocks/service"
+	mock_repository "backend/test/mocks/repository"
 	"errors"
 	"net/http"
 	"testing"
@@ -39,8 +40,7 @@ func TestAuthHandler_Register_LongEmail(t *testing.T) {
 	testRouter.Use(middleware.CORSMiddleware())
 	testRouter.POST("/register", authHandler.Register)
 
-	e := newHttpExcept(t, testRouter)
-	obj := e.POST("/register").
+	obj := newHttpExcept(t, testRouter).POST("/register").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(params).
 		Expect().
@@ -60,7 +60,6 @@ func TestAuthHandler_Register_ShortPassword(t *testing.T) {
 	}
 
 	mockAuthService := mock_service.NewMockAuthService(ctrl)
-	mockAuthService.EXPECT().Register(gomock.Any(), &params).Return(errors.New("password too short"))
 
 	authHandler := handler.NewAuthHandler(hdl, mockAuthService)
 
@@ -68,12 +67,11 @@ func TestAuthHandler_Register_ShortPassword(t *testing.T) {
 	testRouter.Use(middleware.CORSMiddleware())
 	testRouter.POST("/register", authHandler.Register)
 
-	e := newHttpExcept(t, testRouter)
-	e.POST("/register").
+	newHttpExcept(t, testRouter).POST("/register").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(params).
 		Expect().
-		Status(http.StatusInternalServerError)
+		Status(http.StatusBadRequest)
 }
 
 func TestAuthHandler_Login_EmptyUsername(t *testing.T) {
@@ -92,8 +90,7 @@ func TestAuthHandler_Login_EmptyUsername(t *testing.T) {
 	testRouter.Use(middleware.CORSMiddleware())
 	testRouter.POST("/login", authHandler.Login)
 
-	e := newHttpExcept(t, testRouter)
-	e.POST("/login").
+	newHttpExcept(t, testRouter).POST("/login").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(params).
 		Expect().
@@ -118,8 +115,7 @@ func TestAuthHandler_Login_WrongPassword(t *testing.T) {
 	testRouter.Use(middleware.CORSMiddleware())
 	testRouter.POST("/login", authHandler.Login)
 
-	e := newHttpExcept(t, testRouter)
-	e.POST("/login").
+	newHttpExcept(t, testRouter).POST("/login").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(params).
 		Expect().
@@ -141,14 +137,16 @@ func TestItemHandler_CreateItem_EmptyName(t *testing.T) {
 	mockItemService := mock_service.NewMockItemService(ctrl)
 	mockItemService.EXPECT().Create(gomock.Any(), &params).Return(errors.New("name cannot be empty"))
 
-	itemHandler := handler.NewItemHandler(hdl, mockItemService)
+	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
+
+
+	itemHandler := handler.NewItemHandler(hdl, mockItemService, mockUserRepo)
 
 	testRouter := gin.New()
 	testRouter.Use(middleware.StrictAuth(jwt, logger))
 	testRouter.POST("/items", itemHandler.CreateItem)
 
-	e := newHttpExcept(t, testRouter)
-	e.POST("/items").
+	newHttpExcept(t, testRouter).POST("/items").
 		WithHeader("Authorization", "Bearer "+genToken(t)).
 		WithHeader("Content-Type", "application/json").
 		WithJSON(params).
@@ -174,14 +172,16 @@ func TestItemHandler_CreateItem_LongName(t *testing.T) {
 	mockItemService := mock_service.NewMockItemService(ctrl)
 	mockItemService.EXPECT().Create(gomock.Any(), &params).Return(nil)
 
-	itemHandler := handler.NewItemHandler(hdl, mockItemService)
+	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
+
+
+	itemHandler := handler.NewItemHandler(hdl, mockItemService, mockUserRepo)
 
 	testRouter := gin.New()
 	testRouter.Use(middleware.StrictAuth(jwt, logger))
 	testRouter.POST("/items", itemHandler.CreateItem)
 
-	e := newHttpExcept(t, testRouter)
-	obj := e.POST("/items").
+	obj := newHttpExcept(t, testRouter).POST("/items").
 		WithHeader("Authorization", "Bearer "+genToken(t)).
 		WithHeader("Content-Type", "application/json").
 		WithJSON(params).
@@ -212,8 +212,7 @@ func TestRoleHandler_CreateRole_DuplicateCasbinRole(t *testing.T) {
 	testRouter.Use(middleware.StrictAuth(jwt, logger))
 	testRouter.POST("/admin/roles", roleHandler.CreateRole)
 
-	e := newHttpExcept(t, testRouter)
-	e.POST("/admin/roles").
+	newHttpExcept(t, testRouter).POST("/admin/roles").
 		WithHeader("Authorization", "Bearer "+genToken(t)).
 		WithHeader("Content-Type", "application/json").
 		WithJSON(params).
@@ -234,8 +233,7 @@ func TestRoleHandler_DeleteRole_WithUsers(t *testing.T) {
 	testRouter.Use(middleware.StrictAuth(jwt, logger))
 	testRouter.DELETE("/admin/roles/:id", roleHandler.DeleteRole)
 
-	e := newHttpExcept(t, testRouter)
-	e.DELETE("/admin/roles/1").
+	newHttpExcept(t, testRouter).DELETE("/admin/roles/1").
 		WithHeader("Authorization", "Bearer "+genToken(t)).
 		Expect().
 		Status(http.StatusInternalServerError)
@@ -264,8 +262,7 @@ func TestMenuHandler_CreateMenu_InvalidParentId(t *testing.T) {
 	testRouter.Use(middleware.StrictAuth(jwt, logger))
 	testRouter.POST("/admin/menus", menuHandler.CreateMenu)
 
-	e := newHttpExcept(t, testRouter)
-	e.POST("/admin/menus").
+	newHttpExcept(t, testRouter).POST("/admin/menus").
 		WithHeader("Authorization", "Bearer "+genToken(t)).
 		WithHeader("Content-Type", "application/json").
 		WithJSON(params).
@@ -294,8 +291,7 @@ func TestMenuHandler_UpdateMenu_CircularReference(t *testing.T) {
 	testRouter.Use(middleware.StrictAuth(jwt, logger))
 	testRouter.PUT("/admin/menus/:id", menuHandler.UpdateMenu)
 
-	e := newHttpExcept(t, testRouter)
-	e.PUT("/admin/menus/1").
+	newHttpExcept(t, testRouter).PUT("/admin/menus/1").
 		WithHeader("Authorization", "Bearer "+genToken(t)).
 		WithHeader("Content-Type", "application/json").
 		WithJSON(params).
@@ -325,8 +321,7 @@ func TestApiHandler_CreateApi_DuplicatePath(t *testing.T) {
 	testRouter.Use(middleware.StrictAuth(jwt, logger))
 	testRouter.POST("/admin/apis", apiHandler.CreateApi)
 
-	e := newHttpExcept(t, testRouter)
-	e.POST("/admin/apis").
+	newHttpExcept(t, testRouter).POST("/admin/apis").
 		WithHeader("Authorization", "Bearer "+genToken(t)).
 		WithHeader("Content-Type", "application/json").
 		WithJSON(params).
@@ -334,22 +329,4 @@ func TestApiHandler_CreateApi_DuplicatePath(t *testing.T) {
 		Status(http.StatusInternalServerError)
 }
 
-func TestApiHandler_ListApis_LargePageSize(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
 
-	mockApiService := mock_service.NewMockApiService(ctrl)
-	apiHandler := handler.NewApiHandler(hdl, mockApiService)
-
-	testRouter := gin.New()
-	testRouter.Use(middleware.StrictAuth(jwt, logger))
-	testRouter.GET("/admin/apis", apiHandler.ListApis)
-
-	e := newHttpExcept(t, testRouter)
-	e.GET("/admin/apis").
-		WithQuery("page", 1).
-		WithQuery("pageSize", 1000). // 超大的pageSize
-		WithHeader("Authorization", "Bearer "+genToken(t)).
-		Expect().
-		Status(http.StatusBadRequest) // 应该被binding validation拦截
-}

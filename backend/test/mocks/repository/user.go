@@ -51,7 +51,7 @@ func (mr *MockUserRepositoryMockRecorder) Create(ctx, user interface{}) *gomock.
 }
 
 // Delete mocks base method.
-func (m *MockUserRepository) Delete(ctx context.Context, uid uint) error {
+func (m *MockUserRepository) Delete(ctx context.Context, uid string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, uid)
 	ret0, _ := ret[0].(error)
@@ -65,7 +65,7 @@ func (mr *MockUserRepositoryMockRecorder) Delete(ctx, uid interface{}) *gomock.C
 }
 
 // DeleteRoles mocks base method.
-func (m *MockUserRepository) DeleteRoles(ctx context.Context, uid uint) error {
+func (m *MockUserRepository) DeleteRoles(ctx context.Context, uid string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteRoles", ctx, uid)
 	ret0, _ := ret[0].(error)
@@ -79,7 +79,7 @@ func (mr *MockUserRepositoryMockRecorder) DeleteRoles(ctx, uid interface{}) *gom
 }
 
 // Get mocks base method.
-func (m *MockUserRepository) Get(ctx context.Context, uid uint) (model.User, error) {
+func (m *MockUserRepository) Get(ctx context.Context, uid string) (model.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, uid)
 	ret0, _ := ret[0].(model.User)
@@ -139,7 +139,7 @@ func (mr *MockUserRepositoryMockRecorder) GetByUsernameOrEmail(ctx, username, em
 }
 
 // GetPermissions mocks base method.
-func (m *MockUserRepository) GetPermissions(ctx context.Context, uid uint) ([][]string, error) {
+func (m *MockUserRepository) GetPermissions(ctx context.Context, uid string) ([][]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPermissions", ctx, uid)
 	ret0, _ := ret[0].([][]string)
@@ -154,7 +154,7 @@ func (mr *MockUserRepositoryMockRecorder) GetPermissions(ctx, uid interface{}) *
 }
 
 // GetRoles mocks base method.
-func (m *MockUserRepository) GetRoles(ctx context.Context, uid uint) ([]string, error) {
+func (m *MockUserRepository) GetRoles(ctx context.Context, uid string) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRoles", ctx, uid)
 	ret0, _ := ret[0].([]string)
@@ -185,7 +185,7 @@ func (mr *MockUserRepositoryMockRecorder) List(ctx, req interface{}) *gomock.Cal
 }
 
 // Update mocks base method.
-func (m *MockUserRepository) Update(ctx context.Context, uid uint, data map[string]interface{}) error {
+func (m *MockUserRepository) Update(ctx context.Context, uid string, data map[string]interface{}) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", ctx, uid, data)
 	ret0, _ := ret[0].(error)
@@ -199,7 +199,7 @@ func (mr *MockUserRepositoryMockRecorder) Update(ctx, uid, data interface{}) *go
 }
 
 // UpdateRoles mocks base method.
-func (m *MockUserRepository) UpdateRoles(ctx context.Context, uid uint, roles []string) error {
+func (m *MockUserRepository) UpdateRoles(ctx context.Context, uid string, roles []string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateRoles", ctx, uid, roles)
 	ret0, _ := ret[0].(error)

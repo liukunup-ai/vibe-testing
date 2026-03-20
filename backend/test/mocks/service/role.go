@@ -63,6 +63,21 @@ func (mr *MockRoleServiceMockRecorder) Delete(ctx, id interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockRoleService)(nil).Delete), ctx, id)
 }
 
+// GetApis mocks base method.
+func (m *MockRoleService) GetApis(ctx context.Context, roleId uint) ([]uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetApis", ctx, roleId)
+	ret0, _ := ret[0].([]uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetApis indicates an expected call of GetApis.
+func (mr *MockRoleServiceMockRecorder) GetApis(ctx, roleId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetApis", reflect.TypeOf((*MockRoleService)(nil).GetApis), ctx, roleId)
+}
+
 // GetPermissions mocks base method.
 func (m *MockRoleService) GetPermissions(ctx context.Context, role string) (*v1.GetRolePermissionResponseData, error) {
 	m.ctrl.T.Helper()
@@ -120,6 +135,20 @@ func (m *MockRoleService) Update(ctx context.Context, id uint, req *v1.RoleReque
 func (mr *MockRoleServiceMockRecorder) Update(ctx, id, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockRoleService)(nil).Update), ctx, id, req)
+}
+
+// UpdateApis mocks base method.
+func (m *MockRoleService) UpdateApis(ctx context.Context, roleId uint, apiIds []uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateApis", ctx, roleId, apiIds)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateApis indicates an expected call of UpdateApis.
+func (mr *MockRoleServiceMockRecorder) UpdateApis(ctx, roleId, apiIds interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateApis", reflect.TypeOf((*MockRoleService)(nil).UpdateApis), ctx, roleId, apiIds)
 }
 
 // UpdatePermissions mocks base method.
