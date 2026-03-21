@@ -246,24 +246,7 @@ export default [
     path: '/profile',
     name: 'profile',
     icon: 'user',
-    routes: [
-      {
-        path: '/profile',
-        redirect: '/profile/center',
-      },
-      {
-        path: '/profile/center',
-        name: 'center',
-        icon: 'idcard',
-        component: '@/pages/Profile/Center',
-      },
-      {
-        path: '/profile/settings',
-        name: 'settings',
-        icon: 'setting',
-        component: '@/pages/Profile/Settings',
-      },
-    ],
+    component: '@/pages/Profile',
   },
   // 10. 管理中心
   {
