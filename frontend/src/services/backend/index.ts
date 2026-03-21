@@ -9,6 +9,7 @@ import * as setting from './setting';
 import * as user from './user';
 import * as auth from './auth';
 import * as item from './item';
+import * as model from './model';
 export default {
   api,
   menu,
@@ -17,4 +18,5 @@ export default {
   user,
   auth,
   item,
+  model,
 };

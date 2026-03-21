@@ -4,6 +4,8 @@
 package wire
 
 import (
+	"fmt"
+
 	"backend/internal/handler"
 	"backend/internal/job"
 	"backend/internal/repository"
@@ -11,6 +13,7 @@ import (
 	"backend/internal/service"
 	"backend/pkg/app"
 	"backend/pkg/audit"
+	"backend/pkg/crypto"
 	"backend/pkg/email"
 	"backend/pkg/jwt"
 	"backend/pkg/log"
@@ -36,6 +39,7 @@ var repositorySet = wire.NewSet(
 	repository.NewSettingRepository,
 	// more biz repository
 	repository.NewItemRepository,
+	repository.NewModelRepository,
 )
 
 var serviceSet = wire.NewSet(
@@ -48,6 +52,7 @@ var serviceSet = wire.NewSet(
 	service.NewSettingService,
 	// more biz service
 	service.NewItemService,
+	service.NewModelService,
 )
 
 var handlerSet = wire.NewSet(
@@ -60,6 +65,7 @@ var handlerSet = wire.NewSet(
 	handler.NewSettingHandler,
 	// more biz handler
 	handler.NewItemHandler,
+	handler.NewModelHandler,
 )
 
 var jobSet = wire.NewSet(
@@ -70,6 +76,21 @@ var serverSet = wire.NewSet(
 	server.NewHTTPServer,
 	server.NewJobServer,
 )
+
+// NewModelEncryptionService provider
+func NewModelEncryptionService(*viper.Viper) (*crypto.ModelEncryptionService, error) {
+	key := viper.GetString("app.model_encryption_key")
+	if key == "" {
+		key = "default-32-byte-key-for-dev!!" // fallback for development
+	}
+	// Ensure key is exactly 32 bytes
+	if len(key) < 32 {
+		key = fmt.Sprintf("%-32s", key)[:32]
+	} else if len(key) > 32 {
+		key = key[:32]
+	}
+	return crypto.NewModelEncryptionService(key)
+}
 
 // build App
 func newApp(
@@ -93,6 +114,7 @@ func NewWire(*viper.Viper, *log.Logger) (*app.App, func(), error) {
 		jwt.NewJwt,
 		email.NewService,
 		audit.NewAudit,
+		NewModelEncryptionService,
 		newApp,
 	))
 }

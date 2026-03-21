@@ -47,6 +47,7 @@ func (m *MigrateServer) Start(ctx context.Context) error {
 		&model.Api{},
 		&model.Setting{},
 		&model.Item{},
+		&model.Model{},
 	)
 	if err := m.db.AutoMigrate(
 		&model.User{},
@@ -55,6 +56,7 @@ func (m *MigrateServer) Start(ctx context.Context) error {
 		&model.Api{},
 		&model.Setting{},
 		&model.Item{},
+		&model.Model{},
 	); err != nil {
 		m.log.Error("AutoMigrate error", zap.Error(err))
 		return err
@@ -316,6 +318,14 @@ func (m *MigrateServer) initialApisData(ctx context.Context) error {
 		{Group: "项目管理", Name: "创建项目", Path: "/v1/items", Method: http.MethodPost},
 		{Group: "项目管理", Name: "更新项目", Path: "/v1/items/:id", Method: http.MethodPut},
 		{Group: "项目管理", Name: "删除项目", Path: "/v1/items/:id", Method: http.MethodDelete},
+
+		// 模型管理
+		{Group: "模型管理", Name: "获取模型列表", Path: "/v1/admin/models", Method: http.MethodGet},
+		{Group: "模型管理", Name: "获取模型详情", Path: "/v1/admin/models/:id", Method: http.MethodGet},
+		{Group: "模型管理", Name: "创建模型", Path: "/v1/admin/models", Method: http.MethodPost},
+		{Group: "模型管理", Name: "更新模型", Path: "/v1/admin/models/:id", Method: http.MethodPut},
+		{Group: "模型管理", Name: "删除模型", Path: "/v1/admin/models/:id", Method: http.MethodDelete},
+		{Group: "模型管理", Name: "测试模型连接", Path: "/v1/admin/models/test-connection", Method: http.MethodPost},
 	}
 
 	return m.db.Create(&initialApis).Error
@@ -435,6 +445,15 @@ var menuData = `[
     "path": "/admin/config",
     "name": "config",
 	"component": "@/pages/Admin/Config",
+	"access": "canAdmin"
+  },
+  {
+    "id": 1007,
+    "parentId": 1000,
+    "path": "/admin/models",
+    "name": "models",
+    "icon": "RobotOutlined",
+	"component": "@/pages/Admin/Model",
 	"access": "canAdmin"
   }
 ]`

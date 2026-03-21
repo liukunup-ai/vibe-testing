@@ -29,6 +29,7 @@ func NewHTTPServer(
 	apiHandler *handler.ApiHandler,
 	settingHandler *handler.SettingHandler,
 	itemHandler *handler.ItemHandler,
+	modelHandler *handler.ModelHandler,
 ) *http.Server {
 	gin.SetMode(gin.DebugMode)
 	s := http.NewServer(
@@ -150,6 +151,9 @@ func NewHTTPServer(
 			strictAuthRouter.PUT("/items/:id", itemHandler.UpdateItem)
 			strictAuthRouter.DELETE("/items/:id", itemHandler.DeleteItem)
 			strictAuthRouter.GET("/items/:id", itemHandler.GetItem)
+
+			// Model
+			modelHandler.RegisterRoutes(strictAuthRouter)
 		}
 	}
 
