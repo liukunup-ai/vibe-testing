@@ -179,8 +179,8 @@ func TestAuthService_Login_Success(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, token)
 }
+
 func TestAuthService_Login_UserNotFound_Auth(t *testing.T) {
-func TestAuthService_Login_UserNotFound(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -401,7 +401,6 @@ func TestAuthService_RefreshToken_Success(t *testing.T) {
 		RefreshToken: "valid-refresh-token",
 	}
 	tokenData, _ := authService.RefreshToken(ctx, req)
-	tokenData, err := authService.RefreshToken(ctx, req)
 
 	// The actual JWT service will validate the token - for invalid tokens it will error
 	// We just verify the method is called correctly

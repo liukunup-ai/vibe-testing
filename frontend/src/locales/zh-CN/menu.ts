@@ -8,6 +8,7 @@ export default {
   'menu.admin.role': '角色管理',
   'menu.admin.menu': '菜单管理',
   'menu.admin.api': '接口管理',
+  'menu.admin.model': '模型管理',
   'menu.admin.audit': '审计日志',
   'menu.admin.config': '系统配置',
   'menu.admin.sub-page': '二级管理页',

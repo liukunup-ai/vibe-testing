@@ -19,33 +19,32 @@ import (
 	"backend/pkg/log"
 	"backend/pkg/server/http"
 	"backend/pkg/sid"
-	"fmt"
 	"github.com/google/wire"
 	"github.com/spf13/viper"
 )
 
 // Injectors from wire.go:
 
-func NewWire(v *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
-	db := repository.NewDB(v, logger)
+func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
+	db := repository.NewDB(viperViper, logger)
 	syncedEnforcer := repository.NewCasbinEnforcer(db)
 	cache := repository.NewCache()
 	repositoryRepository := repository.NewRepository(db, syncedEnforcer, cache, logger)
 	tokenStore := repository.NewTokenStore(repositoryRepository)
-	jwtJWT := jwt.NewJwt(v, tokenStore)
+	jwtJWT := jwt.NewJwt(viperViper, tokenStore)
 	handlerHandler := handler.NewHandler(logger)
 	sidSid := sid.NewSid()
-	emailService := email.NewService(v)
+	emailService := email.NewService(viperViper)
 	transaction := repository.NewTransaction(repositoryRepository)
-	auditAudit := audit.NewAudit(v)
+	auditAudit := audit.NewAudit(viperViper)
 	settingRepository := repository.NewSettingRepository(repositoryRepository)
-	serviceService := service.NewService(logger, sidSid, jwtJWT, emailService, v, transaction, auditAudit, settingRepository)
+	serviceService := service.NewService(logger, sidSid, jwtJWT, emailService, viperViper, transaction, auditAudit, settingRepository)
 	userRepository := repository.NewUserRepository(repositoryRepository)
 	authService := service.NewAuthService(serviceService, userRepository, settingRepository)
 	authHandler := handler.NewAuthHandler(handlerHandler, authService)
 	roleRepository := repository.NewRoleRepository(repositoryRepository)
 	menuRepository := repository.NewMenuRepository(repositoryRepository)
-	avatarStorage := repository.NewAvatarStorage(repositoryRepository, v)
+	avatarStorage := repository.NewAvatarStorage(repositoryRepository, viperViper)
 	userService := service.NewUserService(serviceService, userRepository, roleRepository, menuRepository, avatarStorage)
 	userHandler := handler.NewUserHandler(handlerHandler, userService)
 	roleService := service.NewRoleService(serviceService, roleRepository)
@@ -61,13 +60,12 @@ func NewWire(v *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
 	itemService := service.NewItemService(serviceService, itemRepository, userRepository)
 	itemHandler := handler.NewItemHandler(handlerHandler, itemService, userRepository)
 	modelRepository := repository.NewModelRepository(repositoryRepository)
-	string2 := modelEncryptionKey(v)
-	modelService, err := service.NewModelService(serviceService, modelRepository, string2)
+	modelService, err := service.NewModelService(serviceService, modelRepository)
 	if err != nil {
 		return nil, nil, err
 	}
 	modelHandler := handler.NewModelHandler(handlerHandler, modelService)
-	httpServer := server.NewHTTPServer(logger, v, jwtJWT, syncedEnforcer, authHandler, userHandler, roleHandler, menuHandler, apiHandler, settingHandler, itemHandler, modelHandler)
+	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, syncedEnforcer, authHandler, userHandler, roleHandler, menuHandler, apiHandler, settingHandler, itemHandler, modelHandler)
 	jobJob := job.NewJob(transaction, logger, sidSid)
 	userJob := job.NewUserJob(jobJob, userRepository)
 	jobServer := server.NewJobServer(logger, userJob)
@@ -78,28 +76,15 @@ func NewWire(v *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
 
 // wire.go:
 
-var repositorySet = wire.NewSet(repository.NewDB, repository.NewCache, repository.NewRepository, repository.NewTransaction, repository.NewTokenStore, repository.NewCasbinEnforcer, repository.NewUserRepository, repository.NewAvatarStorage, repository.NewRoleRepository, repository.NewMenuRepository, repository.NewApiRepository, repository.NewSettingRepository, repository.NewItemRepository, repository.NewModelRepository)
+var repositorySet = wire.NewSet(repository.NewDB, repository.NewCache, repository.NewRepository, repository.NewTransaction, repository.NewTokenStore, repository.NewCasbinEnforcer, repository.NewUserRepository, repository.NewAvatarStorage, repository.NewRoleRepository, repository.NewMenuRepository, repository.NewApiRepository, repository.NewModelRepository, repository.NewSettingRepository, repository.NewItemRepository)
 
-var serviceSet = wire.NewSet(service.NewService, service.NewAuthService, service.NewUserService, service.NewRoleService, service.NewMenuService, service.NewApiService, service.NewSettingService, service.NewItemService)
+var serviceSet = wire.NewSet(service.NewService, service.NewAuthService, service.NewUserService, service.NewRoleService, service.NewMenuService, service.NewApiService, service.NewModelService, service.NewSettingService, service.NewItemService)
 
-var handlerSet = wire.NewSet(handler.NewHandler, handler.NewAuthHandler, handler.NewUserHandler, handler.NewRoleHandler, handler.NewMenuHandler, handler.NewApiHandler, handler.NewSettingHandler, handler.NewItemHandler, handler.NewModelHandler)
+var handlerSet = wire.NewSet(handler.NewHandler, handler.NewAuthHandler, handler.NewUserHandler, handler.NewRoleHandler, handler.NewMenuHandler, handler.NewApiHandler, handler.NewModelHandler, handler.NewSettingHandler, handler.NewItemHandler)
 
 var jobSet = wire.NewSet(job.NewJob, job.NewUserJob)
 
 var serverSet = wire.NewSet(server.NewHTTPServer, server.NewJobServer)
-
-func modelEncryptionKey(v *viper.Viper) string {
-	key := v.GetString("app.model_encryption_key")
-	if key == "" {
-		key = "default-32-byte-key-for-dev!!"
-	}
-	if len(key) < 32 {
-		key = fmt.Sprintf("%-32s", key)[:32]
-	} else if len(key) > 32 {
-		key = key[:32]
-	}
-	return key
-}
 
 func newApp(
 	httpServer *http.Server,

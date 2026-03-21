@@ -45,18 +45,18 @@ func (m *MigrateServer) Start(ctx context.Context) error {
 		&model.Menu{},
 		&model.Role{},
 		&model.Api{},
+		&model.Model{},
 		&model.Setting{},
 		&model.Item{},
-		&model.Model{},
 	)
 	if err := m.db.AutoMigrate(
 		&model.User{},
 		&model.Menu{},
 		&model.Role{},
 		&model.Api{},
+		&model.Model{},
 		&model.Setting{},
 		&model.Item{},
-		&model.Model{},
 	); err != nil {
 		m.log.Error("AutoMigrate error", zap.Error(err))
 		return err
@@ -306,6 +306,14 @@ func (m *MigrateServer) initialApisData(ctx context.Context) error {
 		{Group: "菜单管理", Name: "更新菜单", Path: "/v1/admin/menus/:id", Method: http.MethodPut},
 		{Group: "菜单管理", Name: "删除菜单", Path: "/v1/admin/menus/:id", Method: http.MethodDelete},
 
+		// 模型管理
+		{Group: "模型管理", Name: "获取模型列表", Path: "/v1/admin/models", Method: http.MethodGet},
+		{Group: "模型管理", Name: "获取模型详情", Path: "/v1/admin/models/:id", Method: http.MethodGet},
+		{Group: "模型管理", Name: "创建模型", Path: "/v1/admin/models", Method: http.MethodPost},
+		{Group: "模型管理", Name: "更新模型", Path: "/v1/admin/models/:id", Method: http.MethodPut},
+		{Group: "模型管理", Name: "删除模型", Path: "/v1/admin/models/:id", Method: http.MethodDelete},
+		{Group: "模型管理", Name: "测试模型连接", Path: "/v1/admin/models/test-connection", Method: http.MethodPost},
+
 		// 系统设置
 		{Group: "系统设置", Name: "获取系统设置", Path: "/v1/admin/settings", Method: http.MethodGet},
 		{Group: "系统设置", Name: "更新系统设置", Path: "/v1/admin/settings", Method: http.MethodPut},
@@ -318,14 +326,6 @@ func (m *MigrateServer) initialApisData(ctx context.Context) error {
 		{Group: "项目管理", Name: "创建项目", Path: "/v1/items", Method: http.MethodPost},
 		{Group: "项目管理", Name: "更新项目", Path: "/v1/items/:id", Method: http.MethodPut},
 		{Group: "项目管理", Name: "删除项目", Path: "/v1/items/:id", Method: http.MethodDelete},
-
-		// 模型管理
-		{Group: "模型管理", Name: "获取模型列表", Path: "/v1/admin/models", Method: http.MethodGet},
-		{Group: "模型管理", Name: "获取模型详情", Path: "/v1/admin/models/:id", Method: http.MethodGet},
-		{Group: "模型管理", Name: "创建模型", Path: "/v1/admin/models", Method: http.MethodPost},
-		{Group: "模型管理", Name: "更新模型", Path: "/v1/admin/models/:id", Method: http.MethodPut},
-		{Group: "模型管理", Name: "删除模型", Path: "/v1/admin/models/:id", Method: http.MethodDelete},
-		{Group: "模型管理", Name: "测试模型连接", Path: "/v1/admin/models/test-connection", Method: http.MethodPost},
 	}
 
 	return m.db.Create(&initialApis).Error
@@ -350,6 +350,7 @@ func (m *MigrateServer) initialMenuData(ctx context.Context) error {
 			Path:               item.Path,
 			Component:          item.Component,
 			Access:             item.Access,
+			Locale:             item.Locale,
 			Redirect:           item.Redirect,
 			Target:             item.Target,
 			HideChildrenInMenu: item.HideChildrenInMenu,
@@ -375,6 +376,7 @@ var menuData = `[
     "id": 2,
     "path": "/welcome",
     "name": "welcome",
+    "locale": "menu.welcome",
     "icon": "smile",
 	"component": "@/pages/Welcome"
   },
@@ -382,6 +384,7 @@ var menuData = `[
     "id": 3,
     "path": "/item",
     "name": "item",
+    "locale": "menu.item",
     "icon": "appstore",
 	"component": "@/pages/Item",
 	"access": "canUser"
@@ -390,6 +393,7 @@ var menuData = `[
     "id": 999,
     "path": "/profile",
     "name": "profile",
+    "locale": "menu.profile",
     "icon": "profile",
 	"component": "@/pages/Profile",
 	"access": "canUser"
@@ -398,6 +402,7 @@ var menuData = `[
     "id": 1000,
     "path": "/admin",
     "name": "admin",
+    "locale": "menu.admin",
     "icon": "crown",
     "access": "canOperate"
   },
@@ -412,6 +417,7 @@ var menuData = `[
     "parentId": 1000,
     "path": "/admin/user",
     "name": "user",
+    "locale": "menu.admin.user",
 	"component": "@/pages/Admin/User",
 	"access": "canOperate"
   },
@@ -420,6 +426,7 @@ var menuData = `[
     "parentId": 1000,
     "path": "/admin/role",
     "name": "role",
+    "locale": "menu.admin.role",
 	"component": "@/pages/Admin/Role",
 	"access": "canAdmin"
   },
@@ -428,6 +435,7 @@ var menuData = `[
     "parentId": 1000,
     "path": "/admin/api",
     "name": "api",
+    "locale": "menu.admin.api",
 	"component": "@/pages/Admin/Api",
 	"access": "canAdmin"
   },
@@ -436,24 +444,27 @@ var menuData = `[
     "parentId": 1000,
     "path": "/admin/menu",
     "name": "menu",
+    "locale": "menu.admin.menu",
 	"component": "@/pages/Admin/Menu",
 	"access": "canAdmin"
   },
   {
     "id": 1006,
     "parentId": 1000,
-    "path": "/admin/config",
-    "name": "config",
-	"component": "@/pages/Admin/Config",
+    "path": "/admin/model",
+    "name": "model",
+    "locale": "menu.admin.model",
+    "icon": "ProductOutlined",
+	"component": "@/pages/Admin/Model",
 	"access": "canAdmin"
   },
   {
     "id": 1007,
     "parentId": 1000,
-    "path": "/admin/models",
-    "name": "models",
-    "icon": "RobotOutlined",
-	"component": "@/pages/Admin/Model",
+    "path": "/admin/config",
+    "name": "config",
+    "locale": "menu.admin.config",
+	"component": "@/pages/Admin/Config",
 	"access": "canAdmin"
   }
 ]`

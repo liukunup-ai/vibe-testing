@@ -143,6 +143,11 @@ declare namespace API {
     id: number;
   };
 
+  type DeleteModelParams = {
+    /** 模型ID */
+    id: number;
+  };
+
   type DeleteRoleParams = {
     /** 角色ID */
     id: number;
@@ -192,6 +197,11 @@ declare namespace API {
 
   type GetItemParams = {
     /** 项目ID */
+    id: number;
+  };
+
+  type GetModelParams = {
+    /** 模型ID */
     id: number;
   };
 
@@ -336,6 +346,17 @@ declare namespace API {
     path?: string;
     /** 可见性 */
     access?: string;
+  };
+
+  type ListModelsParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 模型提供者 */
+    provider?: number;
+    /** 模型名称 */
+    name?: string;
   };
 
   type ListRolesParams = {
@@ -521,6 +542,107 @@ declare namespace API {
 
   type MenuSearchResponse = {
     data?: MenuList;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type Model = {
+    /** API 基础地址 */
+    baseUrl?: string;
+    /** 创建时间 */
+    createdAt?: string;
+    /** 频率惩罚 */
+    frequencyPenalty?: number;
+    /** 自定义请求头(JSON) */
+    headers?: string;
+    /** ID */
+    id?: number;
+    /** 最大重试次数 */
+    maxRetries?: number;
+    /** 最大 token 数 */
+    maxTokens?: number;
+    /** 模型 ID */
+    modelId?: string;
+    /** 模型名称 */
+    name?: string;
+    /** 存在惩罚 */
+    presencePenalty?: number;
+    /** 模型提供者 1:OpenAI 2:Azure 3:Ollama 4:LMStudio 5:vLLM 6:Groq 7:Anthropic */
+    provider?: number;
+    /** 速率限制(请求/分钟) */
+    rateLimit?: number;
+    /** 温度参数 */
+    temperature?: number;
+    /** 超时时间(秒) */
+    timeout?: number;
+    /** Top K 参数 */
+    topK?: number;
+    /** Top P 参数 */
+    topP?: number;
+    /** 更新时间 */
+    updatedAt?: string;
+  };
+
+  type ModelList = {
+    /** 列表 */
+    list?: Model[];
+    /** 总数 */
+    total?: number;
+  };
+
+  type ModelRequest = {
+    /** API 密钥 */
+    apiKey?: string;
+    /** API 基础地址 */
+    baseUrl: string;
+    /** 频率惩罚 */
+    frequencyPenalty?: number;
+    /** 自定义请求头(JSON) */
+    headers?: string;
+    /** 最大重试次数 */
+    maxRetries?: number;
+    /** 最大 token 数 */
+    maxTokens?: number;
+    /** 模型 ID */
+    modelId: string;
+    /** 模型名称 */
+    name: string;
+    /** 存在惩罚 */
+    presencePenalty?: number;
+    /** 模型提供者 1:OpenAI 2:Azure 3:Ollama 4:LMStudio 5:vLLM 6:Groq 7:Anthropic */
+    provider: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+    /** 速率限制(请求/分钟) */
+    rateLimit?: number;
+    /** 温度参数 */
+    temperature?: number;
+    /** 超时时间(秒) */
+    timeout?: number;
+    /** Top K 参数 */
+    topK?: number;
+    /** Top P 参数 */
+    topP?: number;
+  };
+
+  type ModelResponse = {
+    data?: Model;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
+  type ModelSearchResponse = {
+    data?: ModelList;
     /** 错误码 */
     errorCode?: number;
     /** 报错信息 */
@@ -740,6 +862,24 @@ declare namespace API {
     user?: string;
   };
 
+  type TestConnectionRequest = {
+    /** API 密钥 */
+    apiKey?: string;
+    /** API 基础地址 */
+    baseUrl: string;
+    /** 模型提供者 */
+    provider: string;
+  };
+
+  type TestConnectionResult = {
+    /** 消息 */
+    message?: string;
+    /** 可用模型列表 */
+    models?: string[];
+    /** 是否成功 */
+    success?: boolean;
+  };
+
   type TestEmailRequest = {
     /** 邮箱 */
     to: string;
@@ -772,6 +912,11 @@ declare namespace API {
 
   type UpdateMenuParams = {
     /** 菜单ID */
+    id: number;
+  };
+
+  type UpdateModelParams = {
+    /** 模型ID */
     id: number;
   };
 
@@ -884,159 +1029,5 @@ declare namespace API {
     errorShowType?: number;
     /** 是否成功 */
     success?: boolean;
-  };
-
-  // Model types
-  type Model = {
-    /** ID */
-    id?: number;
-    /** 模型提供者 1:OpenAI 2:Azure 3:Ollama 4:LMStudio 5:vLLM 6:Groq 7:Anthropic */
-    provider?: number;
-    /** 模型名称 */
-    name?: string;
-    /** API 基础地址 */
-    baseUrl?: string;
-    /** 模型 ID */
-    modelId?: string;
-    /** API 密钥 (仅用于表单,不会从API返回) */
-    apiKey?: string;
-    /** 超时时间(秒) */
-    timeout?: number;
-    /** 最大重试次数 */
-    maxRetries?: number;
-    /** 速率限制(请求/分钟) */
-    rateLimit?: number;
-    /** 自定义请求头(JSON) */
-    headers?: string;
-    /** 温度参数 */
-    temperature?: number;
-    /** Top P 参数 */
-    topP?: number;
-    /** 最大 token 数 */
-    maxTokens?: number;
-    /** Top K 参数 */
-    topK?: number;
-    /** 频率惩罚 */
-    frequencyPenalty?: number;
-    /** 存在惩罚 */
-    presencePenalty?: number;
-    /** 创建时间 */
-    createdAt?: string;
-    /** 更新时间 */
-    updatedAt?: string;
-  };
-
-  type ModelList = {
-    /** 列表 */
-    list?: Model[];
-    /** 总数 */
-    total?: number;
-  };
-
-  type ModelRequest = {
-    /** 模型提供者 1:OpenAI 2:Azure 3:Ollama 4:LMStudio 5:vLLM 6:Groq 7:Anthropic */
-    provider?: number;
-    /** 模型名称 */
-    name?: string;
-    /** API 基础地址 */
-    baseUrl?: string;
-    /** 模型 ID */
-    modelId?: string;
-    /** API 密钥 */
-    apiKey?: string;
-    /** 超时时间(秒) */
-    timeout?: number;
-    /** 最大重试次数 */
-    maxRetries?: number;
-    /** 速率限制(请求/分钟) */
-    rateLimit?: number;
-    /** 自定义请求头(JSON) */
-    headers?: string;
-    /** 温度参数 */
-    temperature?: number;
-    /** Top P 参数 */
-    topP?: number;
-    /** 最大 token 数 */
-    maxTokens?: number;
-    /** Top K 参数 */
-    topK?: number;
-    /** 频率惩罚 */
-    frequencyPenalty?: number;
-    /** 存在惩罚 */
-    presencePenalty?: number;
-  };
-
-  type ModelResponse = {
-    data?: Model;
-    /** 错误码 */
-    errorCode?: number;
-    /** 报错信息 */
-    errorMessage?: string;
-    /** 前端展示方式 */
-    errorShowType?: number;
-    /** 是否成功 */
-    success?: boolean;
-  };
-
-  type ModelSearchResponse = {
-    data?: ModelList;
-    /** 错误码 */
-    errorCode?: number;
-    /** 报错信息 */
-    errorMessage?: string;
-    /** 前端展示方式 */
-    errorShowType?: number;
-    /** 是否成功 */
-    success?: boolean;
-  };
-
-  type ListModelsParams = {
-    /** 页码 */
-    page: number;
-    /** 分页大小 */
-    pageSize: number;
-    /** 筛选项: 模型提供者 */
-    provider?: number;
-    /** 筛选项: 模型名称 模糊匹配 */
-    name?: string;
-  };
-
-  type GetModelParams = {
-    /** 模型ID */
-    id: number;
-  };
-
-  type UpdateModelParams = {
-    /** 模型ID */
-    id: number;
-  };
-
-  type DeleteModelParams = {
-    /** 模型ID */
-    id: number;
-  };
-
-  type TestConnectionRequest = {
-    /** 模型提供者 */
-    provider?: string;
-    /** API 基础地址 */
-    baseUrl?: string;
-    /** API 密钥 */
-    apiKey?: string;
-  };
-
-  type TestConnectionResponse = {
-    /** 是否成功 */
-    success?: boolean;
-    /** 消息 */
-    message?: string;
-    /** 可用模型列表 */
-    models?: string[];
-    /** 错误码 */
-    errorCode?: number;
-    /** 报错信息 */
-    errorMessage?: string;
-    /** 前端展示方式 */
-    errorShowType?: number;
   };
 }

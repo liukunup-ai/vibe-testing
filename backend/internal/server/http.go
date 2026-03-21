@@ -153,7 +153,12 @@ func NewHTTPServer(
 			strictAuthRouter.GET("/items/:id", itemHandler.GetItem)
 
 			// Model
-			modelHandler.RegisterRoutes(strictAuthRouter)
+			strictAuthRouter.GET("/admin/models", modelHandler.ListModels)
+			strictAuthRouter.GET("/admin/models/:id", modelHandler.GetModel)
+			strictAuthRouter.POST("/admin/models", modelHandler.CreateModel)
+			strictAuthRouter.PUT("/admin/models/:id", modelHandler.UpdateModel)
+			strictAuthRouter.DELETE("/admin/models/:id", modelHandler.DeleteModel)
+			strictAuthRouter.POST("/admin/models/test-connection", modelHandler.TestConnection)
 		}
 	}
 

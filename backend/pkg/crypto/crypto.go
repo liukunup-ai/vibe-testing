@@ -9,25 +9,14 @@ import (
 	"io"
 )
 
-// ModelEncryptionService handles AES-256-GCM encryption for model API keys
-type ModelEncryptionService struct {
-	key []byte // 32 bytes for AES-256
-}
-
-// NewModelEncryptionService creates encryption service from a 32-byte key string
-// Returns error if key is not exactly 32 bytes
-func NewModelEncryptionService(encryptionKey string) (*ModelEncryptionService, error) {
-	key := []byte(encryptionKey)
-	if len(key) != 32 {
-		return nil, errors.New("encryption key must be exactly 32 bytes for AES-256")
-	}
-	return &ModelEncryptionService{key: key}, nil
-}
-
 // Encrypt encrypts plaintext using AES-256-GCM with a random nonce
 // Returns base64-encoded string: nonce (12 bytes) || ciphertext || tag (16 bytes)
-func (s *ModelEncryptionService) Encrypt(plaintext string) (string, error) {
-	block, err := aes.NewCipher(s.key)
+func Encrypt(key, plaintext string) (string, error) {
+	if len(key) != 32 {
+		return "", errors.New("encryption key must be exactly 32 bytes for AES-256")
+	}
+
+	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		return "", err
 	}
@@ -48,13 +37,17 @@ func (s *ModelEncryptionService) Encrypt(plaintext string) (string, error) {
 
 // Decrypt decrypts base64-encoded ciphertext encrypted with Encrypt()
 // Returns plaintext string
-func (s *ModelEncryptionService) Decrypt(ciphertext string) (string, error) {
+func Decrypt(key, ciphertext string) (string, error) {
+	if len(key) != 32 {
+		return "", errors.New("encryption key must be exactly 32 bytes for AES-256")
+	}
+
 	data, err := base64.StdEncoding.DecodeString(ciphertext)
 	if err != nil {
 		return "", err
 	}
 
-	block, err := aes.NewCipher(s.key)
+	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		return "", err
 	}

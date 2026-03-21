@@ -22,16 +22,6 @@ func NewModelHandler(handler *Handler, modelService service.ModelService) *Model
 	}
 }
 
-func (h *ModelHandler) RegisterRoutes(g *gin.RouterGroup) {
-	models := g.Group("/models")
-	models.GET("", h.ListModels)
-	models.GET("/:id", h.GetModel)
-	models.POST("", h.CreateModel)
-	models.PUT("/:id", h.UpdateModel)
-	models.DELETE("/:id", h.DeleteModel)
-	models.POST("/test-connection", h.TestConnection)
-}
-
 // ListModels godoc
 // @Summary 获取模型列表
 // @Schemes

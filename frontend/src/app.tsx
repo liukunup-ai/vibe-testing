@@ -2,7 +2,7 @@ import { AvatarDropdown, AvatarName, Footer, Question, SelectLang, SelectDirecti
 import { fetchCurrentUser } from '@/services/backend/user';
 import { getSiteConfigWithCache } from '@/utils/settingCache';
 import { initToken } from '@/models/useTokenModel';
-import { LinkOutlined, SmileOutlined, CrownOutlined, AppstoreOutlined, ProfileOutlined } from '@ant-design/icons';
+import { LinkOutlined, SmileOutlined, CrownOutlined, AppstoreOutlined, ProfileOutlined, ProductOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
@@ -56,6 +56,7 @@ const IconMap: IconMapType = {
   crown: <CrownOutlined />,
   appstore: <AppstoreOutlined />,
   profile: <ProfileOutlined />,
+  product: <ProductOutlined />,
 };
 const loopMenuItem = (menus: API.MenuNode[]): MenuDataItem[] =>
   menus.map(({ icon, children, parentKeys, ...item }) => ({
@@ -222,6 +223,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 
   return {
     navTheme,
+    locale: true, // 启用菜单国际化，使用 MenuDataItem 的 locale 字段进行翻译
     actionsRender: () => [
       <Question key="doc" />,
       <SelectLang key="lang" />,

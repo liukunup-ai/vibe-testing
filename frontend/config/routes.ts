@@ -59,6 +59,11 @@ export default [
         component: '@/pages/Admin/Api',
       },
       {
+        path: '/admin/model',
+        name: 'model',
+        component: '@/pages/Admin/Model',
+      },
+      {
         path: '/admin/config',
         name: 'config',
         component: '@/pages/Admin/Config',

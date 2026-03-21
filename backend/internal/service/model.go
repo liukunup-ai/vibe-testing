@@ -24,23 +24,16 @@ type ModelService interface {
 func NewModelService(
 	service *Service,
 	modelRepository repository.ModelRepository,
-	encryptionKey string,
 ) (ModelService, error) {
-	encryptionSvc, err := crypto.NewModelEncryptionService(encryptionKey)
-	if err != nil {
-		return nil, err
-	}
 	return &modelService{
 		Service:         service,
 		modelRepository: modelRepository,
-		encryptionSvc:   encryptionSvc,
 	}, nil
 }
 
 type modelService struct {
 	*Service
 	modelRepository repository.ModelRepository
-	encryptionSvc   *crypto.ModelEncryptionService
 }
 
 func (s *modelService) Get(ctx context.Context, id uint) (*v1.ModelDataItem, error) {
@@ -126,7 +119,8 @@ func (s *modelService) Create(ctx context.Context, req *v1.ModelRequest) error {
 
 	// Encrypt API key if provided
 	if req.APIKey != "" {
-		encryptedKey, err := s.encryptionSvc.Encrypt(req.APIKey)
+		key := s.cfg.GetString("security.crypto.key")
+		encryptedKey, err := crypto.Encrypt(key, req.APIKey)
 		if err != nil {
 			s.logger.WithContext(ctx).Error("encrypt API key error", zap.Error(err))
 			return v1.ErrInternalServerError
@@ -189,7 +183,8 @@ func (s *modelService) Update(ctx context.Context, id uint, req *v1.ModelRequest
 
 	// Re-encrypt API key if provided
 	if req.APIKey != "" {
-		encryptedKey, err := s.encryptionSvc.Encrypt(req.APIKey)
+		key := s.cfg.GetString("security.crypto.key")
+		encryptedKey, err := crypto.Encrypt(key, req.APIKey)
 		if err != nil {
 			s.logger.WithContext(ctx).Error("encrypt API key error", zap.Error(err))
 			return v1.ErrInternalServerError

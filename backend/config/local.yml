@@ -8,6 +8,8 @@ security:
   api_sign:
     app_key: 123456
     app_security: 123456
+  crypto:
+    key: 12345678901234567890123456789012 # Must be exactly 32 bytes for AES-256
   jwt:
     secret_key: QQYnRFerJTSEcrfB89fw8prOaObmrch8
     access_token_expiry: 15m

@@ -4,8 +4,6 @@
 package wire
 
 import (
-	"fmt"
-
 	"backend/internal/handler"
 	"backend/internal/job"
 	"backend/internal/repository"
@@ -35,9 +33,9 @@ var repositorySet = wire.NewSet(
 	repository.NewRoleRepository,
 	repository.NewMenuRepository,
 	repository.NewApiRepository,
+	repository.NewModelRepository,
 	repository.NewSettingRepository,
 	repository.NewItemRepository,
-	repository.NewModelRepository,
 )
 
 var serviceSet = wire.NewSet(
@@ -47,6 +45,7 @@ var serviceSet = wire.NewSet(
 	service.NewRoleService,
 	service.NewMenuService,
 	service.NewApiService,
+	service.NewModelService,
 	service.NewSettingService,
 	service.NewItemService,
 )
@@ -58,9 +57,9 @@ var handlerSet = wire.NewSet(
 	handler.NewRoleHandler,
 	handler.NewMenuHandler,
 	handler.NewApiHandler,
+	handler.NewModelHandler,
 	handler.NewSettingHandler,
 	handler.NewItemHandler,
-	handler.NewModelHandler,
 )
 
 var jobSet = wire.NewSet(
@@ -72,19 +71,6 @@ var serverSet = wire.NewSet(
 	server.NewJobServer,
 )
 
-func modelEncryptionKey(v *viper.Viper) string {
-	key := v.GetString("app.model_encryption_key")
-	if key == "" {
-		key = "default-32-byte-key-for-dev!!"
-	}
-	if len(key) < 32 {
-		key = fmt.Sprintf("%-32s", key)[:32]
-	} else if len(key) > 32 {
-		key = key[:32]
-	}
-	return key
-}
-
 func newApp(
 	httpServer *http.Server,
 	jobServer *server.JobServer,
@@ -95,8 +81,8 @@ func newApp(
 	)
 }
 
-func NewWire(v *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
-	wire.Build(
+func NewWire(*viper.Viper, *log.Logger) (*app.App, func(), error) {
+	panic(wire.Build(
 		repositorySet,
 		serviceSet,
 		handlerSet,
@@ -106,9 +92,6 @@ func NewWire(v *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
 		jwt.NewJwt,
 		email.NewService,
 		audit.NewAudit,
-		modelEncryptionKey,
-		service.NewModelService,
 		newApp,
-	)
-	return newApp(nil, nil), func() {}, nil
+	))
 }

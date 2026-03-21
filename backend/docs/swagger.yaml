@@ -159,6 +159,71 @@ definitions:
         description: 总数
         type: integer
     type: object
+  Model:
+    properties:
+      baseUrl:
+        description: API 基础地址
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      frequencyPenalty:
+        description: 频率惩罚
+        type: number
+      headers:
+        description: 自定义请求头(JSON)
+        type: string
+      id:
+        description: ID
+        type: integer
+      maxRetries:
+        description: 最大重试次数
+        type: integer
+      maxTokens:
+        description: 最大 token 数
+        type: integer
+      modelId:
+        description: 模型 ID
+        type: string
+      name:
+        description: 模型名称
+        type: string
+      presencePenalty:
+        description: 存在惩罚
+        type: number
+      provider:
+        description: 模型提供者 1:OpenAI 2:Azure 3:Ollama 4:LMStudio 5:vLLM 6:Groq 7:Anthropic
+        type: integer
+      rateLimit:
+        description: 速率限制(请求/分钟)
+        type: integer
+      temperature:
+        description: 温度参数
+        type: number
+      timeout:
+        description: 超时时间(秒)
+        type: integer
+      topK:
+        description: Top K 参数
+        type: integer
+      topP:
+        description: Top P 参数
+        type: number
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  ModelList:
+    properties:
+      list:
+        description: 列表
+        items:
+          $ref: '#/definitions/Model'
+        type: array
+      total:
+        description: 总数
+        type: integer
+    type: object
   Role:
     properties:
       apiCount:
@@ -200,6 +265,20 @@ definitions:
       total:
         description: 总数
         type: integer
+    type: object
+  TestConnectionResult:
+    properties:
+      message:
+        description: 消息
+        type: string
+      models:
+        description: 可用模型列表
+        items:
+          type: string
+        type: array
+      success:
+        description: 是否成功
+        type: boolean
     type: object
   User:
     properties:
@@ -738,6 +817,118 @@ definitions:
         example: true
         type: boolean
     type: object
+  backend_api_v1.ModelRequest:
+    properties:
+      apiKey:
+        description: API 密钥
+        example: sk-xxx
+        type: string
+      baseUrl:
+        description: API 基础地址
+        example: https://api.openai.com/v1
+        type: string
+      frequencyPenalty:
+        description: 频率惩罚
+        example: 0
+        type: number
+      headers:
+        description: 自定义请求头(JSON)
+        example: '{}'
+        type: string
+      maxRetries:
+        description: 最大重试次数
+        example: 3
+        type: integer
+      maxTokens:
+        description: 最大 token 数
+        example: 4096
+        type: integer
+      modelId:
+        description: 模型 ID
+        example: gpt-4
+        type: string
+      name:
+        description: 模型名称
+        example: GPT-4
+        type: string
+      presencePenalty:
+        description: 存在惩罚
+        example: 0
+        type: number
+      provider:
+        description: 模型提供者 1:OpenAI 2:Azure 3:Ollama 4:LMStudio 5:vLLM 6:Groq 7:Anthropic
+        enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        example: 1
+        type: integer
+      rateLimit:
+        description: 速率限制(请求/分钟)
+        example: 60
+        type: integer
+      temperature:
+        description: 温度参数
+        example: 0.7
+        type: number
+      timeout:
+        description: 超时时间(秒)
+        example: 60
+        type: integer
+      topK:
+        description: Top K 参数
+        example: 40
+        type: integer
+      topP:
+        description: Top P 参数
+        example: 1
+        type: number
+    required:
+    - baseUrl
+    - modelId
+    - name
+    - provider
+    type: object
+  backend_api_v1.ModelResponse:
+    properties:
+      data:
+        $ref: '#/definitions/Model'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
+  backend_api_v1.ModelSearchResponse:
+    properties:
+      data:
+        $ref: '#/definitions/ModelList'
+      errorCode:
+        description: 错误码
+        type: integer
+      errorMessage:
+        description: 报错信息
+        type: string
+      errorShowType:
+        description: 前端展示方式
+        type: integer
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+    type: object
   backend_api_v1.OIDCAuthRequest:
     properties:
       autoLogin:
@@ -1002,6 +1193,24 @@ definitions:
         type: boolean
       title:
         type: string
+    type: object
+  backend_api_v1.TestConnectionRequest:
+    properties:
+      apiKey:
+        description: API 密钥
+        example: sk-xxx
+        type: string
+      baseUrl:
+        description: API 基础地址
+        example: https://api.openai.com/v1
+        type: string
+      provider:
+        description: 模型提供者
+        example: "1"
+        type: string
+    required:
+    - baseUrl
+    - provider
     type: object
   backend_api_v1.TestEmailRequest:
     properties:
@@ -1479,6 +1688,168 @@ paths:
       summary: 更新菜单
       tags:
       - Menu
+  /admin/models:
+    get:
+      consumes:
+      - application/json
+      description: 分页获取模型列表，支持按提供者和名称筛选
+      operationId: ListModels
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 模型提供者
+        in: query
+        name: provider
+        type: integer
+      - description: 模型名称
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.ModelSearchResponse'
+      security:
+      - Bearer: []
+      summary: 获取模型列表
+      tags:
+      - Model
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的模型配置
+      operationId: CreateModel
+      parameters:
+      - description: 模型信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.ModelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 创建模型
+      tags:
+      - Model
+  /admin/models/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的模型配置
+      operationId: DeleteModel
+      parameters:
+      - description: 模型ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 删除模型
+      tags:
+      - Model
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的模型详情
+      operationId: GetModel
+      parameters:
+      - description: 模型ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.ModelResponse'
+      security:
+      - Bearer: []
+      summary: 获取模型详情
+      tags:
+      - Model
+    put:
+      consumes:
+      - application/json
+      description: 更新指定ID的模型配置
+      operationId: UpdateModel
+      parameters:
+      - description: 模型ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 模型信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.ModelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backend_api_v1.Response'
+      security:
+      - Bearer: []
+      summary: 更新模型
+      tags:
+      - Model
+  /admin/models/test-connection:
+    post:
+      consumes:
+      - application/json
+      description: 测试模型配置是否可以正常连接
+      operationId: TestConnection
+      parameters:
+      - description: 连接测试参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend_api_v1.TestConnectionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/TestConnectionResult'
+      security:
+      - Bearer: []
+      summary: 测试模型连接
+      tags:
+      - Model
   /admin/roles:
     get:
       consumes:
