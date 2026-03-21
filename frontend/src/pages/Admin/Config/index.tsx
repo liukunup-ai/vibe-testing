@@ -3,7 +3,7 @@ import { ProForm, ProFormText, ProFormTextArea, ProFormSwitch, ProFormSelect, Pr
 import { message, Button, Modal, Input, Tooltip, Divider, Row, Col, Space, Typography } from 'antd';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { getSetting, updateSetting, testEmail } from '@/services/backend/setting';
-import { clearSiteSettingCache } from '@/utils/settingCache';
+import { clearSiteConfigCache } from '@/utils/settingCache';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   MailOutlined, InfoCircleOutlined, SettingOutlined, 
@@ -49,7 +49,7 @@ const Config: React.FC = () => {
         if (response.success) {
           message.success(intl.formatMessage({ id: 'pages.common.update.success', defaultMessage: '已自动保存' }));
           // Clear cache so other components see the new settings
-          clearSiteSettingCache();
+          clearSiteConfigCache();
         } else {
           message.error(response.errorMessage || intl.formatMessage({ id: 'pages.common.update.failure', defaultMessage: '保存失败' }));
         }
@@ -69,12 +69,12 @@ const Config: React.FC = () => {
     if (!data) return {};
     return {
       frontendBaseUrl: data.app?.frontendBaseUrl || '',
+      gravatarEndpoint: data.app?.gravatarEndpoint || '',
       siteTitle: data.site?.title || '',
       siteLogo: data.site?.logo || '',
       siteFavicon: data.site?.favicon || '',
       siteCopyright: data.site?.copyright || '',
-      siteShowLinks: data.site?.showLinks || false,
-      siteQuestionLink: data.site?.questionLink || '',
+      siteShowLinks: data.site?.showLinks ?? true,
 		smtpHost: data.smtp?.host || '',
       smtpPort: data.smtp?.port || 465,
       smtpUser: data.smtp?.user || '',
@@ -126,10 +126,12 @@ const Config: React.FC = () => {
   const transformToRequest = (values: any): API.AdminSettingRequest => {
     const request: API.AdminSettingRequest = {};
     
-    if (values.frontendBaseUrl !== undefined) {
-      request.app = { frontendBaseUrl: values.frontendBaseUrl };
+    if (values.frontendBaseUrl !== undefined || values.gravatarEndpoint !== undefined) {
+      request.app = { 
+        frontendBaseUrl: values.frontendBaseUrl || '',
+        gravatarEndpoint: values.gravatarEndpoint || '',
+      };
     }
-
     if (values.siteTitle !== undefined || values.siteLogo !== undefined || values.siteFavicon !== undefined || 
         values.siteCopyright !== undefined || values.siteShowLinks !== undefined || values.siteQuestionLink !== undefined) {
       request.site = {
@@ -137,8 +139,7 @@ const Config: React.FC = () => {
         logo: values.siteLogo || '',
         favicon: values.siteFavicon || '',
         copyright: values.siteCopyright || '',
-        showLinks: values.siteShowLinks || false,
-        questionLink: values.siteQuestionLink || '',
+        showLinks: values.siteShowLinks ?? false,
       };
     }
 
@@ -313,12 +314,12 @@ const Config: React.FC = () => {
                     label={
                       <span>
                         {intl.formatMessage({ id: 'pages.admin.config.siteLogo', defaultMessage: '徽标' })}
-                        <Tooltip title={intl.formatMessage({ id: 'pages.admin.config.siteLogo.detail', defaultMessage: '建议尺寸：高度40-60px，宽度200-400px；支持格式：PNG、SVG（推荐）、JPG；显示在左上角菜单栏旁' })}>
+                        <Tooltip title={intl.formatMessage({ id: 'pages.admin.config.siteLogo.detail', defaultMessage: '建议尺寸：高度40～60px，宽度200～400px；支持格式：SVG（推荐）、PNG、JPG；显示在左上角菜单栏旁' })}>
                           <InfoCircleOutlined style={{ marginLeft: 4, color: '#999', fontSize: 12 }} />
                         </Tooltip>
                       </span>
                     }
-                    placeholder={intl.formatMessage({ id: 'pages.admin.config.siteLogo.placeholder', defaultMessage: '请输入 Logo URL' })}
+                    placeholder={intl.formatMessage({ id: 'pages.admin.config.siteLogo.placeholder', defaultMessage: '请输入 LOGO URL' })}
                     fieldProps={{ style: { width: '100%' }, onChange: (e) => setLogoUrl(e.target.value) }}
                   />
                   {logoUrl && (
@@ -331,12 +332,12 @@ const Config: React.FC = () => {
                     label={
                       <span>
                         {intl.formatMessage({ id: 'pages.admin.config.siteFavicon', defaultMessage: '图标' })}
-                        <Tooltip title={intl.formatMessage({ id: 'pages.admin.config.siteFavicon.detail', defaultMessage: '建议尺寸：32x32px 或 16x16px；支持格式：ICO、PNG、SVG（推荐）；显示在浏览器标签页' })}>
+                        <Tooltip title={intl.formatMessage({ id: 'pages.admin.config.siteFavicon.detail', defaultMessage: '建议尺寸：32x32px 或 16x16px；支持格式：（ICO推荐）、PNG、SVG；显示在浏览器标签页' })}>
                           <InfoCircleOutlined style={{ marginLeft: 4, color: '#999', fontSize: 12 }} />
                         </Tooltip>
                       </span>
                     }
-                    placeholder={intl.formatMessage({ id: 'pages.admin.config.siteFavicon.placeholder', defaultMessage: '请输入 Icon URL' })}
+                    placeholder={intl.formatMessage({ id: 'pages.admin.config.siteFavicon.placeholder', defaultMessage: '请输入 ICON URL' })}
                     fieldProps={{ style: { width: '100%' }, onChange: (e) => setIconUrl(e.target.value) }}
                   />
                   {iconUrl && (
@@ -366,12 +367,46 @@ const Config: React.FC = () => {
                     label={
                       <span>
                         {intl.formatMessage({ id: 'pages.admin.config.siteQuestionLink', defaultMessage: '帮助链接' })}
-                        <Tooltip title={intl.formatMessage({ id: 'pages.admin.config.siteQuestionLink.extra', defaultMessage: '页面底部帮助按钮的跳转链接' })}>
+                        <Tooltip title={intl.formatMessage({ id: 'pages.admin.config.siteQuestionLink.extra', defaultMessage: '页面顶部问号图标对应链接' })}>
                           <InfoCircleOutlined style={{ marginLeft: 4, color: '#999', fontSize: 12 }} />
                         </Tooltip>
                       </span>
                     }
                     placeholder="https://pro.ant.design/docs/getting-started"
+                    colProps={{ span: 24 }}
+                  />
+                </ProCard>
+              </Col>
+              <Col span={24}>
+                <ProCard
+                  title={<CardHeader icon={<GlobalOutlined />} title={intl.formatMessage({ id: 'pages.admin.config.app', defaultMessage: '应用' })} />}
+                  bordered
+                  style={{ marginBottom: 0 }}
+                >
+                  <ProFormText
+                    name="frontendBaseUrl"
+                    label={
+                      <span>
+                        {intl.formatMessage({ id: 'pages.admin.config.frontendBaseUrl', defaultMessage: '前端地址' })}
+                        <Tooltip title={intl.formatMessage({ id: 'pages.admin.config.frontendBaseUrl.detail', defaultMessage: '用于生成绝对链接地址' })}>
+                          <InfoCircleOutlined style={{ marginLeft: 4, color: '#999', fontSize: 12 }} />
+                        </Tooltip>
+                      </span>
+                    }
+                    placeholder="https://example.com/"
+                    colProps={{ span: 24 }}
+                  />
+                  <ProFormText
+                    name="gravatarEndpoint"
+                    label={
+                      <span>
+                        {intl.formatMessage({ id: 'pages.admin.config.gravatarEndpoint', defaultMessage: '头像端点' })}
+                        <Tooltip title={intl.formatMessage({ id: 'pages.admin.config.gravatarEndpoint.detail', defaultMessage: '通过邮箱来获取公开的社交头像' })}>
+                          <InfoCircleOutlined style={{ marginLeft: 4, color: '#999', fontSize: 12 }} />
+                        </Tooltip>
+                      </span>
+                    }
+                    placeholder="https://gravatar.com/"
                     colProps={{ span: 24 }}
                   />
                 </ProCard>
@@ -488,7 +523,7 @@ const Config: React.FC = () => {
                 />
                 <ProFormText
                   name="oidcLogo"
-                  label={intl.formatMessage({ id: 'pages.admin.config.oidcLogo', defaultMessage: 'Logo URL' })}
+                  label={intl.formatMessage({ id: 'pages.admin.config.oidcLogo', defaultMessage: '显示徽标' })}
                   placeholder="https://example.com/logo.png"
                   colProps={{ span: 24 }}
                 />
@@ -517,7 +552,7 @@ const Config: React.FC = () => {
 							label={
 								<span>
 									{intl.formatMessage({ id: 'pages.admin.config.oidcCaCert', defaultMessage: 'CA证书' })}
-									<Tooltip title={intl.formatMessage({ id: 'pages.admin.config.oidcCaCert.extra', defaultMessage: '自签名证书时需要配置，PEM格式' })}>
+									<Tooltip title={intl.formatMessage({ id: 'pages.admin.config.oidcCaCert.extra', defaultMessage: '使用自签名证书时需配置（PEM格式）' })}>
 										<InfoCircleOutlined style={{ marginLeft: 4, color: '#999', fontSize: 12 }} />
 									</Tooltip>
 								</span>
@@ -629,14 +664,14 @@ const Config: React.FC = () => {
                   />
 						<ProFormSwitch
 							name="s3Secure"
-							label={intl.formatMessage({ id: 'pages.admin.config.s3Secure', defaultMessage: '使用 HTTPS' })}
+							label={intl.formatMessage({ id: 'pages.admin.config.s3Secure', defaultMessage: 'Secure' })}
 						/>
 						<ProFormTextArea
 							name="s3CACert"
 							label={
 								<span>
 									{intl.formatMessage({ id: 'pages.admin.config.s3CACert', defaultMessage: 'CA证书' })}
-									<Tooltip title={intl.formatMessage({ id: 'pages.admin.config.s3CACert.extra', defaultMessage: '自签名证书时需要配置，PEM格式' })}>
+									<Tooltip title={intl.formatMessage({ id: 'pages.admin.config.s3CACert.extra', defaultMessage: '使用自签名证书时需配置（PEM格式）' })}>
 										<InfoCircleOutlined style={{ marginLeft: 4, color: '#999', fontSize: 12 }} />
 									</Tooltip>
 								</span>

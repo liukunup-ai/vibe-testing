@@ -4,6 +4,7 @@
 // API 唯一标识：
 import * as api from './api';
 import * as menu from './menu';
+import * as model from './model';
 import * as role from './role';
 import * as setting from './setting';
 import * as user from './user';
@@ -22,6 +23,7 @@ import * as testSuite from './testSuite';
 export default {
   api,
   menu,
+  model,
   role,
   setting,
   user,

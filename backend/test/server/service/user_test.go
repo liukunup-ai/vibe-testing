@@ -21,9 +21,10 @@ func TestAuthService_Register(t *testing.T) {
 
 	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
 	mockTm := mock_repository.NewMockTransaction(ctrl)
-	srv := service.NewService(logger, sf, j, em, mockTm)
+	mockSettingRepo := mock_repository.NewMockSettingRepository(ctrl)
+	srv := service.NewService(logger, sf, j, em, cfg, mockTm, aud, mockSettingRepo)
 
-	authService := service.NewAuthService(srv, mockUserRepo)
+	authService := service.NewAuthService(srv, mockUserRepo, mockSettingRepo)
 
 	ctx := context.Background()
 	req := &v1.RegisterRequest{
@@ -45,8 +46,9 @@ func TestAuthService_Register_UserExists(t *testing.T) {
 
 	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
 	mockTm := mock_repository.NewMockTransaction(ctrl)
-	srv := service.NewService(logger, sf, j, em, mockTm)
-	authService := service.NewAuthService(srv, mockUserRepo)
+	mockSettingRepo := mock_repository.NewMockSettingRepository(ctrl)
+	srv := service.NewService(logger, sf, j, em, cfg, mockTm, aud, mockSettingRepo)
+	authService := service.NewAuthService(srv, mockUserRepo, mockSettingRepo)
 
 	ctx := context.Background()
 	req := &v1.RegisterRequest{
@@ -69,8 +71,9 @@ func TestAuthService_Login(t *testing.T) {
 
 	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
 	mockTm := mock_repository.NewMockTransaction(ctrl)
-	srv := service.NewService(logger, sf, j, em, mockTm)
-	authService := service.NewAuthService(srv, mockUserRepo)
+	mockSettingRepo := mock_repository.NewMockSettingRepository(ctrl)
+	srv := service.NewService(logger, sf, j, em, cfg, mockTm, aud, mockSettingRepo)
+	authService := service.NewAuthService(srv, mockUserRepo, mockSettingRepo)
 
 	ctx := context.Background()
 	req := &v1.LoginRequest{
@@ -82,6 +85,7 @@ func TestAuthService_Login(t *testing.T) {
 		t.Fatal("failed to hash password")
 	}
 
+	mockSettingRepo.EXPECT().GetAll(ctx).Return([]model.Setting{}, nil)
 	mockUserRepo.EXPECT().GetByUsernameOrEmail(ctx, req.Username, req.Username).Return(model.User{
 		Model:          gorm.Model{ID: 1},
 		Username:       req.Username,
@@ -100,8 +104,9 @@ func TestAuthService_Login_UserNotFound(t *testing.T) {
 
 	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
 	mockTm := mock_repository.NewMockTransaction(ctrl)
-	srv := service.NewService(logger, sf, j, em, mockTm)
-	authService := service.NewAuthService(srv, mockUserRepo)
+	mockSettingRepo := mock_repository.NewMockSettingRepository(ctrl)
+	srv := service.NewService(logger, sf, j, em, cfg, mockTm, aud, mockSettingRepo)
+	authService := service.NewAuthService(srv, mockUserRepo, mockSettingRepo)
 
 	ctx := context.Background()
 	req := &v1.LoginRequest{
@@ -109,6 +114,7 @@ func TestAuthService_Login_UserNotFound(t *testing.T) {
 		Password: "password",
 	}
 
+	mockSettingRepo.EXPECT().GetAll(ctx).Return([]model.Setting{}, nil)
 	mockUserRepo.EXPECT().GetByUsernameOrEmail(ctx, req.Username, req.Username).Return(model.User{}, gorm.ErrRecordNotFound)
 
 	_, err := authService.Login(ctx, req)
@@ -125,21 +131,24 @@ func TestUserService_GetUserByID(t *testing.T) {
 	mockMenuRepo := mock_repository.NewMockMenuRepository(ctrl)
 	mockAvatarStorage := mock_repository.NewMockAvatarStorage(ctrl)
 	mockTm := mock_repository.NewMockTransaction(ctrl)
-	srv := service.NewService(logger, sf, j, em, mockTm)
+	mockSettingRepo := mock_repository.NewMockSettingRepository(ctrl)
+	srv := service.NewService(logger, sf, j, em, cfg, mockTm, aud, mockSettingRepo)
 	userService := service.NewUserService(srv, mockUserRepo, mockRoleRepo, mockMenuRepo, mockAvatarStorage)
 
 	ctx := context.Background()
-	userId := uint(123)
+	userId := "123"
 
 	mockUserRepo.EXPECT().Get(ctx, userId).Return(model.User{
-		Model:    gorm.Model{ID: userId},
-		Username: "testuser",
+		Model:     gorm.Model{ID: 123},
+		UserID:    "123",
+		Username:  "testuser",
+		AvatarURL: "local://avatar.png",
 	}, nil)
-	mockUserRepo.EXPECT().GetRoles(ctx, userId).Return([]string{}, nil)
-	mockAvatarStorage.EXPECT().GetURL(ctx, gomock.Any()).Return("", nil)
+	mockUserRepo.EXPECT().GetRoles(ctx, "123").Return([]string{}, nil)
+	mockAvatarStorage.EXPECT().GetURL(ctx, "local://avatar.png").Return("", nil)
 
 	user, err := userService.Get(ctx, userId)
 
 	assert.NoError(t, err)
-	assert.Equal(t, userId, user.ID)
+	assert.Equal(t, "123", user.UserID)
 }

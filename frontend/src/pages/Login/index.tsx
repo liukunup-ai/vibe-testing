@@ -91,18 +91,15 @@ const Login: React.FC = () => {
   const { styles } = useStyles();
   const intl = useIntl();
 
-  const siteSettings = (initialState?.siteSettings as API.SiteSetting) || {};
+  const siteConfig = (initialState?.siteConfig as API.PublicSiteConfig) || {};
 
-  const siteTitle = siteSettings.site?.title || Settings.title;
-  const siteLogo = siteSettings.site?.logo || '/logo.svg';
+  const siteTitle = siteConfig.site?.title || Settings.title;
+  const siteLogo = siteConfig.site?.logo || '/logo.svg';
 
-  const oidcEnabled = siteSettings.oidc?.enabled;
-  // 优先使用 oidc.Name，否则默认 'OIDC'
-  const rawProvider = siteSettings.oidc?.name || 'OIDC';
-  // 首字母大写
+  const oidcEnabled = siteConfig.oidc?.enabled;
+  const rawProvider = siteConfig.oidc?.name || 'OpenID Connect';
   const oidcProvider = rawProvider.charAt(0).toUpperCase() + rawProvider.slice(1);
-  const oidcLogo = siteSettings.oidc?.logo;
-  // 默认选中 OIDC Tab（如果已启用），否则选中账号密码
+  const oidcLogo = siteConfig.oidc?.logo;
   const defaultTab = useMemo(() => {
     return oidcEnabled ? 'oidc' : 'account';
   }, [oidcEnabled]);
@@ -110,7 +107,7 @@ const Login: React.FC = () => {
   const [type, setType] = useState<string>(defaultTab);
 
   const handleOIDCLogin = async () => {
-    const cfg = siteSettings.oidc;
+    const cfg = siteConfig.oidc;
     if (!cfg?.authorizeUrl || !cfg?.clientId || !cfg?.redirectUrl) {
       message.error(intl.formatMessage({ id: 'pages.login.oidc.configError', defaultMessage: 'OIDC配置不完整' }));
       return;

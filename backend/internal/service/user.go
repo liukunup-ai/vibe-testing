@@ -8,8 +8,8 @@ import (
 	"backend/pkg/audit"
 	"backend/pkg/email"
 	"context"
-	cryptoRand "crypto/rand"
 	"crypto/md5"
+	cryptoRand "crypto/rand"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -71,9 +71,10 @@ type userService struct {
 	avatarStorage  repository.AvatarStorage
 }
 
-// getGravatarURL returns Gravatar URL if configured, otherwise empty string
+// getGravatarURL returns Gravatar URL with email hash if configured
+// URL format: {endpoint}/{hash}?s=100&d=robohash
 func (s *userService) getGravatarURL(ctx context.Context, email string) string {
-	// Get gravatar endpoint from settings
+	// Get gravatar endpoint from settings (configured via admin API)
 	gravatarEndpoint := s.cfg.GetString("app.gravatar_endpoint")
 	if gravatarEndpoint == "" {
 		return ""
@@ -81,7 +82,7 @@ func (s *userService) getGravatarURL(ctx context.Context, email string) string {
 
 	// Generate MD5 hash of lowercase email
 	hash := md5.Sum([]byte(strings.ToLower(email)))
-	return fmt.Sprintf("%s/%x", gravatarEndpoint, hash)
+	return fmt.Sprintf("%s/%x?s=100&d=robohash", gravatarEndpoint, hash)
 }
 
 func (s *userService) List(ctx context.Context, req *v1.UserSearchRequest) (*v1.UserSearchResponseData, error) {
@@ -130,21 +131,17 @@ func (s *userService) List(ctx context.Context, req *v1.UserSearchRequest) (*v1.
 			avatarURL = s.getGravatarURL(ctx, user.Email)
 		}
 		data.List = append(data.List, v1.UserDataItem{
-			CreatedAt: user.CreatedAt.Format(constant.DateTimeLayout),
-			UpdatedAt: user.UpdatedAt.Format(constant.DateTimeLayout),
-			UserID:    user.UserID,
-			Email:     user.Email,
-			Username:  user.Username,
-			Phone:     user.Phone,
-			AvatarURL: avatarURL,
-			FullName:  user.FullName,
-			Bio:       user.Bio,
-			Language:  user.Language,
-			Timezone:  user.Timezone,
-			Theme:     user.Theme,
-			Direction: user.Direction,
-			Status:    user.Status,
-			Roles:     roleList,
+			CreatedAt:     user.CreatedAt,
+			UpdatedAt:     user.UpdatedAt,
+			UserID:        user.UserID,
+			Email:         user.Email,
+			Username:      user.Username,
+			Phone:         user.Phone,
+			AvatarURL:     avatarURL,
+			FullName:      user.FullName,
+			Bio:           user.Bio,
+			Status:        user.Status,
+			Roles:         roleList,
 		})
 	}
 
@@ -192,19 +189,28 @@ func (s *userService) Create(ctx context.Context, req *v1.UserRequest) error {
 		HashedPassword: string(hashedPassword), // 用户通过邮箱激活账户并设置新密码
 		FullName:       fullName,
 		Bio:            req.Bio,
-		Language:       req.Language,
-		Timezone:       req.Timezone,
-		Theme:          req.Theme,
 		Status:         req.Status,
 	}
 	// 创建用户
 	if err = s.userRepository.Create(ctx, newUser); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionUserCreate, "", "", "user", "", err, map[string]interface{}{
+			"email":    req.Email,
+			"username": req.Username,
+		})
 		return err
 	}
 	// 设置角色
 	if err = s.userRepository.UpdateRoles(ctx, newUser.UserID, req.Roles); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionUserCreate, "", "", "user", "", err, map[string]interface{}{
+			"email":    req.Email,
+			"username": req.Username,
+		})
 		return err
 	}
+	s.audit.LogSuccess(ctx, audit.ActionUserCreate, "", newUser.UserID, "user", "", map[string]interface{}{
+		"email":    req.Email,
+		"username": req.Username,
+	})
 	return err
 }
 
@@ -235,25 +241,20 @@ func (s *userService) Update(ctx context.Context, uid string, req *v1.UserReques
 	if req.Bio != "" {
 		data["bio"] = req.Bio
 	}
-	if req.Language != "" {
-		data["language"] = req.Language
-	}
-	if req.Timezone != "" {
-		data["timezone"] = req.Timezone
-	}
-	if req.Theme != "" {
-		data["theme"] = req.Theme
-	}
-	if req.Direction != "" {
-		data["direction"] = req.Direction
-	}
-	if req.Status != 0 {
-		data["status"] = req.Status
-	}
+	data["status"] = req.Status
 	if len(data) == 0 {
 		return nil
 	}
-	return s.userRepository.Update(ctx, uid, data)
+	if err = s.userRepository.Update(ctx, uid, data); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionUserUpdate, uid, user.UserID, "user", "", err, map[string]interface{}{
+			"username": req.Username,
+		})
+		return err
+	}
+	s.audit.LogSuccess(ctx, audit.ActionUserUpdate, uid, user.UserID, "user", "", map[string]interface{}{
+		"username": req.Username,
+	})
+	return nil
 }
 
 func (s *userService) Delete(ctx context.Context, uid string) error {
@@ -263,10 +264,18 @@ func (s *userService) Delete(ctx context.Context, uid string) error {
 	}
 	err = s.userRepository.DeleteRoles(ctx, user.UserID)
 	if err != nil {
+		s.audit.LogFailure(ctx, audit.ActionUserDelete, uid, user.UserID, "user", "", err, nil)
 		return err
 	}
 	// 删除用户
-	return s.userRepository.Delete(ctx, uid)
+	if err = s.userRepository.Delete(ctx, uid); err != nil {
+		s.audit.LogFailure(ctx, audit.ActionUserDelete, uid, user.UserID, "user", "", err, nil)
+		return err
+	}
+	s.audit.LogSuccess(ctx, audit.ActionUserDelete, uid, user.UserID, "user", "", map[string]interface{}{
+		"username": user.Username,
+	})
+	return nil
 }
 
 func (s *userService) Get(ctx context.Context, uid string) (*v1.UserDataItem, error) {
@@ -310,21 +319,17 @@ func (s *userService) Get(ctx context.Context, uid string) (*v1.UserDataItem, er
 		avatarURL = s.getGravatarURL(ctx, user.Email)
 	}
 	return &v1.UserDataItem{
-		CreatedAt: user.CreatedAt.Format(constant.DateTimeLayout),
-		UpdatedAt: user.UpdatedAt.Format(constant.DateTimeLayout),
-		UserID:    user.UserID,
-		Email:     user.Email,
-		Phone:     user.Phone,
-		Username:  user.Username,
-		FullName:  user.FullName,
-		AvatarURL: avatarURL,
-		Bio:       user.Bio,
-		Language:  user.Language,
-		Timezone:  user.Timezone,
-		Theme:     user.Theme,
-		Direction: user.Direction,
-		Status:    user.Status,
-		Roles:     roleList,
+		CreatedAt:     user.CreatedAt,
+		UpdatedAt:     user.UpdatedAt,
+		UserID:        user.UserID,
+		Email:         user.Email,
+		Phone:         user.Phone,
+		Username:      user.Username,
+		FullName:      user.FullName,
+		AvatarURL:     avatarURL,
+		Bio:           user.Bio,
+		Status:        user.Status,
+		Roles:         roleList,
 	}, nil
 }
 
@@ -369,21 +374,17 @@ func (s *userService) GetByUserID(ctx context.Context, uid string) (*v1.UserData
 		avatarURL = s.getGravatarURL(ctx, user.Email)
 	}
 	return &v1.UserDataItem{
-		UserID:    user.UserID,
-		CreatedAt: user.CreatedAt.Format(constant.DateTimeLayout),
-		UpdatedAt: user.UpdatedAt.Format(constant.DateTimeLayout),
-		Email:     user.Email,
-		Username:  user.Username,
-		Phone:     user.Phone,
-		FullName:  user.FullName,
-		AvatarURL: avatarURL,
-		Bio:       user.Bio,
-		Language:  user.Language,
-		Timezone:  user.Timezone,
-		Theme:     user.Theme,
-		Direction: user.Direction,
-		Status:    user.Status,
-		Roles:     roleList,
+		UserID:        user.UserID,
+		CreatedAt:     user.CreatedAt,
+		UpdatedAt:     user.UpdatedAt,
+		Email:         user.Email,
+		Username:      user.Username,
+		Phone:         user.Phone,
+		FullName:      user.FullName,
+		AvatarURL:     avatarURL,
+		Bio:           user.Bio,
+		Status:        user.Status,
+		Roles:         roleList,
 	}, nil
 }
 
@@ -476,7 +477,7 @@ func (s *userService) UpdatePassword(ctx context.Context, uid string, req *v1.Up
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(req.OldPassword))
 	if err != nil {
-		s.audit.LogFailure(ctx, audit.ActionPasswordChange, fmt.Sprintf("%d", uid), user.UserID, "user", "", v1.ErrUnauthorized, nil)
+		s.audit.LogFailure(ctx, audit.ActionPasswordChange, uid, user.UserID, "user", "", v1.ErrUnauthorized, nil)
 		return v1.ErrUnauthorized
 	}
 
@@ -521,6 +522,8 @@ func (s *userService) UploadAvatar(ctx context.Context, uid string, req *v1.Avat
 	}
 
 	req.UserID = uid
+	// 固定文件名为 avatar，根据类型推断扩展名
+	req.Filename = getAvatarFilename(req.Type)
 
 	avatarURL, err := s.avatarStorage.SaveToMinIO(ctx, req, reader)
 	if err != nil {
@@ -533,7 +536,7 @@ func (s *userService) UploadAvatar(ctx context.Context, uid string, req *v1.Avat
 			s.audit.LogFailure(ctx, audit.ActionAvatarUpload, uid, user.UserID, "avatar", "", err, map[string]interface{}{
 				"filename": req.Filename,
 				"size":     req.Size,
-		})
+			})
 			return err
 		}
 	}
@@ -641,6 +644,24 @@ func (s *userService) ResetAvatar(ctx context.Context, uid string) error {
 		"action": "reset",
 	})
 	return nil
+}
+
+// getAvatarFilename returns fixed avatar filename with extension based on content type
+func getAvatarFilename(contentType string) string {
+	ext := ".jpg" // default
+	switch contentType {
+	case "image/png":
+		ext = ".png"
+	case "image/gif":
+		ext = ".gif"
+	case "image/svg+xml":
+		ext = ".svg"
+	case "image/webp":
+		ext = ".webp"
+	case "image/jpeg", "image/jpg":
+		ext = ".jpg"
+	}
+	return "avatar" + ext
 }
 
 func generateRandomPassword(length int) string {

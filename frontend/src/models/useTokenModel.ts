@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { getRefreshToken, setRefreshToken, removeRefreshToken } from '@/utils/auth';
 import { refreshToken as refreshTokenApi } from '@/services/backend/auth';
-import { clearSiteSettingCache } from '@/utils/settingCache';
+import { clearSiteConfigCache } from '@/utils/settingCache';
 
 const REFRESH_BUFFER_SECONDS = 3 * 60;
 
@@ -168,14 +168,14 @@ export const useTokenModel = (): TokenModel => {
     setAccessTokenMemory(accessToken, expiresIn);
     setRefreshToken(refreshToken);
     scheduleRefreshTimer(expiresIn);
-    clearSiteSettingCache();
+    clearSiteConfigCache();
   }, []);
 
   const clearTokens = useCallback(() => {
     clearAccessTokenMemory();
     removeRefreshToken();
     clearRefreshTimer();
-    clearSiteSettingCache();
+    clearSiteConfigCache();
   }, []);
 
   return {

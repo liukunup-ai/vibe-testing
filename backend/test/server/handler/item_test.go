@@ -5,7 +5,8 @@ import (
 	"backend/internal/handler"
 	"backend/internal/middleware"
 	"backend/internal/model"
-	"backend/test/mocks/service"
+	mock_repository "backend/test/mocks/repository"
+	mock_service "backend/test/mocks/service"
 	"net/http"
 	"testing"
 
@@ -16,6 +17,8 @@ import (
 func TestItemHandler_ListItems(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+
+	userId := &v1.OwnerData{Username: "xxx"}
 
 	mockItemService := mock_service.NewMockItemService(ctrl)
 	mockItemService.EXPECT().List(gomock.Any(), gomock.Any()).Return(&v1.ItemSearchResponseData{
@@ -36,7 +39,8 @@ func TestItemHandler_ListItems(t *testing.T) {
 		},
 	}, nil)
 
-	itemHandler := handler.NewItemHandler(hdl, mockItemService)
+	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
+	itemHandler := handler.NewItemHandler(hdl, mockItemService, mockUserRepo)
 	router.Use(middleware.StrictAuth(jwt, logger))
 	router.GET("/items", itemHandler.ListItems)
 
@@ -60,6 +64,8 @@ func TestItemHandler_CreateItem(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	userId := "xxx"
+
 	params := v1.ItemRequest{
 		Name:  "New Item",
 		Desc:  "New Description",
@@ -69,7 +75,8 @@ func TestItemHandler_CreateItem(t *testing.T) {
 	mockItemService := mock_service.NewMockItemService(ctrl)
 	mockItemService.EXPECT().Create(gomock.Any(), &params).Return(nil)
 
-	itemHandler := handler.NewItemHandler(hdl, mockItemService)
+	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
+	itemHandler := handler.NewItemHandler(hdl, mockItemService, mockUserRepo)
 	router.Use(middleware.StrictAuth(jwt, logger))
 	router.POST("/items", itemHandler.CreateItem)
 
@@ -90,6 +97,7 @@ func TestItemHandler_UpdateItem(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	userId := "xxx"
 	itemId := uint(1)
 	params := v1.ItemRequest{
 		Name:  "Updated Item",
@@ -100,7 +108,8 @@ func TestItemHandler_UpdateItem(t *testing.T) {
 	mockItemService := mock_service.NewMockItemService(ctrl)
 	mockItemService.EXPECT().Update(gomock.Any(), itemId, &params).Return(nil)
 
-	itemHandler := handler.NewItemHandler(hdl, mockItemService)
+	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
+	itemHandler := handler.NewItemHandler(hdl, mockItemService, mockUserRepo)
 	router.Use(middleware.StrictAuth(jwt, logger))
 	router.PUT("/items/:id", itemHandler.UpdateItem)
 
@@ -128,11 +137,14 @@ func TestItemHandler_GetItem(t *testing.T) {
 			ID: 1,
 		},
 		Name:  "Test Item",
-		Owner: userId,
+		Owner: "xxx",
 		Desc:  "Test Description",
 	}, nil)
 
-	itemHandler := handler.NewItemHandler(hdl, mockItemService)
+	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
+	mockUserRepo.EXPECT().GetByUsername(gomock.Any(), "xxx").Return(model.User{}, nil)
+
+	itemHandler := handler.NewItemHandler(hdl, mockItemService, mockUserRepo)
 	router.Use(middleware.StrictAuth(jwt, logger))
 	router.GET("/items/:id", itemHandler.GetItem)
 
@@ -158,7 +170,8 @@ func TestItemHandler_DeleteItem(t *testing.T) {
 	mockItemService := mock_service.NewMockItemService(ctrl)
 	mockItemService.EXPECT().Delete(gomock.Any(), itemId).Return(nil)
 
-	itemHandler := handler.NewItemHandler(hdl, mockItemService)
+	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
+	itemHandler := handler.NewItemHandler(hdl, mockItemService, mockUserRepo)
 	router.Use(middleware.StrictAuth(jwt, logger))
 	router.DELETE("/items/:id", itemHandler.DeleteItem)
 

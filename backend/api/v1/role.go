@@ -1,5 +1,7 @@
 package v1
 
+import "time"
+
 // CRUD
 type RoleSearchRequest struct {
 	Page       int    `form:"page" binding:"omitempty,min=1" example:"1"`               // 页码
@@ -8,11 +10,12 @@ type RoleSearchRequest struct {
 	CasbinRole string `form:"casbinRole" example:"admin"`                               // 筛选项: Casbin-Role 精确匹配
 }
 type RoleDataItem struct {
-	ID         uint   `json:"id,omitempty"`                                       // ID
-	CreatedAt  string `json:"createdAt,omitempty"  example:"2006-01-02 15:04:05"` // 创建时间
-	UpdatedAt  string `json:"updatedAt,omitempty"  example:"2006-01-02 15:04:05"` // 更新时间
-	Name       string `json:"name" example:"Admin"`                               // 角色名
-	CasbinRole string `json:"casbinRole" example:"admin"`                         // Casbin-Role
+	ID         uint      `json:"id,omitempty"`               // ID
+	CreatedAt  time.Time `json:"createdAt,omitempty"`        // 创建时间
+	UpdatedAt  time.Time `json:"updatedAt,omitempty"`        // 更新时间
+	Name       string    `json:"name" example:"Admin"`       // 角色名
+	CasbinRole string    `json:"casbinRole" example:"admin"` // Casbin-Role
+	ApiCount   int64     `json:"apiCount" example:"10"`      // 接口权限的数量
 } // @name Role
 type RoleSearchResponseData struct {
 	List  []RoleDataItem `json:"list"`  // 列表
@@ -33,7 +36,6 @@ type RoleRequest struct {
 	CasbinRole string `json:"casbinRole" binding:"required" example:"admin"` // Casbin-Role
 }
 
-// Permission Management
 type GetRolePermissionRequest struct {
 	CasbinRole string `json:"casbinRole" binding:"required" example:"admin"` // Casbin-Role
 }
@@ -50,12 +52,14 @@ type UpdateRolePermissionRequest struct {
 	List       []string `form:"list" binding:"required"`                       // 权限列表
 }
 
-// RoleApiResponse 角色接口权限响应
-type RoleApiResponse struct {
+type RoleApiResponseData struct {
 	ApiIds []uint `json:"apiIds"`
+} // @name RoleApiList
+type RoleApiResponse struct {
+	Response
+	Data RoleApiResponseData
 }
 
-// UpdateRoleApisRequest 更新角色接口权限请求
 type UpdateRoleApisRequest struct {
 	ApiIds []uint `json:"apiIds" binding:"required"`
 }

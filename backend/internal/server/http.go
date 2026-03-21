@@ -40,6 +40,7 @@ func NewHTTPServer(
 	requirementHandler *handler.RequirementHandler,
 	aiProviderHandler *handler.AIProviderHandler,
 	aiAnalysisResultHandler *handler.AIAnalysisResultHandler,
+	modelHandler *handler.ModelHandler,
 ) *http.Server {
 	gin.SetMode(gin.DebugMode)
 	s := http.NewServer(
@@ -88,7 +89,7 @@ func NewHTTPServer(
 		// No route group has permission
 		noAuthRouter := v1.Group("/")
 		{
-			noAuthRouter.GET("/settings", settingHandler.GetSiteSetting)
+			noAuthRouter.GET("/site/config", settingHandler.GetPublicSiteConfig)
 			noAuthRouter.POST("/register", authHandler.Register)
 			noAuthRouter.POST("/login", authHandler.Login)
 			noAuthRouter.POST("/forgot-password", authHandler.ForgotPassword)
@@ -238,6 +239,13 @@ func NewHTTPServer(
 			strictAuthRouter.PUT("/aianalyses/:id", aiAnalysisResultHandler.UpdateAIAnalysisResult)
 			strictAuthRouter.DELETE("/aianalyses/:id", aiAnalysisResultHandler.DeleteAIAnalysisResult)
 			strictAuthRouter.GET("/aianalyses/:id", aiAnalysisResultHandler.GetAIAnalysisResult)
+			// Model
+			strictAuthRouter.GET("/admin/models", modelHandler.ListModels)
+			strictAuthRouter.GET("/admin/models/:id", modelHandler.GetModel)
+			strictAuthRouter.POST("/admin/models", modelHandler.CreateModel)
+			strictAuthRouter.PUT("/admin/models/:id", modelHandler.UpdateModel)
+			strictAuthRouter.DELETE("/admin/models/:id", modelHandler.DeleteModel)
+			strictAuthRouter.POST("/admin/models/test-connection", modelHandler.TestConnection)
 		}
 	}
 

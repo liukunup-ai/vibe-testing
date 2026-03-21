@@ -17,7 +17,7 @@ import (
 )
 
 type SettingService interface {
-	GetSite(ctx context.Context, clientVersion string) (*v1.SiteSetting, error)
+	GetPublicSiteConfig(ctx context.Context, clientVersion string) (*v1.PublicSiteConfig, error)
 	Get(ctx context.Context) (*v1.AdminSetting, error)
 	Update(ctx context.Context, req *v1.AdminSettingRequest) error
 	TestEmail(ctx context.Context, req *v1.TestEmailRequest) error
@@ -98,14 +98,34 @@ func (s *settingService) Get(ctx context.Context) (*v1.AdminSetting, error) {
 		}
 	}
 
-	// Only include Site if there's any configuration
+	// Get site config values
 	siteTitle := getString(model.SettingKeySiteTitle, "site.title")
 	siteLogo := getString(model.SettingKeySiteLogo, "site.logo")
 	siteFavicon := getString(model.SettingKeySiteFavicon, "site.favicon")
 	siteCopyright := getString(model.SettingKeySiteCopyright, "site.copyright")
 	siteShowLinks := getBool(model.SettingKeySiteShowLinks, "site.show_links")
 	siteQuestionLink := getString(model.SettingKeySiteQuestionLink, "site.question_link")
-	if siteTitle != "" || siteLogo != "" || siteFavicon != "" || siteCopyright != "" || siteQuestionLink != "" || siteShowLinks {
+
+	// Check if any site config exists in database or config file
+	_, hasSiteTitle := settingMap[model.SettingKeySiteTitle]
+	_, hasSiteLogo := settingMap[model.SettingKeySiteLogo]
+	_, hasSiteFavicon := settingMap[model.SettingKeySiteFavicon]
+	_, hasSiteCopyright := settingMap[model.SettingKeySiteCopyright]
+	_, hasSiteShowLinks := settingMap[model.SettingKeySiteShowLinks]
+	_, hasSiteQuestionLink := settingMap[model.SettingKeySiteQuestionLink]
+	hasSiteConfig := hasSiteTitle || hasSiteLogo || hasSiteFavicon || hasSiteCopyright || hasSiteShowLinks || hasSiteQuestionLink
+
+	// Also check config file
+	if !hasSiteConfig {
+		hasSiteConfig = s.cfg.GetString("site.title") != "" ||
+			s.cfg.GetString("site.logo") != "" ||
+			s.cfg.GetString("site.favicon") != "" ||
+			s.cfg.GetString("site.copyright") != "" ||
+			s.cfg.GetBool("site.show_links") ||
+			s.cfg.GetString("site.question_link") != ""
+	}
+
+	if hasSiteConfig {
 		resp.Site = &v1.SiteConfig{
 			Title:        siteTitle,
 			Logo:         siteLogo,
@@ -234,7 +254,7 @@ func (s *settingService) Get(ctx context.Context) (*v1.AdminSetting, error) {
 	return resp, nil
 }
 
-func (s *settingService) GetSite(ctx context.Context, clientVersion string) (*v1.SiteSetting, error) {
+func (s *settingService) GetPublicSiteConfig(ctx context.Context, clientVersion string) (*v1.PublicSiteConfig, error) {
 	settings, err := s.settingRepository.GetAll(ctx)
 	if err != nil {
 		s.logger.WithContext(ctx).Error("GetAll error", zap.Error(err))
@@ -246,7 +266,7 @@ func (s *settingService) GetSite(ctx context.Context, clientVersion string) (*v1
 		settingMap[setting.Key] = setting.Value
 	}
 
-	currentVersion := calculateSiteSettingVersion(settingMap)
+	currentVersion := calculateSiteConfigVersion(settingMap)
 	if clientVersion != "" && clientVersion == currentVersion {
 		return nil, nil
 	}
@@ -265,18 +285,38 @@ func (s *settingService) GetSite(ctx context.Context, clientVersion string) (*v1
 		return s.cfg.GetBool(yamlKey)
 	}
 
-	resp := &v1.SiteSetting{
+	resp := &v1.PublicSiteConfig{
 		Version: currentVersion,
 	}
 
-	// Only include Site if there's actual data
+	// Get site config values
 	siteTitle := getString(model.SettingKeySiteTitle, "site.title")
 	siteLogo := getString(model.SettingKeySiteLogo, "site.logo")
 	siteFavicon := getString(model.SettingKeySiteFavicon, "site.favicon")
 	siteCopyright := getString(model.SettingKeySiteCopyright, "site.copyright")
 	siteShowLinks := getBool(model.SettingKeySiteShowLinks, "site.show_links")
 	siteQuestionLink := getString(model.SettingKeySiteQuestionLink, "site.question_link")
-	if siteTitle != "" || siteLogo != "" || siteFavicon != "" || siteCopyright != "" || siteQuestionLink != "" || siteShowLinks {
+
+	// Check if any site config exists in database or config file
+	_, hasSiteTitle := settingMap[model.SettingKeySiteTitle]
+	_, hasSiteLogo := settingMap[model.SettingKeySiteLogo]
+	_, hasSiteFavicon := settingMap[model.SettingKeySiteFavicon]
+	_, hasSiteCopyright := settingMap[model.SettingKeySiteCopyright]
+	_, hasSiteShowLinks := settingMap[model.SettingKeySiteShowLinks]
+	_, hasSiteQuestionLink := settingMap[model.SettingKeySiteQuestionLink]
+	hasSiteConfig := hasSiteTitle || hasSiteLogo || hasSiteFavicon || hasSiteCopyright || hasSiteShowLinks || hasSiteQuestionLink
+
+	// Also check config file
+	if !hasSiteConfig {
+		hasSiteConfig = s.cfg.GetString("site.title") != "" ||
+			s.cfg.GetString("site.logo") != "" ||
+			s.cfg.GetString("site.favicon") != "" ||
+			s.cfg.GetString("site.copyright") != "" ||
+			s.cfg.GetBool("site.show_links") ||
+			s.cfg.GetString("site.question_link") != ""
+	}
+
+	if hasSiteConfig {
 		resp.Site = &v1.SiteConfig{
 			Title:        siteTitle,
 			Logo:         siteLogo,
@@ -327,7 +367,7 @@ func (s *settingService) GetSite(ctx context.Context, clientVersion string) (*v1
 	return resp, nil
 }
 
-func calculateSiteSettingVersion(settingMap map[string]string) string {
+func calculateSiteConfigVersion(settingMap map[string]string) string {
 	siteKeys := []string{
 		model.SettingKeySiteTitle,
 		model.SettingKeySiteLogo,

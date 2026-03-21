@@ -71,7 +71,7 @@ const Role: React.FC = () => {
       dataIndex: 'apiCount',
       ellipsis: true,
       hideInSearch: true,
-      render: (_: any, record: API.Role) => ((record as any).apiCount ?? 0),
+      render: (_: any, record: API.Role) => (record.apiCount ?? 0),
     },
     {
       title: intl.formatMessage({

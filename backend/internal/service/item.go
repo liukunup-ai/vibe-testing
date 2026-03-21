@@ -2,7 +2,6 @@ package service
 
 import (
 	v1 "backend/api/v1"
-	"backend/internal/constant"
 	"backend/internal/model"
 	"backend/internal/repository"
 	"context"
@@ -58,8 +57,8 @@ func (s *itemService) List(ctx context.Context, req *v1.ItemSearchRequest) (*v1.
 		}
 		data.List = append(data.List, v1.ItemDataItem{
 			Id:        item.ID,
-			CreatedAt: item.CreatedAt.Format(constant.DateTimeLayout),
-			UpdatedAt: item.UpdatedAt.Format(constant.DateTimeLayout),
+			CreatedAt: item.CreatedAt,
+			UpdatedAt: item.UpdatedAt,
 			Name:      item.Name,
 			Desc:      item.Desc,
 			Owner:     owner,

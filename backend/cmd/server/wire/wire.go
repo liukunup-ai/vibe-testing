@@ -33,8 +33,8 @@ var repositorySet = wire.NewSet(
 	repository.NewRoleRepository,
 	repository.NewMenuRepository,
 	repository.NewApiRepository,
+	repository.NewModelRepository,
 	repository.NewSettingRepository,
-	// more biz repository
 	repository.NewItemRepository,
 	repository.NewProjectRepository,
 	repository.NewProjectUserRepository,
@@ -59,8 +59,8 @@ var serviceSet = wire.NewSet(
 	service.NewRoleService,
 	service.NewMenuService,
 	service.NewApiService,
+	service.NewModelService,
 	service.NewSettingService,
-	// more biz service
 	service.NewItemService,
 	service.NewProjectService,
 	service.NewTestCaseService,
@@ -82,8 +82,8 @@ var handlerSet = wire.NewSet(
 	handler.NewRoleHandler,
 	handler.NewMenuHandler,
 	handler.NewApiHandler,
+	handler.NewModelHandler,
 	handler.NewSettingHandler,
-	// more biz handler
 	handler.NewItemHandler,
 	handler.NewProjectHandler,
 	handler.NewTestCaseHandler,
@@ -107,7 +107,6 @@ var serverSet = wire.NewSet(
 	server.NewJobServer,
 )
 
-// build App
 func newApp(
 	httpServer *http.Server,
 	jobServer *server.JobServer,

@@ -79,6 +79,21 @@ func (mr *MockApiServiceMockRecorder) Get(ctx, id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockApiService)(nil).Get), ctx, id)
 }
 
+// GetRoles mocks base method.
+func (m *MockApiService) GetRoles(ctx context.Context, apiId uint) ([]uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoles", ctx, apiId)
+	ret0, _ := ret[0].([]uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoles indicates an expected call of GetRoles.
+func (mr *MockApiServiceMockRecorder) GetRoles(ctx, apiId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoles", reflect.TypeOf((*MockApiService)(nil).GetRoles), ctx, apiId)
+}
+
 // List mocks base method.
 func (m *MockApiService) List(ctx context.Context, req *v1.ApiSearchRequest) (*v1.ApiSearchResponseData, error) {
 	m.ctrl.T.Helper()
@@ -106,4 +121,18 @@ func (m *MockApiService) Update(ctx context.Context, id uint, req *v1.ApiRequest
 func (mr *MockApiServiceMockRecorder) Update(ctx, id, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockApiService)(nil).Update), ctx, id, req)
+}
+
+// UpdateRoles mocks base method.
+func (m *MockApiService) UpdateRoles(ctx context.Context, apiId uint, roleIds []uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateRoles", ctx, apiId, roleIds)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateRoles indicates an expected call of UpdateRoles.
+func (mr *MockApiServiceMockRecorder) UpdateRoles(ctx, apiId, roleIds interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRoles", reflect.TypeOf((*MockApiService)(nil).UpdateRoles), ctx, apiId, roleIds)
 }

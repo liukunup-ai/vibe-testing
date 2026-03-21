@@ -18,6 +18,7 @@ type ApiRepository interface {
 
 	GetRoleIds(ctx context.Context, apiId uint) ([]uint, error)
 	UpdateRoles(ctx context.Context, apiId uint, roleIds []uint) error
+	CountRolePermissions(ctx context.Context, path string, method string) (int64, error)
 }
 
 func NewApiRepository(
@@ -87,6 +88,19 @@ func (r *apiRepository) GetRoleIds(ctx context.Context, apiId uint) ([]uint, err
 	api, err := r.Get(ctx, apiId)
 	if err != nil {
 		return nil, err
+	}
+
+	// 如果是公开接口，所有角色都有权限
+	if api.IsPublic {
+		var roles []model.Role
+		if err := r.DB(ctx).Find(&roles).Error; err != nil {
+			return nil, err
+		}
+		var roleIds []uint
+		for _, role := range roles {
+			roleIds = append(roleIds, role.ID)
+		}
+		return roleIds, nil
 	}
 
 	// 获取所有角色
@@ -168,4 +182,36 @@ func (r *apiRepository) UpdateRoles(ctx context.Context, apiId uint, newRoleIds 
 	}
 
 	return nil
+}
+func (r *apiRepository) CountRolePermissions(ctx context.Context, path string, method string) (int64, error) {
+	// 查找 API
+	var api model.Api
+	if err := r.DB(ctx).Where("path = ? AND method = ?", path, method).First(&api).Error; err == nil {
+		// 如果是公开接口，所有角色都有权限
+		if api.IsPublic {
+			var count int64
+			r.DB(ctx).Model(&model.Role{}).Count(&count)
+			return count, nil
+		}
+	}
+
+	// 获取所有角色
+	var roles []model.Role
+	if err := r.DB(ctx).Find(&roles).Error; err != nil {
+		return 0, err
+	}
+
+	// 统计有该 API 权限的角色数量
+	var count int64
+	for _, role := range roles {
+		hasPermission, err := r.e.Enforce(role.CasbinRole, constant.ApiResourcePrefix+path, method)
+		if err != nil {
+			return 0, err
+		}
+		if hasPermission {
+			count++
+		}
+	}
+
+	return count, nil
 }

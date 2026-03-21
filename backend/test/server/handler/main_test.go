@@ -16,13 +16,14 @@ import (
 	"path/filepath"
 	"testing"
 
+	v1 "backend/api/v1"
+
 	"github.com/gavv/httpexpect/v2"
 	"github.com/gin-gonic/gin"
 )
 
-var (
-	userId = "xxx"
-)
+var userId *v1.OwnerData
+
 var logger *log.Logger
 var hdl *handler.Handler
 var jwt *jwt2.JWT
@@ -55,6 +56,11 @@ func TestMain(m *testing.M) {
 		//middleware.SignMiddleware(log),
 	)
 
+	// Initialize userId as OwnerData type
+	userId = &v1.OwnerData{
+		Username: "xxx",
+	}
+
 	code := m.Run()
 	fmt.Println("test end")
 
@@ -69,7 +75,7 @@ func performRequest(r http.Handler, method, path string, body *bytes.Buffer) *ht
 }
 
 func genToken(t *testing.T) string {
-	tokenPair, err := jwt.GenerateTokenPair(context.Background(), 1, "test-family")
+	tokenPair, err := jwt.GenerateTokenPair(context.Background(), "1", "test-family")
 	if err != nil {
 		t.Error(err)
 		return ""

@@ -92,7 +92,13 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	aiAnalysisResultRepository := repository.NewAIAnalysisResultRepository(repositoryRepository)
 	aiAnalysisResultService := service.NewAIAnalysisResultService(serviceService, aiAnalysisResultRepository)
 	aiAnalysisResultHandler := handler.NewAIAnalysisResultHandler(handlerHandler, aiAnalysisResultService)
-	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, syncedEnforcer, authHandler, userHandler, roleHandler, menuHandler, apiHandler, settingHandler, itemHandler, projectHandler, testCaseHandler, testSuiteHandler, testPlanHandler, testRecordHandler, deviceHandler, userFeedbackHandler, bugHandler, requirementHandler, aiProviderHandler, aiAnalysisResultHandler)
+	modelRepository := repository.NewModelRepository(repositoryRepository)
+	modelService, err := service.NewModelService(serviceService, modelRepository)
+	if err != nil {
+		return nil, nil, err
+	}
+	modelHandler := handler.NewModelHandler(handlerHandler, modelService)
+	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, syncedEnforcer, authHandler, userHandler, roleHandler, menuHandler, apiHandler, settingHandler, itemHandler, projectHandler, testCaseHandler, testSuiteHandler, testPlanHandler, testRecordHandler, deviceHandler, userFeedbackHandler, bugHandler, requirementHandler, aiProviderHandler, aiAnalysisResultHandler, modelHandler)
 	jobJob := job.NewJob(transaction, logger, sidSid)
 	userJob := job.NewUserJob(jobJob, userRepository)
 	jobServer := server.NewJobServer(logger, userJob)
@@ -103,17 +109,16 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 
 // wire.go:
 
-var repositorySet = wire.NewSet(repository.NewDB, repository.NewCache, repository.NewRepository, repository.NewTransaction, repository.NewTokenStore, repository.NewCasbinEnforcer, repository.NewUserRepository, repository.NewAvatarStorage, repository.NewRoleRepository, repository.NewMenuRepository, repository.NewApiRepository, repository.NewSettingRepository, repository.NewItemRepository, repository.NewProjectRepository, repository.NewProjectUserRepository, repository.NewTestCaseRepository, repository.NewTestSuiteRepository, repository.NewTestPlanRepository, repository.NewTestRecordRepository, repository.NewTestCaseExecutionRepository, repository.NewTestSuiteExecutionRepository, repository.NewDeviceRepository, repository.NewUserFeedbackRepository, repository.NewBugRepository, repository.NewRequirementRepository, repository.NewAIProviderRepository, repository.NewAIAnalysisResultRepository)
+var repositorySet = wire.NewSet(repository.NewDB, repository.NewCache, repository.NewRepository, repository.NewTransaction, repository.NewTokenStore, repository.NewCasbinEnforcer, repository.NewUserRepository, repository.NewAvatarStorage, repository.NewRoleRepository, repository.NewMenuRepository, repository.NewApiRepository, repository.NewModelRepository, repository.NewSettingRepository, repository.NewItemRepository, repository.NewProjectRepository, repository.NewProjectUserRepository, repository.NewTestCaseRepository, repository.NewTestSuiteRepository, repository.NewTestPlanRepository, repository.NewTestRecordRepository, repository.NewTestCaseExecutionRepository, repository.NewTestSuiteExecutionRepository, repository.NewDeviceRepository, repository.NewUserFeedbackRepository, repository.NewBugRepository, repository.NewRequirementRepository, repository.NewAIProviderRepository, repository.NewAIAnalysisResultRepository)
 
-var serviceSet = wire.NewSet(service.NewService, service.NewAuthService, service.NewUserService, service.NewRoleService, service.NewMenuService, service.NewApiService, service.NewSettingService, service.NewItemService, service.NewProjectService, service.NewTestCaseService, service.NewTestSuiteService, service.NewTestPlanService, service.NewTestRecordService, service.NewDeviceService, service.NewUserFeedbackService, service.NewBugService, service.NewRequirementService, service.NewAIProviderService, service.NewAIAnalysisResultService)
+var serviceSet = wire.NewSet(service.NewService, service.NewAuthService, service.NewUserService, service.NewRoleService, service.NewMenuService, service.NewApiService, service.NewModelService, service.NewSettingService, service.NewItemService, service.NewProjectService, service.NewTestCaseService, service.NewTestSuiteService, service.NewTestPlanService, service.NewTestRecordService, service.NewDeviceService, service.NewUserFeedbackService, service.NewBugService, service.NewRequirementService, service.NewAIProviderService, service.NewAIAnalysisResultService)
 
-var handlerSet = wire.NewSet(handler.NewHandler, handler.NewAuthHandler, handler.NewUserHandler, handler.NewRoleHandler, handler.NewMenuHandler, handler.NewApiHandler, handler.NewSettingHandler, handler.NewItemHandler, handler.NewProjectHandler, handler.NewTestCaseHandler, handler.NewTestSuiteHandler, handler.NewTestPlanHandler, handler.NewTestRecordHandler, handler.NewDeviceHandler, handler.NewUserFeedbackHandler, handler.NewBugHandler, handler.NewRequirementHandler, handler.NewAIProviderHandler, handler.NewAIAnalysisResultHandler)
+var handlerSet = wire.NewSet(handler.NewHandler, handler.NewAuthHandler, handler.NewUserHandler, handler.NewRoleHandler, handler.NewMenuHandler, handler.NewApiHandler, handler.NewModelHandler, handler.NewSettingHandler, handler.NewItemHandler, handler.NewProjectHandler, handler.NewTestCaseHandler, handler.NewTestSuiteHandler, handler.NewTestPlanHandler, handler.NewTestRecordHandler, handler.NewDeviceHandler, handler.NewUserFeedbackHandler, handler.NewBugHandler, handler.NewRequirementHandler, handler.NewAIProviderHandler, handler.NewAIAnalysisResultHandler)
 
 var jobSet = wire.NewSet(job.NewJob, job.NewUserJob)
 
 var serverSet = wire.NewSet(server.NewHTTPServer, server.NewJobServer)
 
-// build App
 func newApp(
 	httpServer *http.Server,
 	jobServer *server.JobServer,

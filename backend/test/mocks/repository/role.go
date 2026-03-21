@@ -36,6 +36,21 @@ func (m *MockRoleRepository) EXPECT() *MockRoleRepositoryMockRecorder {
 	return m.recorder
 }
 
+// CountApiPermissions mocks base method.
+func (m *MockRoleRepository) CountApiPermissions(ctx context.Context, casbinRole string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountApiPermissions", ctx, casbinRole)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountApiPermissions indicates an expected call of CountApiPermissions.
+func (mr *MockRoleRepositoryMockRecorder) CountApiPermissions(ctx, casbinRole interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountApiPermissions", reflect.TypeOf((*MockRoleRepository)(nil).CountApiPermissions), ctx, casbinRole)
+}
+
 // Create mocks base method.
 func (m_2 *MockRoleRepository) Create(ctx context.Context, m *model.Role) error {
 	m_2.ctrl.T.Helper()
@@ -92,6 +107,21 @@ func (m *MockRoleRepository) Get(ctx context.Context, id uint) (model.Role, erro
 func (mr *MockRoleRepositoryMockRecorder) Get(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRoleRepository)(nil).Get), ctx, id)
+}
+
+// GetApiIds mocks base method.
+func (m *MockRoleRepository) GetApiIds(ctx context.Context, roleId uint) ([]uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetApiIds", ctx, roleId)
+	ret0, _ := ret[0].([]uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetApiIds indicates an expected call of GetApiIds.
+func (mr *MockRoleRepositoryMockRecorder) GetApiIds(ctx, roleId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetApiIds", reflect.TypeOf((*MockRoleRepository)(nil).GetApiIds), ctx, roleId)
 }
 
 // GetByCasbinRole mocks base method.
@@ -167,6 +197,20 @@ func (m_2 *MockRoleRepository) Update(ctx context.Context, m *model.Role) error 
 func (mr *MockRoleRepositoryMockRecorder) Update(ctx, m interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockRoleRepository)(nil).Update), ctx, m)
+}
+
+// UpdateApis mocks base method.
+func (m *MockRoleRepository) UpdateApis(ctx context.Context, roleId uint, apiIds []uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateApis", ctx, roleId, apiIds)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateApis indicates an expected call of UpdateApis.
+func (mr *MockRoleRepositoryMockRecorder) UpdateApis(ctx, roleId, apiIds interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateApis", reflect.TypeOf((*MockRoleRepository)(nil).UpdateApis), ctx, roleId, apiIds)
 }
 
 // UpdatePermissions mocks base method.

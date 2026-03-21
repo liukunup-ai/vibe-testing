@@ -235,7 +235,7 @@ func (h *RoleHandler) GetRoleApis(ctx *gin.Context) {
 		return
 	}
 
-	v1.HandleSuccess(ctx, v1.RoleApiResponse{ApiIds: apiIds})
+	v1.HandleSuccess(ctx, v1.RoleApiResponseData{ApiIds: apiIds})
 }
 
 // UpdateRoleApis godoc

@@ -5,8 +5,8 @@ import React from 'react';
 
 const Footer: React.FC = () => {
   const { initialState } = useModel('@@initialState');
-  const copyright = initialState?.siteSettings?.site?.copyright || '2026 Vibe Testing 版权所有';
-  const showLinks = initialState?.siteSettings?.site?.showLinks !== false;
+  const copyright = initialState?.siteConfig?.site?.copyright || '2026 Company Name. All rights reserved.';
+  const showLinks = initialState?.siteConfig?.site?.showLinks !== false;
 
   const links = showLinks ? [
     {

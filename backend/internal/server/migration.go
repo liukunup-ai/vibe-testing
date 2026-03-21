@@ -46,6 +46,7 @@ func (m *MigrateServer) Start(ctx context.Context) error {
 		&model.Menu{},
 		&model.Role{},
 		&model.Api{},
+		&model.Model{},
 		&model.Setting{},
 		&model.Item{},
 		&model.Project{},
@@ -71,6 +72,7 @@ func (m *MigrateServer) Start(ctx context.Context) error {
 		&model.Menu{},
 		&model.Role{},
 		&model.Api{},
+		&model.Model{},
 		&model.Setting{},
 		&model.Item{},
 		&model.Project{},
@@ -121,6 +123,11 @@ func (m *MigrateServer) Start(ctx context.Context) error {
 
 	m.initialModelData(ctx)
 
+	err = m.initialSettings(ctx)
+	if err != nil {
+		m.log.Error("initialSettings error", zap.Error(err))
+	}
+
 	m.log.Info("AutoMigrate success")
 	os.Exit(0)
 	return nil
@@ -158,7 +165,7 @@ func (m *MigrateServer) initialUser(ctx context.Context) error {
 		HashedPassword: string(hashedPassword),
 		FullName:       "运营人员",
 		Email:          "operator@example.com",
-		Status:         1,
+		Status:         0,
 	}).Error; err != nil {
 		return err
 	}
@@ -1005,28 +1012,46 @@ func (m *MigrateServer) initialRBAC(ctx context.Context) error {
 		m.log.Error("m.e.AddRoleForUser error", zap.Error(err))
 		return err
 	}
-	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/profile/basic", "read")
-	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/profile/advanced", "read")
-	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/profile", "read")
-	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/dashboard", "read")
-	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/dashboard/workplace", "read")
-	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/dashboard/analysis", "read")
-	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/account/settings", "read")
-	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/account/center", "read")
-	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/account", "read")
-	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/menus", http.MethodGet)
-	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/admin/user", http.MethodGet)
 
-	// 添加普通用户权限
-	// 菜单权限
+	// 运营人员
+	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/", "read")
+	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/welcome", "read")
+	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/profile", "read")
+	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/admin", "read")
+	m.addPermissionForRole(constant.OperatorRole, constant.MenuResourcePrefix+"/admin/user", "read")
+
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/users/profile", http.MethodGet)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/users/profile", http.MethodPut)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/users/profile/avatar", http.MethodPost)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/users/menu", http.MethodGet)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/users/password", http.MethodPut)
+
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/admin/users", http.MethodGet)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/admin/users", http.MethodPost)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/admin/users/:id", http.MethodPut)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/admin/users/:id", http.MethodDelete)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/admin/users/:id/send-reset-email", http.MethodPost)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/admin/users/:id/revoke-sessions", http.MethodPost)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/admin/users/:id/status", http.MethodPut)
+	m.addPermissionForRole(constant.OperatorRole, constant.ApiResourcePrefix+"/v1/admin/users/:id/reset-avatar", http.MethodPut)
+
+	// 普通用户
+	m.addPermissionForRole(constant.UserRole, constant.MenuResourcePrefix+"/", "read")
 	m.addPermissionForRole(constant.UserRole, constant.MenuResourcePrefix+"/welcome", "read")
+	m.addPermissionForRole(constant.UserRole, constant.MenuResourcePrefix+"/item", "read")
 	m.addPermissionForRole(constant.UserRole, constant.MenuResourcePrefix+"/profile", "read")
-	// API权限
+
 	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/users/profile", http.MethodGet)
 	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/users/profile", http.MethodPut)
 	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/users/profile/avatar", http.MethodPost)
 	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/users/menu", http.MethodGet)
 	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/users/password", http.MethodPut)
+
+	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/items", http.MethodGet)
+	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/items/:id", http.MethodGet)
+	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/items", http.MethodPost)
+	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/items/:id", http.MethodPut)
+	m.addPermissionForRole(constant.UserRole, constant.ApiResourcePrefix+"/v1/items/:id", http.MethodDelete)
 
 	return nil
 }
@@ -1043,16 +1068,21 @@ func (m *MigrateServer) addPermissionForRole(role, resource, action string) {
 func (m *MigrateServer) initialApisData(ctx context.Context) error {
 	initialApis := []model.Api{
 
-		// 基础API
-		{Group: "基础API", Name: "登录", Path: "/v1/login", Method: http.MethodPost},
-		{Group: "基础API", Name: "注册", Path: "/v1/register", Method: http.MethodPost},
-		{Group: "基础API", Name: "重置密码", Path: "/v1/reset-password", Method: http.MethodPost},
-		{Group: "基础API", Name: "刷新token", Path: "/v1/refresh-token", Method: http.MethodPost},
+		// 基础API - 公开接口
+		{Group: "基础API", Name: "登录", Path: "/v1/login", Method: http.MethodPost, IsPublic: true},
+		{Group: "基础API", Name: "注册", Path: "/v1/register", Method: http.MethodPost, IsPublic: true},
+		{Group: "基础API", Name: "忘记密码", Path: "/v1/forgot-password", Method: http.MethodPost, IsPublic: true},
+		{Group: "基础API", Name: "重置密码", Path: "/v1/reset-password", Method: http.MethodPost, IsPublic: true},
+		{Group: "基础API", Name: "刷新token", Path: "/v1/refresh-token", Method: http.MethodPost, IsPublic: true},
+		{Group: "基础API", Name: "OIDC认证", Path: "/v1/auth/oidc", Method: http.MethodPost, IsPublic: true},
 
-		{Group: "基础API", Name: "获取当前用户信息", Path: "/v1/users/:id", Method: http.MethodGet},
+		// 基础API - 需认证但跳过权限检查（所有角色默认拥有）
+		{Group: "基础API", Name: "登出", Path: "/v1/logout", Method: http.MethodPost, IsPublic: true},
+		{Group: "基础API", Name: "获取当前用户信息", Path: "/v1/users/:id", Method: http.MethodGet, IsPublic: true},
 
-		{Group: "用户", Name: "获取profile", Path: "/v1/users/profile", Method: http.MethodGet},
-		{Group: "用户", Name: "更新profile", Path: "/v1/users/profile", Method: http.MethodPut},
+		// 用户
+		{Group: "用户", Name: "获取Profile", Path: "/v1/users/profile", Method: http.MethodGet},
+		{Group: "用户", Name: "更新Profile", Path: "/v1/users/profile", Method: http.MethodPut},
 		{Group: "用户", Name: "更新头像", Path: "/v1/users/profile/avatar", Method: http.MethodPost},
 		{Group: "用户", Name: "获取菜单", Path: "/v1/users/menu", Method: http.MethodGet},
 		{Group: "用户", Name: "更新密码", Path: "/v1/users/password", Method: http.MethodPut},
@@ -1062,6 +1092,10 @@ func (m *MigrateServer) initialApisData(ctx context.Context) error {
 		{Group: "用户管理", Name: "创建用户", Path: "/v1/admin/users", Method: http.MethodPost},
 		{Group: "用户管理", Name: "更新用户", Path: "/v1/admin/users/:id", Method: http.MethodPut},
 		{Group: "用户管理", Name: "删除用户", Path: "/v1/admin/users/:id", Method: http.MethodDelete},
+		{Group: "用户管理", Name: "发送重置邮件", Path: "/v1/admin/users/:id/send-reset-email", Method: http.MethodPost},
+		{Group: "用户管理", Name: "撤销会话", Path: "/v1/admin/users/:id/revoke-sessions", Method: http.MethodPost},
+		{Group: "用户管理", Name: "更新用户状态", Path: "/v1/admin/users/:id/status", Method: http.MethodPut},
+		{Group: "用户管理", Name: "重置头像", Path: "/v1/admin/users/:id/reset-avatar", Method: http.MethodPut},
 
 		// 角色管理
 		{Group: "角色管理", Name: "获取角色列表", Path: "/v1/admin/roles", Method: http.MethodGet},
@@ -1070,6 +1104,16 @@ func (m *MigrateServer) initialApisData(ctx context.Context) error {
 		{Group: "角色管理", Name: "删除角色", Path: "/v1/admin/roles/:id", Method: http.MethodDelete},
 		{Group: "角色管理", Name: "获取角色权限", Path: "/v1/admin/roles/permissions", Method: http.MethodGet},
 		{Group: "角色管理", Name: "更新角色权限", Path: "/v1/admin/roles/permissions", Method: http.MethodPut},
+		{Group: "角色管理", Name: "获取角色接口", Path: "/v1/admin/roles/:id/apis", Method: http.MethodGet},
+		{Group: "角色管理", Name: "更新角色接口", Path: "/v1/admin/roles/:id/apis", Method: http.MethodPut},
+
+		// 接口管理
+		{Group: "接口管理", Name: "获取接口列表", Path: "/v1/admin/apis", Method: http.MethodGet},
+		{Group: "接口管理", Name: "创建接口", Path: "/v1/admin/apis", Method: http.MethodPost},
+		{Group: "接口管理", Name: "更新接口", Path: "/v1/admin/apis/:id", Method: http.MethodPut},
+		{Group: "接口管理", Name: "删除接口", Path: "/v1/admin/apis/:id", Method: http.MethodDelete},
+		{Group: "接口管理", Name: "获取接口角色", Path: "/v1/admin/apis/:id/roles", Method: http.MethodGet},
+		{Group: "接口管理", Name: "更新接口角色", Path: "/v1/admin/apis/:id/roles", Method: http.MethodPut},
 
 		// 菜单管理
 		{Group: "菜单管理", Name: "获取菜单列表", Path: "/v1/admin/menus", Method: http.MethodGet},
@@ -1077,17 +1121,19 @@ func (m *MigrateServer) initialApisData(ctx context.Context) error {
 		{Group: "菜单管理", Name: "更新菜单", Path: "/v1/admin/menus/:id", Method: http.MethodPut},
 		{Group: "菜单管理", Name: "删除菜单", Path: "/v1/admin/menus/:id", Method: http.MethodDelete},
 
-		// 接口管理
-		{Group: "接口管理", Name: "获取接口列表", Path: "/v1/admin/apis", Method: http.MethodGet},
-		{Group: "接口管理", Name: "创建接口", Path: "/v1/admin/apis", Method: http.MethodPost},
-		{Group: "接口管理", Name: "更新接口", Path: "/v1/admin/apis/:id", Method: http.MethodPut},
-		{Group: "接口管理", Name: "删除接口", Path: "/v1/admin/apis/:id", Method: http.MethodDelete},
+		// 模型管理
+		{Group: "模型管理", Name: "获取模型列表", Path: "/v1/admin/models", Method: http.MethodGet},
+		{Group: "模型管理", Name: "获取模型详情", Path: "/v1/admin/models/:id", Method: http.MethodGet},
+		{Group: "模型管理", Name: "创建模型", Path: "/v1/admin/models", Method: http.MethodPost},
+		{Group: "模型管理", Name: "更新模型", Path: "/v1/admin/models/:id", Method: http.MethodPut},
+		{Group: "模型管理", Name: "删除模型", Path: "/v1/admin/models/:id", Method: http.MethodDelete},
+		{Group: "模型管理", Name: "测试模型连接", Path: "/v1/admin/models/test-connection", Method: http.MethodPost},
 
 		// 系统设置
 		{Group: "系统设置", Name: "获取系统设置", Path: "/v1/admin/settings", Method: http.MethodGet},
 		{Group: "系统设置", Name: "更新系统设置", Path: "/v1/admin/settings", Method: http.MethodPut},
 		{Group: "系统设置", Name: "测试邮件发送", Path: "/v1/admin/settings/test-email", Method: http.MethodPost},
-		{Group: "系统设置", Name: "获取公开设置", Path: "/v1/settings", Method: http.MethodGet},
+		{Group: "系统设置", Name: "获取公开设置", Path: "/v1/settings", Method: http.MethodGet, IsPublic: true},
 
 		// 项目管理
 		{Group: "项目管理", Name: "获取项目列表", Path: "/v1/items", Method: http.MethodGet},
@@ -1119,6 +1165,7 @@ func (m *MigrateServer) initialMenuData(ctx context.Context) error {
 			Path:               item.Path,
 			Component:          item.Component,
 			Access:             item.Access,
+			Locale:             item.Locale,
 			Redirect:           item.Redirect,
 			Target:             item.Target,
 			HideChildrenInMenu: item.HideChildrenInMenu,
@@ -1392,8 +1439,9 @@ var menuData = `[
     "id": 100,
     "path": "/admin",
     "name": "admin",
+    "locale": "menu.admin",
     "icon": "crown",
-    "access": "canAdmin"
+    "access": "canOperate"
   },
   {
     "id": 101,
@@ -1460,8 +1508,29 @@ var menuData = `[
   {
     "id": 1006,
     "parentId": 1000,
+    "path": "/admin/model",
+    "name": "model",
+    "locale": "menu.admin.model",
+    "icon": "ProductOutlined",
+	"component": "@/pages/Admin/Model",
+	"access": "canAdmin"
+  },
+  {
+    "id": 1007,
+    "parentId": 1000,
     "path": "/admin/config",
     "name": "config",
-    "component": "@/pages/Admin/Config"
+    "locale": "menu.admin.config",
+	"component": "@/pages/Admin/Config",
+	"access": "canAdmin"
   }
 ]`
+
+func (m *MigrateServer) initialSettings(ctx context.Context) error {
+	// 初始化 SiteConfig.ShowLinks 为 true
+	setting := &model.Setting{
+		Key:   model.SettingKeySiteShowLinks,
+		Value: "true",
+	}
+	return m.db.Create(setting).Error
+}

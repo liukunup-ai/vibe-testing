@@ -33,6 +33,7 @@ import { createStyles } from 'antd-style';
 import { useModel, useNavigate, useIntl } from '@umijs/max';
 import { fetchCurrentUser, updateProfile, updatePassword } from '@/services/backend/user';
 import { getAccessToken } from '@/models/useTokenModel';
+import { formatInUserTimezone } from '@/utils/timezone';
 
 const { Title, Text } = Typography;
 
@@ -419,15 +420,12 @@ const Profile: React.FC = () => {
           </Descriptions.Item>
           <Descriptions.Item label="全名">{profile?.fullName || '-'}</Descriptions.Item>
           <Descriptions.Item label="手机">{profile?.phone || '-'}</Descriptions.Item>
-          <Descriptions.Item label="语言">{profile?.language || '-'}</Descriptions.Item>
-          <Descriptions.Item label="时区">{profile?.timezone || '-'}</Descriptions.Item>
-          <Descriptions.Item label="主题">{profile?.theme || '-'}</Descriptions.Item>
           <Descriptions.Item label="状态">
             <span className={statusDisplay.className}>{statusDisplay.text}</span>
           </Descriptions.Item>
           <Descriptions.Item label="个人简介">{profile?.bio || '-'}</Descriptions.Item>
-          <Descriptions.Item label="创建时间">{profile?.createdAt || '-'}</Descriptions.Item>
-          <Descriptions.Item label="更新时间">{profile?.updatedAt || '-'}</Descriptions.Item>
+          <Descriptions.Item label="创建时间">{formatInUserTimezone(profile?.createdAt) || '-'}</Descriptions.Item>
+          <Descriptions.Item label="更新时间">{formatInUserTimezone(profile?.updatedAt) || '-'}</Descriptions.Item>
         </Descriptions>
       </Card>
     );
@@ -444,9 +442,6 @@ const Profile: React.FC = () => {
       }
     >
       <Form form={profileForm} layout="vertical" onFinish={handleProfileChange}>
-        <Form.Item className={styles.formItem} label="个人简介" name="bio">
-          <Input.TextArea rows={3} placeholder="介绍一下自己..." showCount maxLength={200} />
-        </Form.Item>
         <Row gutter={24}>
           <Col xs={24} sm={12}>
             <Form.Item
@@ -502,6 +497,9 @@ const Profile: React.FC = () => {
             </Form.Item>
           </Col>
         </Row>
+        <Form.Item className={styles.formItem} label="个人简介" name="bio">
+          <Input.TextArea rows={3} placeholder="介绍一下自己..." showCount maxLength={200} />
+        </Form.Item>
         <Form.Item className={styles.submitBtn}>
           <Button type="primary" htmlType="submit" loading={loading}>
             保存修改

@@ -112,20 +112,20 @@ type AdminSettingResponse struct {
 	Data AdminSetting
 }
 
-type SiteSettingRequest struct {
+type PublicSiteConfigRequest struct {
 	Version string `form:"version" binding:"omitempty"`
 }
 
-type SiteSetting struct {
+type PublicSiteConfig struct {
 	Version string        `json:"version"`
 	Site    *SiteConfig   `json:"site,omitempty"`
 	OIDC    *OIDCConfig   `json:"oidc,omitempty"`
 	Sentry  *SentryConfig `json:"sentry,omitempty"`
 }
 
-type SiteSettingResponse struct {
+type PublicSiteConfigResponse struct {
 	Response
-	Data SiteSetting
+	Data PublicSiteConfig
 }
 
 type TestEmailRequest struct {

@@ -1,4 +1,5 @@
 import access from '@/access';
+import Icon from '@ant-design/icons';
 
 /**
  * @name umi 的路由配置
@@ -304,6 +305,12 @@ export default [
         name: 'audit',
         icon: 'audit',
         component: '@/pages/Admin/Audit',
+      },
+      {
+        path: '/admin/model',
+        name: 'model',
+        icon: 'product',
+        component: '@/pages/Admin/Model',
       },
       {
         path: '/admin/config',

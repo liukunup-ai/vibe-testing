@@ -51,7 +51,7 @@ func (mr *MockUserServiceMockRecorder) Create(ctx, req interface{}) *gomock.Call
 }
 
 // Delete mocks base method.
-func (m *MockUserService) Delete(ctx context.Context, uid uint) error {
+func (m *MockUserService) Delete(ctx context.Context, uid string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, uid)
 	ret0, _ := ret[0].(error)
@@ -65,7 +65,7 @@ func (mr *MockUserServiceMockRecorder) Delete(ctx, uid interface{}) *gomock.Call
 }
 
 // Get mocks base method.
-func (m *MockUserService) Get(ctx context.Context, uid uint) (*v1.UserDataItem, error) {
+func (m *MockUserService) Get(ctx context.Context, uid string) (*v1.UserDataItem, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, uid)
 	ret0, _ := ret[0].(*v1.UserDataItem)
@@ -80,7 +80,7 @@ func (mr *MockUserServiceMockRecorder) Get(ctx, uid interface{}) *gomock.Call {
 }
 
 // GetMenu mocks base method.
-func (m *MockUserService) GetMenu(ctx context.Context, uid uint) (*v1.DynamicMenuResponseData, error) {
+func (m *MockUserService) GetMenu(ctx context.Context, uid string) (*v1.DynamicMenuResponseData, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMenu", ctx, uid)
 	ret0, _ := ret[0].(*v1.DynamicMenuResponseData)
@@ -109,80 +109,50 @@ func (mr *MockUserServiceMockRecorder) List(ctx, req interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockUserService)(nil).List), ctx, req)
 }
 
-// Login mocks base method.
-func (m *MockUserService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.TokenData, error) {
+// ResetAvatar mocks base method.
+func (m *MockUserService) ResetAvatar(ctx context.Context, uid string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Login", ctx, req)
-	ret0, _ := ret[0].(*v1.TokenData)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Login indicates an expected call of Login.
-func (mr *MockUserServiceMockRecorder) Login(ctx, req interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockUserService)(nil).Login), ctx, req)
-}
-
-// Logout mocks base method.
-func (m *MockUserService) Logout(ctx context.Context, uid uint) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Logout", ctx, uid)
+	ret := m.ctrl.Call(m, "ResetAvatar", ctx, uid)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Logout indicates an expected call of Logout.
-func (mr *MockUserServiceMockRecorder) Logout(ctx, uid interface{}) *gomock.Call {
+// ResetAvatar indicates an expected call of ResetAvatar.
+func (mr *MockUserServiceMockRecorder) ResetAvatar(ctx, uid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Logout", reflect.TypeOf((*MockUserService)(nil).Logout), ctx, uid)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResetAvatar", reflect.TypeOf((*MockUserService)(nil).ResetAvatar), ctx, uid)
 }
 
-// RefreshToken mocks base method.
-func (m *MockUserService) RefreshToken(ctx context.Context, req *v1.RefreshTokenRequest) (*v1.TokenData, error) {
+// RevokeSessions mocks base method.
+func (m *MockUserService) RevokeSessions(ctx context.Context, uid string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RefreshToken", ctx, req)
-	ret0, _ := ret[0].(*v1.TokenData)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// RefreshToken indicates an expected call of RefreshToken.
-func (mr *MockUserServiceMockRecorder) RefreshToken(ctx, req interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshToken", reflect.TypeOf((*MockUserService)(nil).RefreshToken), ctx, req)
-}
-
-// Register mocks base method.
-func (m *MockUserService) Register(ctx context.Context, req *v1.RegisterRequest) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Register", ctx, req)
+	ret := m.ctrl.Call(m, "RevokeSessions", ctx, uid)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Register indicates an expected call of Register.
-func (mr *MockUserServiceMockRecorder) Register(ctx, req interface{}) *gomock.Call {
+// RevokeSessions indicates an expected call of RevokeSessions.
+func (mr *MockUserServiceMockRecorder) RevokeSessions(ctx, uid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockUserService)(nil).Register), ctx, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RevokeSessions", reflect.TypeOf((*MockUserService)(nil).RevokeSessions), ctx, uid)
 }
 
-// ResetPassword mocks base method.
-func (m *MockUserService) ResetPassword(ctx context.Context, req *v1.ResetPasswordRequest) error {
+// SendResetEmail mocks base method.
+func (m *MockUserService) SendResetEmail(ctx context.Context, uid string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ResetPassword", ctx, req)
+	ret := m.ctrl.Call(m, "SendResetEmail", ctx, uid)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// ResetPassword indicates an expected call of ResetPassword.
-func (mr *MockUserServiceMockRecorder) ResetPassword(ctx, req interface{}) *gomock.Call {
+// SendResetEmail indicates an expected call of SendResetEmail.
+func (mr *MockUserServiceMockRecorder) SendResetEmail(ctx, uid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResetPassword", reflect.TypeOf((*MockUserService)(nil).ResetPassword), ctx, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendResetEmail", reflect.TypeOf((*MockUserService)(nil).SendResetEmail), ctx, uid)
 }
 
 // Update mocks base method.
-func (m *MockUserService) Update(ctx context.Context, uid uint, req *v1.UserRequest) error {
+func (m *MockUserService) Update(ctx context.Context, uid string, req *v1.UserRequest) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", ctx, uid, req)
 	ret0, _ := ret[0].(error)
@@ -196,7 +166,7 @@ func (mr *MockUserServiceMockRecorder) Update(ctx, uid, req interface{}) *gomock
 }
 
 // UpdatePassword mocks base method.
-func (m *MockUserService) UpdatePassword(ctx context.Context, uid uint, req *v1.UpdatePasswordRequest) error {
+func (m *MockUserService) UpdatePassword(ctx context.Context, uid string, req *v1.UpdatePasswordRequest) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdatePassword", ctx, uid, req)
 	ret0, _ := ret[0].(error)
@@ -209,8 +179,22 @@ func (mr *MockUserServiceMockRecorder) UpdatePassword(ctx, uid, req interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePassword", reflect.TypeOf((*MockUserService)(nil).UpdatePassword), ctx, uid, req)
 }
 
+// UpdateStatus mocks base method.
+func (m *MockUserService) UpdateStatus(ctx context.Context, uid string, status int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateStatus", ctx, uid, status)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateStatus indicates an expected call of UpdateStatus.
+func (mr *MockUserServiceMockRecorder) UpdateStatus(ctx, uid, status interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStatus", reflect.TypeOf((*MockUserService)(nil).UpdateStatus), ctx, uid, status)
+}
+
 // UploadAvatar mocks base method.
-func (m *MockUserService) UploadAvatar(ctx context.Context, uid uint, req *v1.AvatarRequest, reader io.Reader) error {
+func (m *MockUserService) UploadAvatar(ctx context.Context, uid string, req *v1.AvatarRequest, reader io.Reader) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UploadAvatar", ctx, uid, req, reader)
 	ret0, _ := ret[0].(error)

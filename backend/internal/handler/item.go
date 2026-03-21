@@ -4,7 +4,7 @@ import (
 	v1 "backend/api/v1"
 	"backend/internal/repository"
 	"backend/internal/service"
-	"backend/pkg/time"
+	
 	"net/http"
 	"strconv"
 
@@ -197,8 +197,8 @@ func (h *ItemHandler) GetItem(ctx *gin.Context) {
 
 	v1.HandleSuccess(ctx, v1.ItemDataItem{
 		Id:        item.ID,
-		CreatedAt: time.FormatTime(item.CreatedAt),
-		UpdatedAt: time.FormatTime(item.UpdatedAt),
+		CreatedAt: item.CreatedAt,
+		UpdatedAt: item.UpdatedAt,
 		Name:      item.Name,
 		Desc:      item.Desc,
 		Owner:     owner,
