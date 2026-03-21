@@ -1407,33 +1407,12 @@ var menuData = `[
     "component": "@/pages/Device/List"
   },
   {
-    "id": 90,
+    "id": 999,
     "path": "/profile",
     "name": "profile",
-    "icon": "user",
-    "access": "canUser"
-  },
-  {
-    "id": 91,
-    "parentId": 90,
-    "path": "/profile",
-    "redirect": "/profile/center"
-  },
-  {
-    "id": 92,
-    "parentId": 90,
-    "path": "/profile/center",
-    "name": "center",
-    "icon": "idcard",
-    "component": "@/pages/Profile/Center"
-  },
-  {
-    "id": 93,
-    "parentId": 90,
-    "path": "/profile/settings",
-    "name": "settings",
-    "icon": "setting",
-    "component": "@/pages/Profile/Settings"
+    "icon": "profile",
+	"component": "@/pages/Profile",
+	"access": "canUser"
   },
   {
     "id": 1000,
