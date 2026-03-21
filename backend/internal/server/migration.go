@@ -1436,93 +1436,81 @@ var menuData = `[
     "component": "@/pages/Profile/Settings"
   },
   {
-    "id": 100,
+    "id": 1000,
     "path": "/admin",
     "name": "admin",
-    "locale": "menu.admin",
     "icon": "crown",
     "access": "canOperate"
   },
   {
-    "id": 101,
-    "parentId": 100,
+    "id": 1001,
+    "parentId": 1000,
     "path": "/admin",
     "redirect": "/admin/user"
   },
   {
-    "id": 102,
-    "parentId": 100,
+    "id": 1002,
+    "parentId": 1000,
     "path": "/admin/user",
     "name": "user",
-    "icon": "user",
-    "component": "@/pages/Admin/User"
+    "component": "@/pages/Admin/User",
+	"access": "canAdmin"
   },
   {
-    "id": 103,
-    "parentId": 100,
+    "id": 1003,
+    "parentId": 1000,
     "path": "/admin/role",
     "name": "role",
-    "icon": "safety",
-    "component": "@/pages/Admin/Role"
+    "component": "@/pages/Admin/Role",
+	"access": "canAdmin"
   },
   {
-    "id": 104,
-    "parentId": 100,
+    "id": 1004,
+    "parentId": 1000,
     "path": "/admin/menu",
     "name": "menu",
-    "icon": "menu",
-    "component": "@/pages/Admin/Menu"
+    "component": "@/pages/Admin/Menu",
+	"access": "canAdmin"
   },
   {
-    "id": 105,
-    "parentId": 100,
+    "id": 1005,
+    "parentId": 1000,
     "path": "/admin/api",
     "name": "api",
-    "icon": "api",
-    "component": "@/pages/Admin/Api"
-  },
-  {
-    "id": 106,
-    "parentId": 100,
-    "path": "/admin/audit",
-    "name": "audit",
-    "icon": "audit",
-    "component": "@/pages/Admin/Audit"
-  },
-  {
-    "id": 107,
-    "parentId": 100,
-    "path": "/admin/config",
-    "name": "config",
-    "icon": "tool",
-    "component": "@/pages/Admin/Config"
-  },
-  {
-    "id": 110,
-    "path": "/help",
-    "name": "help",
-    "icon": "questionCircle",
-    "component": "@/pages/Help",
-    "access": "canUser"
+    "component": "@/pages/Admin/Api",
+	"access": "canAdmin"
   },
   {
     "id": 1006,
     "parentId": 1000,
-    "path": "/admin/model",
-    "name": "model",
-    "locale": "menu.admin.model",
-    "icon": "ProductOutlined",
-	"component": "@/pages/Admin/Model",
+    "path": "/admin/audit",
+    "name": "audit",
+    "component": "@/pages/Admin/Audit",
 	"access": "canAdmin"
   },
   {
     "id": 1007,
     "parentId": 1000,
+    "path": "/admin/model",
+    "name": "model",
+	"component": "@/pages/Admin/Model",
+	"access": "canAdmin"
+  },
+  {
+    "id": 1008,
+    "parentId": 1000,
     "path": "/admin/config",
     "name": "config",
-    "locale": "menu.admin.config",
 	"component": "@/pages/Admin/Config",
 	"access": "canAdmin"
+  },
+  {
+    "id": 2000,
+    "path": "/help",
+    "name": "help",
+    "icon": "questionCircle",
+    "component": "@/pages/Help",
+    "access": "canUser"
   }
 ]`
 
