@@ -328,6 +328,16 @@ declare namespace API {
     id: number;
   };
 
+  type DeleteProjectParams = {
+    /** 项目ID */
+    id: number;
+  };
+
+  type DeleteRequirementParams = {
+    /** 需求ID */
+    id: number;
+  };
+
   type DeleteRoleParams = {
     /** 角色ID */
     id: number;
@@ -504,23 +514,24 @@ declare namespace API {
     id: number;
   };
 
-  type GetProjectParams = {
-    /** 项目ID */
+  type GetModelParams = {
+    /** 模型ID */
     id: number;
   };
 
-  type GetRequirementParams = {
-    /** 需求ID */
-    id: number;
-  };
-  type GetModelParams = {
-    /** 模型ID */
+  type GetProjectParams = {
+    /** 项目ID */
     id: number;
   };
 
   type GetPublicSiteConfigParams = {
     /** 客户端缓存的版本号 */
     version?: string;
+  };
+
+  type GetRequirementParams = {
+    /** 需求ID */
+    id: number;
   };
 
   type GetRolePermissionResponse = {
@@ -545,11 +556,6 @@ declare namespace API {
   type GetRolePermissionsParams = {
     /** 角色名 */
     role: string;
-  };
-
-  type GetSiteSettingParams = {
-    /** 客户端缓存的版本号 */
-    version?: string;
   };
 
   type GetTestCaseParams = {
@@ -737,6 +743,17 @@ declare namespace API {
     path?: string;
     /** 可见性 */
     access?: string;
+  };
+
+  type ListModelsParams = {
+    /** 页码 */
+    page: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 模型提供者 */
+    provider?: number;
+    /** 模型名称 */
+    name?: string;
   };
 
   type ListProjectsParams = {
@@ -1205,6 +1222,25 @@ declare namespace API {
     total?: number;
   };
 
+  type PublicSiteConfig = {
+    oidc?: OIDCConfig;
+    sentry?: SentryConfig;
+    site?: SiteConfig;
+    version?: string;
+  };
+
+  type PublicSiteConfigResponse = {
+    data?: PublicSiteConfig;
+    /** 错误码 */
+    errorCode?: number;
+    /** 报错信息 */
+    errorMessage?: string;
+    /** 前端展示方式 */
+    errorShowType?: number;
+    /** 是否成功 */
+    success?: boolean;
+  };
+
   type putAdminApisIdRolesParams = {
     /** 接口ID */
     id: number;
@@ -1485,6 +1521,24 @@ declare namespace API {
   type TestCaseSearchResponseData = {
     list?: TestCaseDataItem[];
     total?: number;
+  };
+
+  type TestConnectionRequest = {
+    /** API 密钥 */
+    apiKey?: string;
+    /** API 基础地址 */
+    baseUrl: string;
+    /** 模型提供者 */
+    provider: string;
+  };
+
+  type TestConnectionResult = {
+    /** 消息 */
+    message?: string;
+    /** 可用模型列表 */
+    models?: string[];
+    /** 是否成功 */
+    success?: boolean;
   };
 
   type TestEmailRequest = {
