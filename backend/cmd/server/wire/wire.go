@@ -13,7 +13,6 @@ import (
 	"backend/internal/service"
 	"backend/pkg/app"
 	"backend/pkg/audit"
-	"backend/pkg/crypto"
 	"backend/pkg/email"
 	"backend/pkg/jwt"
 	"backend/pkg/log"
@@ -37,7 +36,6 @@ var repositorySet = wire.NewSet(
 	repository.NewMenuRepository,
 	repository.NewApiRepository,
 	repository.NewSettingRepository,
-	// more biz repository
 	repository.NewItemRepository,
 	repository.NewModelRepository,
 )
@@ -50,9 +48,7 @@ var serviceSet = wire.NewSet(
 	service.NewMenuService,
 	service.NewApiService,
 	service.NewSettingService,
-	// more biz service
 	service.NewItemService,
-	service.NewModelService,
 )
 
 var handlerSet = wire.NewSet(
@@ -63,7 +59,6 @@ var handlerSet = wire.NewSet(
 	handler.NewMenuHandler,
 	handler.NewApiHandler,
 	handler.NewSettingHandler,
-	// more biz handler
 	handler.NewItemHandler,
 	handler.NewModelHandler,
 )
@@ -77,22 +72,19 @@ var serverSet = wire.NewSet(
 	server.NewJobServer,
 )
 
-// NewModelEncryptionService provider
-func NewModelEncryptionService(*viper.Viper) (*crypto.ModelEncryptionService, error) {
-	key := viper.GetString("app.model_encryption_key")
+func modelEncryptionKey(v *viper.Viper) string {
+	key := v.GetString("app.model_encryption_key")
 	if key == "" {
-		key = "default-32-byte-key-for-dev!!" // fallback for development
+		key = "default-32-byte-key-for-dev!!"
 	}
-	// Ensure key is exactly 32 bytes
 	if len(key) < 32 {
 		key = fmt.Sprintf("%-32s", key)[:32]
 	} else if len(key) > 32 {
 		key = key[:32]
 	}
-	return crypto.NewModelEncryptionService(key)
+	return key
 }
 
-// build App
 func newApp(
 	httpServer *http.Server,
 	jobServer *server.JobServer,
@@ -103,8 +95,8 @@ func newApp(
 	)
 }
 
-func NewWire(*viper.Viper, *log.Logger) (*app.App, func(), error) {
-	panic(wire.Build(
+func NewWire(v *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
+	wire.Build(
 		repositorySet,
 		serviceSet,
 		handlerSet,
@@ -114,7 +106,9 @@ func NewWire(*viper.Viper, *log.Logger) (*app.App, func(), error) {
 		jwt.NewJwt,
 		email.NewService,
 		audit.NewAudit,
-		NewModelEncryptionService,
+		modelEncryptionKey,
+		service.NewModelService,
 		newApp,
-	))
+	)
+	return newApp(nil, nil), func() {}, nil
 }

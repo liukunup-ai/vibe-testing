@@ -24,13 +24,17 @@ type ModelService interface {
 func NewModelService(
 	service *Service,
 	modelRepository repository.ModelRepository,
-	encryptionSvc *crypto.ModelEncryptionService,
-) ModelService {
+	encryptionKey string,
+) (ModelService, error) {
+	encryptionSvc, err := crypto.NewModelEncryptionService(encryptionKey)
+	if err != nil {
+		return nil, err
+	}
 	return &modelService{
 		Service:         service,
 		modelRepository: modelRepository,
 		encryptionSvc:   encryptionSvc,
-	}
+	}, nil
 }
 
 type modelService struct {
